@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<!-- saved from url=(0065)http://localhost/uportal/resources/views/layouts/master.blade.php -->
+<html lang="en" ml-update="aware"><script src="chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/content/location/location.js" id="eppiocemhmnlbhjplcgkofciiegomcon"></script><script src="chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/libs/extend-native-history-api.js"></script><script src="chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/libs/requests.js"></script><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <link rel="icon" type="image/png" sizes="96x96" href="http://localhost/uportal/resources/views/layouts/%7B%7B%20asset(&#39;job-asset/img/favicon.png&#39;)%20%7D%7D">
+  <link href="./admin_panel_files/summernote.css" rel="stylesheet">
+  <!-- CSRF Token -->
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+
+  <title>Arvice Admin Panel</title>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="./admin_panel_files/app.css">
+  <link rel="stylesheet" href="./admin_panel_files/adminlte.css">
+
+<style type="text/css" id="operaUserStyle"></style><script bis_use="true" type="text/javascript" charset="utf-8" data-bis-config="[&quot;facebook.com/&quot;,&quot;twitter.com/&quot;,&quot;youtube-nocookie.com/embed/&quot;,&quot;//vk.com/&quot;,&quot;//www.vk.com/&quot;,&quot;//linkedin.com/&quot;,&quot;//www.linkedin.com/&quot;,&quot;//instagram.com/&quot;,&quot;//www.instagram.com/&quot;,&quot;//www.google.com/recaptcha/api2/&quot;,&quot;//hangouts.google.com/webchat/&quot;,&quot;//www.google.com/calendar/&quot;,&quot;//www.google.com/maps/embed&quot;,&quot;spotify.com/&quot;,&quot;soundcloud.com/&quot;,&quot;//player.vimeo.com/&quot;,&quot;//disqus.com/&quot;,&quot;//tgwidget.com/&quot;,&quot;//js.driftt.com/&quot;,&quot;friends2follow.com&quot;,&quot;/widget&quot;,&quot;login&quot;,&quot;//video.bigmir.net/&quot;,&quot;blogger.com&quot;,&quot;//smartlock.google.com/&quot;,&quot;//keep.google.com/&quot;,&quot;/web.tolstoycomments.com/&quot;,&quot;moz-extension://&quot;,&quot;chrome-extension://&quot;,&quot;/auth/&quot;,&quot;//analytics.google.com/&quot;,&quot;adclarity.com&quot;,&quot;paddle.com/checkout&quot;,&quot;hcaptcha.com&quot;,&quot;recaptcha.net&quot;,&quot;2captcha.com&quot;,&quot;accounts.google.com&quot;,&quot;www.google.com/shopping/customerreviews&quot;,&quot;buy.tinypass.com&quot;,&quot;gstatic.com&quot;,&quot;secureir.ebaystatic.com&quot;,&quot;docs.google.com&quot;,&quot;contacts.google.com&quot;,&quot;github.com&quot;,&quot;mail.google.com&quot;,&quot;chat.google.com&quot;,&quot;audio.xpleer.com&quot;,&quot;keepa.com&quot;,&quot;static.xx.fbcdn.net&quot;,&quot;sas.selleramp.com&quot;,&quot;1plus1.video&quot;,&quot;console.googletagservices.com&quot;]" src="chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/executers/vi-tr.js"></script></head>
+<body class="hold-transition sidebar-mini" bis_register="W3sibWFzdGVyIjp0cnVlLCJleHRlbnNpb25JZCI6ImVwcGlvY2VtaG1ubGJoanBsY2drb2ZjaWllZ29tY29uIiwiYWRibG9ja2VyU3RhdHVzIjp7IkRJU1BMQVkiOiJkaXNhYmxlZCIsIkZBQ0VCT09LIjoiZGlzYWJsZWQiLCJUV0lUVEVSIjoiZGlzYWJsZWQiLCJSRURESVQiOiJkaXNhYmxlZCIsIlBJTlRFUkVTVCI6ImRpc2FibGVkIiwiSU5TVEFHUkFNIjoiZGlzYWJsZWQiLCJDT05GSUciOiJkaXNhYmxlZCJ9LCJ2ZXJzaW9uIjoiMi4wLjE0Iiwic2NvcmUiOjIwMDE0fV0=">
+<div class="wrapper" id="app" bis_skin_checked="1"> 
+
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="http://localhost/uportal/resources/views/layouts/master.blade.php#"><i class="fa fa-bars"></i></a>
+      </li>
+    </ul>
+
+    <!-- SEARCH FORM -->
+      <div class="input-group input-group-sm ml-3" bis_skin_checked="1">
+        <input class="form-control form-control-navbar" type="search" @keyup="searchit" v-model="search" placeholder="Search" aria-label="Search">
+        <div class="input-group-append" bis_skin_checked="1">
+          <button class="btn btn-navbar" @click="searchit">
+            <i class="fa fa-search"></i>
+          </button>
+        </div>
+      </div>
+
+    <!-- Right navbar links -->
+
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="http://localhost/" class="brand-link">
+      <img src="./admin_panel_files/logo.png" alt="BuySellHousing Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">Arvice</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar" bis_skin_checked="1">
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex" bis_skin_checked="1">
+        <div class="image" bis_skin_checked="1">
+          <img src="./admin_panel_files/profile.png" class="img-circle elevation-2" alt="User Image">
+        </div>
+        <div class="info" bis_skin_checked="1">
+          <a href="http://localhost/uportal/resources/views/layouts/master.blade.php#" class="d-block"> {{ Auth::user()-&gt;name }}</a>
+          <a class="d-block">{{ Auth::user()-&gt;type }}</a>
+        </div>
+      </div>
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          @can('isAdmin') 
+          <li class="nav-item">
+            <router-link to="/dashboard" class="nav-link">
+              <i class="nav-icon fas fa-tachometer-alt blue"></i>
+              <p>
+                Dashboard
+              </p>
+            </router-link>
+          </li>
+          <li class="nav-item has-treeview ">
+            <a href="http://localhost/uportal/resources/views/layouts/master.blade.php#" class="nav-link">
+              <i class="nav-icon fa fa-cog green"></i>
+              <p>
+                Manage Users
+                <i class="right fa fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <router-link to="/users" class="nav-link">
+                  <i class="fas fa-users nav-icon blue"></i>
+                  <p>Users</p>
+                </router-link>
+                <router-link to="/partners" class="nav-link">
+                <i class="fas fa-suitcase nav-icon blue"></i>
+                  <p>Partners</p>
+                </router-link>
+                <router-link to="/enquiry" class="nav-link">
+                <i class="fas fa-location-arrow nav-icon green"></i>
+                  <p>Enquiries</p>
+                </router-link>
+                <router-link to="/city" class="nav-link">
+                  <i class="fas fa-city nav-icon yellow"></i>
+                  <p>City</p>
+                </router-link>
+              </li>
+            </ul>
+          </li>
+
+          <li class="nav-item has-treeview ">
+            <a href="http://localhost/uportal/resources/views/layouts/master.blade.php#" class="nav-link">
+              <i class="nav-icon fa fa-cog green"></i>
+              <p>
+                Manage Profession
+                <i class="right fa fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <router-link to="/post" class="nav-link">
+                <i class="nav-icon fas fa-plane-departure red"></i>
+                  <p>Create Profession</p>
+                </router-link>
+                <router-link to="/category" class="nav-link">
+                <i class="fas fa-star nav-icon yellow"></i>
+                  <p>Primary Profession</p>
+                </router-link>
+                <router-link to="/subcategory" class="nav-link">
+                <i class="fas fa-archive nav-icon yellow"></i>
+                  <p>Profession Sub-Types</p>
+                </router-link>
+              </li>
+            </ul>
+          </li>
+
+          <!-- <li class="nav-item has-treeview ">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fa fa-cog green"></i>
+              <p>
+                Manage Invitation
+                <i class="right fa fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <router-link to="/post" class="nav-link">
+                <i class="nav-icon fas fa-plane-departure red"></i>
+                  <p>Total Invitations</p>
+                </router-link>
+              </li>
+            </ul>
+          </li> -->
+         
+          <li class="nav-item">
+            <router-link to="/developer" class="nav-link">
+              <i class="nav-icon fas fa-cogs pink"></i>
+              <p>
+                Developer
+              </p>
+            </router-link>
+          </li>
+          @endcan
+          <li class="nav-item">
+            <router-link to="/profile" class="nav-link">
+              <i class="nav-icon fas fa-user orange"></i>
+              <p>
+                Profile
+              </p>
+            </router-link>
+          </li>
+          <li class="nav-item">
+      <a class="nav-link" href="http://localhost/uportal/resources/views/layouts/%7B%7B%20route(&#39;logout&#39;)%20%7D%7D" onclick="event.preventDefault();
+       document.getElementById(&#39;logout-form&#39;).submit();">
+       <i class="nav-icon fa fa-power-off red"></i>
+       <p>
+             {{ __('Logout') }}
+       </p>
+      </a>
+      <form id="logout-form" action="http://localhost/uportal/resources/views/layouts/%7B%7B%20route(&#39;logout&#39;)%20%7D%7D" method="POST" style="display: none;">
+         @csrf
+      </form>            
+          </li>
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper" bis_skin_checked="1">
+
+    <!-- Main content -->
+    <div class="content" bis_skin_checked="1">
+      <div class="container-fluid" bis_skin_checked="1">
+      <router-view></router-view>
+      <vue-progress-bar></vue-progress-bar>
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Main Footer -->
+  <footer class="main-footer">
+    <!-- To the right -->
+    <div class="float-right d-none d-sm-inline" bis_skin_checked="1">
+      TrickuWeb.com
+    </div>
+    <!-- Default to the left -->
+    <strong>Copyright © 2017-2019 <a href="https://www.trickuweb.com/">Arvice</a>.</strong> All rights reserved.
+  </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+
+@auth
+<script>
+  window.user = @json(auth()->user())
+</script>
+@endauth
+
+<!-- jQuery -->
+<script src="./admin_panel_files/app.js.download"></script>
+<script src="./admin_panel_files/adminlte.js.download"></script>
+
+
+
+</body></html>

@@ -1,0 +1,13 @@
+
+#login_menu {
+    position: absolute;
+    display: none;
+    top: 80px;
+    left: -60px;
+    background-color: white;
+    border: 1px solid #000;
+    width: 200px;
+}
+#login_dropdown:hover #login_menu {
+    display: block;
+}
