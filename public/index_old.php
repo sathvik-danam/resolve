@@ -1,19 +1,7 @@
 <?php 
 require_once('../config/config.php');
 
-if (session_status() == PHP_SESSION_NONE):
-  session_start();
-endif;
-
-
 //$_SESSION['user_id'] = 1;
-
-
-if (isset($_GET['logout']) && session_status() != PHP_SESSION_NONE):
-  $_SESSION = [];
-  session_destroy();
-endif;
-
 
 
 if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
