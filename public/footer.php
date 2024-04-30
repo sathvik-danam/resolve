@@ -1,7 +1,7 @@
 <footer class="font-[sans-serif] bg-black px-10 py-14">
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-8">
         <div class="xl:col-span-2">
-          <a href='javascript:void(0)'><img src="https://readymadeui.com/readymadeui-white.svg" alt="logo" class='w-48' /></a>
+          <a href='javascript:void(0)'><img src="img/logo3.png" alt="logo" class='w-48' /></a>
           <ul class="mt-10 flex space-x-6">
             <li>
               <a href='javascript:void(0)'>
@@ -55,25 +55,25 @@
           </h4>
           <ul class="mt-4 space-y-5">
             <li>
-              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Web Development</a>
+              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Electricians</a>
             </li>
             <li>
-              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Pricing</a>
+              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Carpenters</a>
             </li>
             <li>
-              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Support</a>
+              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Handymen</a>
             </li>
             <li>
-              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Client Portal</a>
+              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Painters</a>
             </li>
             <li>
-              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Resources</a>
+              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Plumbers</a>
             </li>
           </ul>
         </div>
 
         <div>
-          <h4 class="text-white font-semibold text-lg relative max-sm:cursor-pointer">Platforms <svg
+          <h4 class="text-white font-semibold text-lg relative max-sm:cursor-pointer">Cities<svg
             xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
             class="sm:hidden absolute right-0 top-1 fill-[#d6d6d6]" viewBox="0 0 24 24">
             <path
@@ -83,16 +83,16 @@
           </h4>
           <ul class="space-y-5 mt-4 max-sm:hidden">
             <li>
-              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Hubspot</a>
+              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>London</a>
             </li>
             <li>
-              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Integration Services</a>
+              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Luton</a>
             </li>
             <li>
-              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Marketing Glossar</a>
+              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Northampton</a>
             </li>
             <li>
-              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>UIPath</a>
+              <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Milton Keynes</a>
             </li>
           </ul>
         </div>
@@ -159,16 +159,16 @@
       <div class="flex max-md:flex-col gap-4">
         <ul class="md:flex md:space-x-6 max-md:space-y-2">
           <li>
-            <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Terms of Service</a>
+            <a href='terms.php' class='hover:text-white text-gray-300 text-sm'>Terms of Service</a>
           </li>
           <li>
-            <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Privacy Policy</a>
+            <a href='terms.php' class='hover:text-white text-gray-300 text-sm'>Privacy Policy</a>
           </li>
           <li>
-            <a href='javascript:void(0)' class='hover:text-white text-gray-300 text-sm'>Security</a>
+            <a href='terms.php' class='hover:text-white text-gray-300 text-sm'>Security</a>
           </li>
         </ul>
-        <p class='text-gray-300 text-sm md:ml-auto'>Copyright © 2023<a href='https://readymadeui.com/'
-          target='_blank' class="hover:underline mx-1">ReadymadeUI</a>All Rights Reserved.</p>
+        <p class='text-gray-300 text-sm md:ml-auto'>Copyright © 2023<a href='reslove.com'
+          target='_blank' class="hover:underline mx-1">Resolve</a>All Rights Reserved.</p>
       </div>
     </footer>
