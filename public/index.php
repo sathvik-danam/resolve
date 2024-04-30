@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <base href="resolve">
+    <base href="/resolve/">
 
     <link rel="stylesheet" href="css/styles.css">
 

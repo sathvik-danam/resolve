@@ -4,9 +4,6 @@ header('Content-Type: text/javascript;');
 
 ?>
 
-
-
-
     document.addEventListener('DOMContentLoaded', (event) => {
 <?php if (!isset($_SESSION['user_id'])) { ?>
       document.getElementById('get_started').addEventListener('click', function() {

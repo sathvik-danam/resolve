@@ -12,13 +12,25 @@ endif;
 
 switch ($_SERVER['REQUEST_METHOD']) {
   case 'POST':
-    if (isset($_POST['delete_user'])) {
+    //dd($_POST);
+    if (isset($_POST['user']) && $_POST['user'] == 'delete') {
       $stmt = $pdo->prepare("DELETE FROM `users` WHERE `users`.`id` = :user_id;");
       $stmt->execute(array(
         ":user_id" => $_POST['user_id']
       ));
-    } elseif (isset($_POST['add_user'])) {
-      $stmt = $pdo->prepare("SELECT `id`, `email`, `password` FROM `users` WHERE `email` = :email;");
+    } elseif (isset($_POST['user']) && $_POST['user'] == 'edit') {
+      $stmt = $pdo->prepare($sql = "UPDATE `users` SET `name` = :user_name, `email` = :user_email," . (isset($_POST['password']) ? "`password` = :user_password," : '') . " `type` = :user_type WHERE `users`.`id` = :user_id;");
+
+      //dd($sql);
+      $stmt->execute(array(
+        ":user_id" => $_POST['user_id'],
+        ':user_name' => $_POST['name'],
+        ':user_email' => $_POST['email'],
+        ':user_type' => $_POST['type'],
+        ":user_password" => password_hash($_POST["password"], PASSWORD_DEFAULT)
+      ));
+    } elseif (isset($_POST['user']) && $_POST['user'] == 'add') {
+      //$stmt = $pdo->prepare("SELECT `id`, `email`, `password` FROM `users` WHERE `email` = :email;");
 
       $stmt = $pdo->prepare("INSERT INTO users (`name`, `email`, `password`, `type`) VALUES (?, ?, ?, ?)");
       $stmt->execute(array(
@@ -27,6 +39,22 @@ switch ($_SERVER['REQUEST_METHOD']) {
         password_hash($_POST['password'], PASSWORD_DEFAULT),
         $_POST['type']
       ));
+    } elseif(!empty($rawData = file_get_contents("php://input"))) {
+
+      //dd($rawData);
+
+      $decodedData = json_decode($rawData, true);
+      $decodedData['user_id'];
+
+
+      $stmt = $pdo->prepare("SELECT `id`, `name`, `email`, `password`, `type` FROM `users` WHERE `id` = :user_id;");
+      $stmt->execute(array(
+        ":user_id" => $decodedData['user_id']
+      ));
+
+      $row_fetch = $stmt->fetch();
+      die(json_encode(['user_id' => $decodedData['user_id'], 'name' => $row_fetch['name'], 'email' => $row_fetch['email'], 'type' => $row_fetch['type']]));
+
     }
     break;
 
@@ -53,10 +81,10 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
-  <base href="resolve">
+  <base href="/resolve/" /> <!-- always follow with a resolve/ -->
 
-  <link rel="stylesheet" href="css/font-awesome.min.css">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
 
   <style type="text/css">
     nav {
@@ -151,17 +179,18 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
 
     </div>
     <form action method="POST">
-      <input type="hidden" name="add_user" />
+      <input type="hidden" name="user" value="add" />
+      <input type="hidden" name="user_id" />
       <div class="modal-body" bis_skin_checked="1">
-        <div class="form-group" bis_skin_checked="1"><input type="text" name="name" placeholder="Enter Name" class="form-control"> <!----></div> 
-        <div class="form-group" bis_skin_checked="1"><input type="text" name="email" placeholder="Enter Email" class="form-control"> <!----></div> 
-        <div class="form-group" bis_skin_checked="1"><input type="password" name="password" placeholder="Enter Password" class="form-control"> <!----></div>
+        <div class="form-group" bis_skin_checked="1"><input type="text" id="name" name="name" placeholder="Enter Name" class="form-control"> <!----></div> 
+        <div class="form-group" bis_skin_checked="1"><input type="text" id="email" name="email" placeholder="Enter Email" class="form-control"> <!----></div> 
+        <div class="form-group" bis_skin_checked="1"><input type="password" id="password" name="password" placeholder="Enter Password" class="form-control"> <!----></div>
         <div class="form-group" bis_skin_checked="1">
         <select name="type" id="type" placeholder="User Type" class="form-control">
           <option value="">Select User Role</option>
-          <option>Admin</option>
-          <option>User</option>
-          <option>Author</option>
+          <option value="Admin">Admin</option>
+          <option value="User">User</option>
+          <option value="Author">Author</option>
         </select> <!----></div></div>
         <div class="modal-footer" bis_skin_checked="1">
           <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
@@ -237,9 +266,9 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
         </div>
         <div id="hide-show_users_btn" role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
-            <!-- svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
               <path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z" clip-rule="evenodd"></path>
-            </svg -->
+            </svg>
             <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
   <path d="M21.4 12.6c0-1.1-.2-2.2-.6-3.2l2.1-1.7c.2-.2.2-.5 0-.7l-2-3.5c-.2-.2-.5-.2-.7 0l-2.5 1c-.5-.4-1.1-.7-1.7-1l-.4-2.6c0-.3-.3-.5-.5-.5h-4c-.3 0-.5.2-.5.5l-.4 2.6c-.6.3-1.2.6-1.7 1l-2.5-1c-.2-.2-.5-.2-.7 0l-2 3.5c-.2.2-.2.5 0 .7l2.1 1.7c-.4 1-.6 2.1-.6 3.2s.2 2.2.6 3.2l-2.1 1.7c-.2.2-.2.5 0 .7l2 3.5c.2.2.5.2.7 0l2.5-1c.5.4 1.1.7 1.7 1l.4 2.6c0 .3.2.5.5.5h4c.2 0 .5-.2.5-.5l.4-2.6c.6-.3 1.2-.6 1.7-1l2.5 1c.2.2.5.2.7 0l2-3.5c.2-.2.2-.5 0-.7l-2.1-1.7c.4-1 .6-2.1.6-3.2zM12 15.5c-1.9 0-3.5-1.6-3.5-3.5S10.1 8.5 12 8.5s3.5 1.6 3.5 3.5-1.6 3.5-3.5 3.5z"/>
 </svg> --><i class="fa fa-cloud"></i>
@@ -377,10 +406,16 @@ while ($row = $stmt->fetch()) { ?>
                   <?= $row['type'] ?>
                 </td>
                 <td class="px-6 py-4">
-                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a> / 
+                    <!-- a href="javascript:void(0);" class="font-medium text-blue-600 dark:text-blue-500 hover:underline" onclick="document.getElementById('myModal').style.display='block';">Edit</a --> 
+                    <form class="user_edit" style="display: inline;">
+                      <input type="hidden" name="user" value="edit" />
+                      <input type="hidden" name="user_id" value="<?= $row['id'] ?>">
+                      <button type="submit">Edit</button>
+                    </form>
+                    / 
                     
                     <form action method="POST" style="display: inline;">
-                      <input type="hidden" name="delete_user">
+                      <input type="hidden" name="user" value="delete" />
                       <input type="hidden" name="user_id" value="<?= $row['id'] ?>">
                       <button type="submit">Delete</button>
                     </form>
@@ -554,7 +589,7 @@ while ($row = $stmt->fetch()) { ?>
                 <td class="px-6 py-4">
                   <?= /* $row['enquiry'] */ null; ?>
                 </td>
-                <!-- td class="px-6 py-4">
+                <td class="px-6 py-4">
                     <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a> / 
                     
                     <form action method="POST" style="display: inline;">
@@ -562,7 +597,7 @@ while ($row = $stmt->fetch()) { ?>
                       <input type="hidden" name="user_id" value="<?= $row['id'] ?>">
                       <button type="submit">Delete</button>
                     </form>
-                </td -->
+                </td>
             </tr>
 
 <?php } ?>
@@ -659,7 +694,87 @@ window.onclick = function(event) {
   }
 }
  <?php }?>
+/*
+ document.addEventListener('DOMContentLoaded', function() {
+            var usersFeatures = document.getElementById('myModal');
+            usersFeatures.style.display = 'block';
+        });
+*/
+<?php if (isset($_GET['users'])) {  ?>
+ document.addEventListener('DOMContentLoaded', function () {
+    var forms = document.getElementsByClassName('user_edit');
 
+    for (var i = 0; i < forms.length; i++) {
+
+    forms[i].addEventListener('submit', function(event) {
+      
+        event.preventDefault(); // Prevent the default form submission
+
+
+        const formData = new FormData(this);
+        //let dataToShow = '';
+
+        // Loop through the entries of the form data.
+        for (let [key, value] of formData.entries()) {
+            //dataToShow += `${key}: ${value}<br>`; // Append each key-value pair to a string
+
+            if (`${key}` == 'user_id') {
+              console.log('User_id: ' + `${value}` ); 
+              document.getElementById('myModal').style.display = 'block';
+
+
+              var xhr = new XMLHttpRequest();
+              var url = "dashboard.php"; // Replace with your endpoint URL
+              xhr.open("POST", url, true);
+              xhr.setRequestHeader("Content-Type", "application/json");
+
+              xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                  //console.log('what is tyhis' + xhr.responseText.split(',')[1] ); // Handle the response data here
+                  var data = JSON.parse(xhr.responseText);
+                  console.log(data);
+                  document.getElementsByName('user')[0].value = 'edit';
+                  document.getElementsByName('user_id')[0].value = data['user_id'];
+                  document.getElementById('name').value = data['name'];
+                  document.getElementById('email').value = data['email'];
+                  document.getElementById('type').value = data['type'];
+
+                  const selectElement = document.getElementById('type');
+                  if (selectElement.querySelector(`option[value="${data['type']}"]`)) {
+                      selectElement.value = data['type'];
+                  } else {
+                      console.error('The specified value does not exist in the options');
+                  }
+                }
+              };
+
+              var data = JSON.stringify({
+                "user_id": `${value}`
+              });
+              
+              xhr.send(data);
+
+              return; }
+            }
+
+        //console.log(formData.entries());
+
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+        var type = document.getElementById('type').value;
+
+        // Example: Do something with the form data, like logging it or appending it somewhere
+        console.log("email:", email, "password:", email, "type:", type);
+
+        // Optionally, display the result somewhere on the page
+        //document.getElementById('result').innerText = 'Form submitted with Username: ' + username + ' and Email: ' + email;
+
+        // If needed, send the data to a server via AJAX
+        // sendData(username, email);
+    });
+  }
+});
+<?php   } ?>
 /*
 document.addEventListener("DOMContentLoaded", function() {
     var btn = document.getElementById('hide-show_users_btn');
