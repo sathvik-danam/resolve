@@ -19,16 +19,53 @@ switch ($_SERVER['REQUEST_METHOD']) {
         ":user_id" => $_POST['user_id']
       ));
     } elseif (isset($_POST['user']) && $_POST['user'] == 'edit') {
-      $stmt = $pdo->prepare($sql = "UPDATE `users` SET `name` = :user_name, `email` = :user_email," . (isset($_POST['password']) ? "`password` = :user_password," : '') . " `type` = :user_type WHERE `users`.`id` = :user_id;");
 
-      //dd($sql);
-      $stmt->execute(array(
-        ":user_id" => $_POST['user_id'],
-        ':user_name' => $_POST['name'],
-        ':user_email' => $_POST['email'],
-        ':user_type' => $_POST['type'],
-        ":user_password" => password_hash($_POST["password"], PASSWORD_DEFAULT)
-      ));
+
+      $sql = "UPDATE `users` SET ";
+
+      // Start an array to hold SQL segments
+      $updates = array();
+      
+      // Always update these fields
+      $updates[] = "`name` = :user_name";
+      $updates[] = "`email` = :user_email";
+      $updates[] = "`type` = :user_type";
+      
+      // Check if password needs to be updated
+      if (isset($_POST['password']) && !empty($_POST['password'])) {
+          $updates[] = "`password` = :user_password";
+      }
+      
+      // Join all updates to complete the SQL statement
+      $sql .= implode(", ", $updates) . " WHERE `id` = :user_id";
+      
+      // Prepare the SQL statement
+      $stmt = $pdo->prepare($sql);
+      
+      // Bind parameters
+      $params = array(
+          ':user_id' => $_POST['user_id'],
+          ':user_name' => $_POST['name'],
+          ':user_email' => $_POST['email'],
+          ':user_type' => isset($_POST['type']) ? $_POST['type'] : $_SESSION['type']
+      );
+      
+      // Optionally add the password to the parameters
+      if (isset($_POST['password']) && !empty($_POST['password'])) {
+          $params[':user_password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
+      }
+      
+      // Execute the statement
+      $stmt->execute($params);
+      
+      // Optionally, check for success or handle errors
+      /*
+      if ($stmt->rowCount() > 0) {
+          echo "Profile updated successfully!";
+      } else {
+          echo "No changes were made to the profile.";
+      }*/
+
     } elseif (isset($_POST['user']) && $_POST['user'] == 'add') {
       //$stmt = $pdo->prepare("SELECT `id`, `email`, `password` FROM `users` WHERE `email` = :email;");
 
@@ -45,16 +82,19 @@ switch ($_SERVER['REQUEST_METHOD']) {
         ":profession_id" => $_POST['partner_id']
       ));
     } elseif (isset($_POST['partner']) && $_POST['partner'] == 'edit') {
-      dd($_POST);
-      $stmt = $pdo->prepare($sql = "UPDATE `users` SET `name` = :user_name, `email` = :user_email," . (isset($_POST['password']) ? "`password` = :user_password," : '') . " `type` = :user_type WHERE `users`.`id` = :user_id;");
+      //dd($_POST);
+      $stmt = $pdo->prepare($sql = "UPDATE `professionals` SET `profession` = :profession, `profession_name` = :name, `phone` = :phone, `user_id` = :user_id, `city` = :city, `about` => :about, `type` = :type WHERE `professionals`.`id` = :profession_id;");
 
       //dd($sql);
       $stmt->execute(array(
-        ":user_id" => $_POST['user_id'],
-        ':user_name' => $_POST['name'],
-        ':user_email' => $_POST['email'],
-        ':user_type' => $_POST['type'],
-        ":user_password" => password_hash($_POST["password"], PASSWORD_DEFAULT)
+        ':profession_id' => $_POST['partner_id'],
+        ':profession' => $_POST['profession'],
+        ':profession_name' => $_POST['name'],
+        ':phone' => $_POST['phone'],
+        ':user_id' => $_POST['user_id'],
+        ':city' => $_POST['city'],
+        ':about' => $_POST['about'],
+        ':type' => $_POST['type']
       ));
     } elseif (isset($_POST['partner']) && $_POST['partner'] == 'add') {
       // id, profession, profession_name, type, about, photo, state, city, name, phone, email, address, slug, user_id, created_at, updated_at
@@ -94,7 +134,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
       //dd($rawData);
 
       $decodedData = json_decode($rawData, true);
-      $decodedData['user_id'];
+      if ($decodedData['user'] == 'edit') die('{"testing": 123}');
 
 
       $stmt = $pdo->prepare("SELECT `id`, `name`, `email`, `password`, `type` FROM `users` WHERE `id` = :user_id;");
@@ -130,8 +170,9 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
 
-  <base href="/resolve/" /> <!-- always follow with a resolve/ -->
+  <base href="<?= APP_URL_BASE ; /* /resolve/ */ ?>" /> <!-- always follow with a resolve/ -->
 
   <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="css/styles.css">
@@ -387,11 +428,18 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
 
   <div style="overflow-x: auto; width: 100%; max-width: 100%;">
 
-    <div style="display: inline; float: left;  width: 20%; box-sizing: border-box; margin-top: 10px; background-color: #232323;" class="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
-      <!-- div class="mb-2 p-4">
-        <h5 class="block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-gray-900">Material Tailwind</h5>
-      </div -->
+    <div style="display: inline; float: left;  width: 20%; box-sizing: border-box; margin-top: 0; background-color: #232323;" class="relative flex flex-col bg-clip-border  bg-white text-gray-700 h-[calc(100vh)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
+
       <nav class="flex flex-col gap-1 min-w-[240px] p-2 font-sans text-base font-normal text-gray-700">
+      <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
+          <div class="grid place-items-center mr-4">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
+              <path fill-rule="evenodd" d="M2.25 2.25a.75.75 0 000 1.5H3v10.5a3 3 0 003 3h1.21l-1.172 3.513a.75.75 0 001.424.474l.329-.987h8.418l.33.987a.75.75 0 001.422-.474l-1.17-3.513H18a3 3 0 003-3V3.75h.75a.75.75 0 000-1.5H2.25zm6.04 16.5l.5-1.5h6.42l.5 1.5H8.29zm7.46-12a.75.75 0 00-1.5 0v6a.75.75 0 001.5 0v-6zm-3 2.25a.75.75 0 00-1.5 0v3.75a.75.75 0 001.5 0V9zm-3 2.25a.75.75 0 00-1.5 0v1.5a.75.75 0 001.5 0v-1.5z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+          <a href="?">Resolve</a>
+        </div>  
+      <hr />
         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
@@ -402,12 +450,7 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
         </div>
         <div id="hide-show_users_btn" role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
-              <path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z" clip-rule="evenodd"></path>
-            </svg>
-            <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-  <path d="M21.4 12.6c0-1.1-.2-2.2-.6-3.2l2.1-1.7c.2-.2.2-.5 0-.7l-2-3.5c-.2-.2-.5-.2-.7 0l-2.5 1c-.5-.4-1.1-.7-1.7-1l-.4-2.6c0-.3-.3-.5-.5-.5h-4c-.3 0-.5.2-.5.5l-.4 2.6c-.6.3-1.2.6-1.7 1l-2.5-1c-.2-.2-.5-.2-.7 0l-2 3.5c-.2.2-.2.5 0 .7l2.1 1.7c-.4 1-.6 2.1-.6 3.2s.2 2.2.6 3.2l-2.1 1.7c-.2.2-.2.5 0 .7l2 3.5c.2.2.5.2.7 0l2.5-1c.5.4 1.1.7 1.7 1l.4 2.6c0 .3.2.5.5.5h4c.2 0 .5-.2.5-.5l.4-2.6c.6-.3 1.2-.6 1.7-1l2.5 1c.2.2.5.2.7 0l2-3.5c.2-.2.2-.5 0-.7l-2.1-1.7c.4-1 .6-2.1.6-3.2zM12 15.5c-1.9 0-3.5-1.6-3.5-3.5S10.1 8.5 12 8.5s3.5 1.6 3.5 3.5-1.6 3.5-3.5 3.5z"/>
-</svg> --><i class="fa fa-cloud"></i>
+<i class="fa fa-users"></i>
           </div><a href="javascript:void(0)">Manage Users</a>
         </div>
 <div id="hide-show_users" style="display: 
@@ -415,38 +458,28 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
 ;">
         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
-              <path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z" clip-rule="evenodd"></path>
-            </svg>
+          <i class="fa fa-user"></i>
           </div><a href="dashboard.php?users">Users</a>
         </div>
         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
-              <path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z" clip-rule="evenodd"></path>
-            </svg>
+          <i class="fa fa-people"></i>
           </div><a href="dashboard.php?partners">Partners</a>
         </div>
         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
-              <path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z" clip-rule="evenodd"></path>
-            </svg>
+          <i class="fa fa-chat"></i>
           </div><a href="dashboard.php?enquiries">Enquiries</a>
         </div>
         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
-              <path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z" clip-rule="evenodd"></path>
-            </svg>
+          <i class="fas fa-city"></i>
           </div><a href="dashboard.php?cities">City</a>
         </div>
 </div>
         <div id="hide-show_profession_btn" role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
-              <path fill-rule="evenodd" d="M6.912 3a3 3 0 00-2.868 2.118l-2.411 7.838a3 3 0 00-.133.882V18a3 3 0 003 3h15a3 3 0 003-3v-4.162c0-.299-.045-.596-.133-.882l-2.412-7.838A3 3 0 0017.088 3H6.912zm13.823 9.75l-2.213-7.191A1.5 1.5 0 0017.088 4.5H6.912a1.5 1.5 0 00-1.434 1.059L3.265 12.75H6.11a3 3 0 012.684 1.658l.256.513a1.5 1.5 0 001.342.829h3.218a1.5 1.5 0 001.342-.83l.256-.512a3 3 0 012.684-1.658h2.844z" clip-rule="evenodd"></path>
-            </svg>
+<i class="fa fa-briefcase"></i>
           </div><a href="javascript:void(0);">Manage Profession</a>
         </div>
 <div id="hide-show_profession" style="display: 
@@ -454,9 +487,7 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
 ;">
         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
-            <!-- svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
-              <path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z" clip-rule="evenodd"></path>
-            </svg -->
+
           </div><a href="javascript:void(0);">Create Profession</a>
         </div>
         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
@@ -481,7 +512,7 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
               <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd"></path>
             </svg>
-          </div><a href="javascript:void(0)">Profile</a>
+          </div><a href="<?= basename(APP_SELF) ; ?>?profile">Profile</a>
         </div>
 
 
@@ -562,9 +593,51 @@ while ($row = $stmt->fetch()) { ?>
         </tbody>
     </table>
 </div>
+<?php } elseif(isset($_GET['profile'])) {?>
+  <div style="position: relative; display: inline; float: left; margin: 25px 0 0 250px; width: 45%; overflow-x:scroll;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
+  <h1 style="font-weight: bold; font-size: 20pt;">My Profile</h1>
+  <form action method="POST">
+        <input type="hidden" name="user" value="edit" />
+        <input type="hidden" name="user_id" value="<?= $_SESSION['user_id'] ?>" />
+<?php
+
+$stmt = $pdo->prepare("SELECT `name`, `email`, `password` FROM `users` WHERE `id` = :user_id;");
+$stmt->execute(array(
+  ":user_id" => $_SESSION['user_id']
+));
+
+$row_fetch = $stmt->fetch(); ?>
+        <div class="modal-body" bis_skin_checked="1">
+          <div class="form-group" bis_skin_checked="1">
+            <label>Name</label>  
+            <input type="text" id="name" name="name" value="<?= $row_fetch['name'] ?>" placeholder="Enter Name" class="form-control"> <!---->
+          </div> 
+          <!-- div class="form-group" bis_skin_checked="1">
+            <label>Phone</label>  
+            <input type="text" id="phone" name="phone" placeholder="Enter Phone" class="form-control">
+          </div --> 
+          <div class="form-group" bis_skin_checked="1">
+            <label>Email</label>  
+            <input type="text" id="email" name="email" value="<?= $row_fetch['email'] ?>" placeholder="Enter Email" class="form-control"> <!---->
+          </div> 
+        
+          <div class="form-group" bis_skin_checked="1">
+            <label>Password</label>  
+            <input type="password" id="password" name="password" placeholder="Enter Password" class="form-control"> <!---->
+          </div>
+
+        </div>
+        <div class="modal-footer" bis_skin_checked="1">
+          <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
+          <button type="submit" class="btn btn-primary" style="float: right;">Save changes</button>
+        </div>
+      </form>  
+</div>
+  
+  
 <?php } elseif(isset($_GET['partners'])) { ?>
  
-<div style="position: absolute; top: 0; right: -197px; display: inline; float: right; margin: 25px 20px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
+<div style="position: absolute; top: 0; right: 100px; display: inline; float: right; margin: 25px 0 0 250px; width: 75%; overflow-x:scroll;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
     <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add Partner<i class="fas fa-user-plus fa-fw"></i></button>
 </div>
@@ -607,6 +680,7 @@ while ($row = $stmt->fetch()) { ?>
             </tr>
         </thead>
         <tbody>
+          
 <?php 
 
 $stmt = $pdo->query("SELECT `id`, `profession`, `profession_name`, `type`, `about`, `photo`, `city`, `name`, `phone`, `created_at` FROM `professionals`;");
@@ -645,11 +719,17 @@ while ($row = $stmt->fetch()) { ?>
                   <?= $row['created_at'] ?>
                 </td>
                 <td class="px-6 py-4">
-                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a> / 
-                    
+                    <!-- a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a -->
+
+                    <form class="partner_edit" style="display: inline;">
+                      <input type="hidden" name="partner" value="edit" />
+                      <input type="hidden" name="partner_id" value="<?= $row['id'] ?>">
+                      <button type="submit">Edit</button>
+                    </form>
+                    / 
                     <form action method="POST" style="display: inline;">
-                      <input type="hidden" name="delete_user">
-                      <input type="hidden" name="user_id" value="<?= $row['id'] ?>">
+                      <input type="hidden" name="partner" value="delete" />
+                      <input type="hidden" name="partner_id" value="<?= $row['id'] ?>">
                       <button type="submit">Delete</button>
                     </form>
                 </td>
@@ -836,6 +916,7 @@ window.onclick = function(event) {
             usersFeatures.style.display = 'block';
         });
 */
+
 <?php if (isset($_GET['users'])) {  ?>
  document.addEventListener('DOMContentLoaded', function () {
     var forms = document.getElementsByClassName('user_edit');
@@ -910,7 +991,102 @@ window.onclick = function(event) {
     });
   }
 });
-<?php   } ?>
+<?php } elseif (isset($_GET['partners'])) { ?>
+ document.addEventListener('DOMContentLoaded', function () {
+    var forms = document.getElementsByClassName('partner_edit');
+
+    for (var i = 0; i < forms.length; i++) {
+
+    forms[i].addEventListener('submit', function(event) {
+      
+        event.preventDefault(); // Prevent the default form submission
+
+
+        const formData = new FormData(this);
+        //let dataToShow = '';
+
+        // Loop through the entries of the form data.
+        for (let [key, value] of formData.entries()) {
+            //dataToShow += `${key}: ${value}<br>`; // Append each key-value pair to a string
+
+            if (`${key}` == 'partner_id') {
+              console.log('partner_id: ' + `${value}` ); 
+              document.getElementById('myModal').style.display = 'block';
+
+
+              var xhr = new XMLHttpRequest();
+              var url = "dashboard.php"; // Replace with your endpoint URL
+              xhr.open("POST", url, true);
+              xhr.setRequestHeader("Content-Type", "application/json");
+
+              xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                  //console.log('what is tyhis' + xhr.responseText.split(',')[1] ); // Handle the response data here
+                  var data = JSON.parse(xhr.responseText);
+                  console.log(data);
+                  document.getElementsByName('partner')[0].value = 'edit';
+                  document.getElementsByName('partner_id')[0].value = data['partner_id'];
+
+
+
+                  var selectElement = document.getElementById('category');
+                  if (selectElement.querySelector(`option[value="${data['category']}"]`)) {
+                      selectElement.value = data['category'];
+                  } else {
+                      console.error('The specified value does not exist in the options');
+                  } // $_POST['category'],
+
+                  selectElement = document.getElementById('category');
+                  if (selectElement.querySelector(`option[value="${data['category']}"]`)) {
+                      selectElement.value = data['category'];
+                  } else {
+                      console.error('The specified value does not exist in the options');
+                  } // $_POST['profession'],
+                  
+                  document.getElementsByName('name')[0].value = data['name']; // $_POST['name'],
+                  document.getElementsByName('phone')[0].value = data['phone'];  // $_POST['phone'],
+                  document.getElementsByName('user_id')[0].value = data['user_id'];  // $_POST['user_id'].
+                  document.getElementsByName('city')[0].value = data['city']; // $_POST['city']
+                  document.getElementsByName('about')[0].value = data['about'];  // $_POST['about']
+                  document.getElementsByName('name')[0].value = data['name']; //$_POST['name']
+
+                  selectElement = document.getElementById('type');
+                  if (selectElement.querySelector(`option[value="${data['type']}"]`)) {
+                      selectElement.value = data['type'];
+                  } else {
+                      console.error('The specified value does not exist in the options');
+                  }
+                }
+              };
+
+              var data = JSON.stringify({
+                "user_id": `${value}`
+              });
+              
+              xhr.send(data);
+
+              return; }
+            }
+
+        //console.log(formData.entries());
+
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+        var type = document.getElementById('type').value;
+
+        // Example: Do something with the form data, like logging it or appending it somewhere
+        console.log("email:", email, "password:", email, "type:", type);
+
+        // Optionally, display the result somewhere on the page
+        //document.getElementById('result').innerText = 'Form submitted with Username: ' + username + ' and Email: ' + email;
+
+        // If needed, send the data to a server via AJAX
+        // sendData(username, email);
+    });
+  }
+});
+<?php  } ?>
+
 /*
 document.addEventListener("DOMContentLoaded", function() {
     var btn = document.getElementById('hide-show_users_btn');
