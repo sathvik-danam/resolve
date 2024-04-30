@@ -39,6 +39,56 @@ switch ($_SERVER['REQUEST_METHOD']) {
         password_hash($_POST['password'], PASSWORD_DEFAULT),
         $_POST['type']
       ));
+    } elseif (isset($_POST['partner']) && $_POST['partner'] == 'delete') {
+      $stmt = $pdo->prepare("DELETE FROM `professionals` WHERE `professionals`.`id` = :profession_id;");
+      $stmt->execute(array(
+        ":profession_id" => $_POST['partner_id']
+      ));
+    } elseif (isset($_POST['partner']) && $_POST['partner'] == 'edit') {
+      dd($_POST);
+      $stmt = $pdo->prepare($sql = "UPDATE `users` SET `name` = :user_name, `email` = :user_email," . (isset($_POST['password']) ? "`password` = :user_password," : '') . " `type` = :user_type WHERE `users`.`id` = :user_id;");
+
+      //dd($sql);
+      $stmt->execute(array(
+        ":user_id" => $_POST['user_id'],
+        ':user_name' => $_POST['name'],
+        ':user_email' => $_POST['email'],
+        ':user_type' => $_POST['type'],
+        ":user_password" => password_hash($_POST["password"], PASSWORD_DEFAULT)
+      ));
+    } elseif (isset($_POST['partner']) && $_POST['partner'] == 'add') {
+      // id, profession, profession_name, type, about, photo, state, city, name, phone, email, address, slug, user_id, created_at, updated_at
+      $stmt = $pdo->prepare("INSERT INTO professionals (" . /*`category`,*/ "`profession`, `name`, `phone`, `user_id`, `city`, `about`, `type`) VALUES ( ?, ?, ?, ?, ?, ?, ?)");
+      $stmt->execute(array(
+        //$_POST['category'],
+        $_POST['profession'],
+        $_POST['name'],
+        $_POST['phone'],
+        $_POST['user_id'],
+        $_POST['city'],
+        $_POST['about'],
+        $_POST['type'],
+      ));
+    } elseif (isset($_POST['user']) && $_POST['city'] == 'delete') {
+      $stmt = $pdo->prepare("DELETE FROM `cities` WHERE `cities`.`id` = :city_id;");
+      $stmt->execute(array(
+        ":city_id" => $_POST['city_id']
+      ));
+    }  elseif (isset($_POST['city']) && $_POST['city'] == 'edit') {
+      $stmt = $pdo->prepare($sql = "UPDATE `cities` SET `city` = :city_name WHERE `cities`.`id` = :city_id;");
+
+      //dd($sql);
+      $stmt->execute(array(
+        ":city_id" => $_POST['city_id'],
+        ':city_name' => $_POST['name']
+      ));
+    } elseif (isset($_POST['city']) && $_POST['city'] == 'add') {
+      //$stmt = $pdo->prepare("SELECT `id`, `email`, `password` FROM `users` WHERE `email` = :email;");
+
+      $stmt = $pdo->prepare("INSERT INTO `cities` (`city`) VALUES (?)");
+      $stmt->execute(array(
+        $_POST['name'],
+      ));
     } elseif(!empty($rawData = file_get_contents("php://input"))) {
 
       //dd($rawData);
@@ -68,10 +118,10 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
   ));
   $row_fetch = $stmt->fetch();
   $_SESSION = ['user_id' => (int) $row_fetch['id'], 'name' => $row_fetch['name'], 'email' => $row_fetch['email'], 'type' => (string) $row_fetch['type']];
+}
 
+//die('test');
 ?>
-
-
 <!doctype html>
 <html>
 
@@ -87,6 +137,18 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
   <link rel="stylesheet" type="text/css" href="css/styles.css">
 
   <style type="text/css">
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    *:focus {
+      outline: none;
+    }
+    body{
+      background-color: #FFF;
+      overflow-x: hidden;
+    }
     nav {
       position: absolute;
       display: block;
@@ -171,17 +233,18 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
 <?php if (isset($_GET['users'])) { // 7x  ?>
 
 <div id="myModal" class="modal" style="display: none;">
-<div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
-    <div class="modal-content" bis_skin_checked="1"><div class="modal-header" bis_skin_checked="1">
-      <button id="myBtn" type="button" data-dismiss="modal" aria-label="Close" class="close" style="float: right;"><span aria-hidden="true">×</span></button>
-      <span id="addNewLabel" class="modal-title" style="">Add New User</span>
-      <h5 id="addNewLabel" class="modal-title" style="display: none;">Update User's info</h5>
+  <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
+    <div class="modal-content" bis_skin_checked="1">
+      <div class="modal-header" bis_skin_checked="1">
+        <button id="myBtn" type="button" data-dismiss="modal" aria-label="Close" class="close" style="float: right;"><span aria-hidden="true">×</span></button>
+        <span id="addNewLabel" class="modal-title" style="">Add New User</span>
+        <h5 id="addNewLabel" class="modal-title" style="display: none;">Update User's info</h5>
 
-    </div>
-    <form action method="POST">
-      <input type="hidden" name="user" value="add" />
-      <input type="hidden" name="user_id" />
-      <div class="modal-body" bis_skin_checked="1">
+      </div>
+      <form action method="POST">
+        <input type="hidden" name="user" value="add" />
+        <input type="hidden" name="user_id" />
+        <div class="modal-body" bis_skin_checked="1">
         <div class="form-group" bis_skin_checked="1"><input type="text" id="name" name="name" placeholder="Enter Name" class="form-control"> <!----></div> 
         <div class="form-group" bis_skin_checked="1"><input type="text" id="email" name="email" placeholder="Enter Email" class="form-control"> <!----></div> 
         <div class="form-group" bis_skin_checked="1"><input type="password" id="password" name="password" placeholder="Enter Password" class="form-control"> <!----></div>
@@ -199,6 +262,79 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
       </form>
     </div>
   </div>
+</div>
+
+
+<?php } else if (isset($_GET['partners'])) { // 7x  ?>
+
+<div id="myModal" class="modal" style="display: none;">
+  <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
+    <div class="modal-content" bis_skin_checked="1">
+      <div class="modal-header" bis_skin_checked="1">
+        <button id="myBtn" type="button" data-dismiss="modal" aria-label="Close" class="close" style="float: right;"><span aria-hidden="true">×</span></button>
+        <span id="addNewLabel" class="modal-title" style="">Add Partner</span>
+        <h5 id="addNewLabel" class="modal-title" style="display: none;">Update User's info</h5>
+      </div>
+      <form action method="POST">
+        <input type="hidden" name="partner" value="add" />
+        <input type="hidden" name="partner_id" />
+        <div class="modal-body" bis_skin_checked="1">
+
+        <label>Category</label>
+        <div class="form-group" bis_skin_checked="1"><input type="text" id="category" name="category" placeholder="Enter Category" class="form-control"> <!----></div> 
+        <label>Profession</label>
+        <div class="form-group" bis_skin_checked="1"><input type="text" id="profession" name="profession" placeholder="Enter Profession" class="form-control"> <!----></div> 
+        <label>Name</label>
+        <div class="form-group" bis_skin_checked="1"><input type="text" id="name" name="name" placeholder="Enter Name" class="form-control"> <!----></div> 
+
+
+        <label>Phone</label>
+        <div class="form-group" bis_skin_checked="1"><input type="text" id="phone" name="phone" placeholder="Enter Phone #" class="form-control"> <!----></div> 
+        <label>User ID</label>
+        <div class="form-group" bis_skin_checked="1"><input type="text" id="user_id" name="user_id" placeholder="Enter User ID" class="form-control"> <!----></div> 
+        <label>City</label>
+        <div class="form-group" bis_skin_checked="1"><input type="text" id="city" name="city" placeholder="Enter City" class="form-control"> <!----></div> 
+          <label>Address</label>
+          <div class="form-group" bis_skin_checked="1"><textarea id="about" name="about" placeholder="Enter Address" class="form-control"></textarea> <!----></div> 
+          <label>About You And Your Profession</label>
+
+          <label>Partner Type</label>
+          <div class="form-group" bis_skin_checked="1"><input type="text" id="type" name="type" placeholder="Partner Type" class="form-control"> <!----></div> 
+
+          <div class="modal-footer" bis_skin_checked="1">
+            <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
+            <button type="submit" class="btn btn-primary" style="float: right;">Save changes</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<?php } elseif (isset($_GET['cities'])) { // 7x  ?>
+
+<div id="myModal" class="modal" style="display: none;">
+  <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
+      <div class="modal-content" bis_skin_checked="1">
+        <div class="modal-header" bis_skin_checked="1">
+          <button id="myBtn" type="button" data-dismiss="modal" aria-label="Close" class="close" style="float: right;"><span aria-hidden="true">×</span></button>
+          <span id="addNewLabel" class="modal-title" style="">Add New City</span>
+          <h5 id="addNewLabel" class="modal-title" style="display: none;">Update User's info</h5>
+
+        </div>
+        <form action method="POST">
+          <input type="hidden" name="city" value="add" />
+          <input type="hidden" name="city_id" />
+          <div class="modal-body" bis_skin_checked="1">
+            <div class="form-group" bis_skin_checked="1"><input type="text" id="name" name="name" placeholder="Enter Name" class="form-control"> <!----></div> 
+          </div>
+          <div class="modal-footer" bis_skin_checked="1">
+            <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
+            <button type="submit" class="btn btn-primary" style="float: right;">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
 </div>
 
 
@@ -233,7 +369,7 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
               </label>
             </div>
             <div>
-              <a href="jajvascript:void(0);" class="text-sm text-blue-600 hover:text-blue-500">
+              <a href="javascript:void(0);" class="text-sm text-blue-600 hover:text-blue-500">
                 Forgot Password?
               </a>
             </div>
@@ -251,7 +387,7 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
 
   <div style="overflow-x: auto; width: 100%; max-width: 100%;">
 
-    <div style="display: inline; float: left; margin-top: 50px; background-color: #232323;" class="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
+    <div style="display: inline; float: left;  width: 20%; box-sizing: border-box; margin-top: 10px; background-color: #232323;" class="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
       <!-- div class="mb-2 p-4">
         <h5 class="block antialiased tracking-normal font-sans text-xl font-semibold leading-snug text-gray-900">Material Tailwind</h5>
       </div -->
@@ -367,7 +503,7 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
     </div>
 <?php if (isset($_GET['users'])) { ?>
 
-<div style="display: inline; float: left; margin: 100px 20px; " class="relative overflow-x-auto shadow-md sm:rounded-lg">  
+<div style=" display: inline; float: left; margin: 25px 20px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
     <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add User<i class="fas fa-user-plus fa-fw"></i></button>
 </div>
@@ -428,7 +564,7 @@ while ($row = $stmt->fetch()) { ?>
 </div>
 <?php } elseif(isset($_GET['partners'])) { ?>
  
-<div style="display: inline; float: left; margin: 100px 20px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
+<div style="position: absolute; top: 0; right: -197px; display: inline; float: right; margin: 25px 20px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
     <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add Partner<i class="fas fa-user-plus fa-fw"></i></button>
 </div>
@@ -526,7 +662,7 @@ while ($row = $stmt->fetch()) { ?>
 
   <?php } elseif (isset($_GET['enquiries'])) { ?>
 
-<div style="display: inline; float: left; margin: 100px 20px; " class="relative overflow-x-auto shadow-md sm:rounded-lg">  
+<div style="display: inline; float: left; margin: 25px 20px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
 Enquiries Table
 </div>
@@ -606,7 +742,7 @@ while ($row = $stmt->fetch()) { ?>
 </div>
 <?php } elseif (isset($_GET['cities'])) { ?>
 
-<div style="display: inline; float: left; margin: 100px 20px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
+<div style="display: inline; float: left; margin: 25px 20px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
     <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add City<i class="fas fa-user-plus fa-fw"></i></button>
 </div>
@@ -667,7 +803,7 @@ while ($row = $stmt->fetch()) { ?>
   <script type="text/javascript" src="javascript/app.js.php"></script>
 
   <script type="text/javascript">
-<?php if (isset($_GET['users'])) { ?>
+<?php if (isset($_GET['users']) || isset($_GET['partners'])) { ?>
 // Get the modal
 var modal = document.getElementById("myModal");
 
@@ -837,9 +973,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <?php
 
-} else {
+////} else {
 
-  die(header('Location: index.php'));
+ // die(header('Location: index.php'));
   /*
 //die(var_dump($_SESSION));
     $stmt = $pdo->prepare("SELECT `id`, `name`, `email`, `type` FROM `users` WHERE `id` = :user_id;");
@@ -849,7 +985,7 @@ document.addEventListener("DOMContentLoaded", function() {
       $row_fetch = $stmt->fetch();
       $_SESSION = ['user_id' => (int) $row_fetch['id'], 'name' => $row_fetch['name'], 'email' => $row_fetch['email'], 'type' => (int) $row_fetch['type']];
 */
-}
+//}
 
 // session_destroy();
 
