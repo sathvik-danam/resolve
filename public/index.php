@@ -30,94 +30,8 @@ a:hover {
 
   color: blue;
 }
-    </style>
-</head>
 
-<body>
-<?php require_once('nav_bar.php'); ?>
-<!-- Home Hero -->
-
-<?php if (!isset($_SESSION['user_id'])) { ?>
-
-<div id="login-pop-up" style="position:fixed; display: none; width: 400px; border: 1px solid #000; z-index: 1; left: 38%; right:50%;">
-
-
-  <div class="max-w-md w-full border py-8 px-6 rounded border-gray-300 bg-white">
-
-    <span class="text-md font-semibold text-lg" style="float: right;">[<a href="javascript:void(0)" onclick="document.getElementById('login-pop-up').style.display = 'none';">x</a>]</span>
-    <a href="javascript:void(0)"><img src="https://readymadeui.com/readymadeui.svg" alt="logo" class='w-40 mb-10' />
-    </a>
-
-    <h2 class="text-center text-3xl font-extrabold">
-      Log in to your account
-    </h2>
-    <form action="login.php" method="POST" class="mt-10 space-y-4">
-      <div>
-        <input name="email" type="email" autocomplete="email" required class="w-full text-sm px-4 py-3 rounded outline-none border-2 focus:border-blue-500" placeholder="Email address" />
-      </div>
-      <div>
-        <input name="password" type="password" autocomplete="current-password" required class="w-full text-sm px-4 py-3 rounded outline-none border-2 focus:border-blue-500" placeholder="Password" />
-      </div>
-      <div class="flex items-center justify-between gap-4">
-        <div class="flex items-center">
-          <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-          <label for="remember-me" class="ml-3 block text-sm">
-            Remember me
-          </label>
-        </div>
-        <div>
-          <a href="jajvascript:void(0);" class="text-sm text-blue-600 hover:text-blue-500">
-            Forgot Password?
-          </a>
-        </div>
-      </div>
-      <div class="!mt-10">
-        <button type="submit" class="w-full py-2.5 px-4 text-sm rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
-          Log in
-        </button>
-      </div>
-    </form>
-  </div>
-
-</div>
-
-<?php } ?>
-
-<section
-  class="relative bg-[url(https://images.unsplash.com/photo-1604014237800-1c9102c219da?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80)] bg-cover bg-center bg-no-repeat"
-  style="height: 700px; position: relative; margin-top: 0;"
->
-  <div style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: rgba(0, 0, 0, 0.7);"></div>
-  <div
-    style="position: absolute; width: 100%; max-width: 1280px; height: 100%; display: flex; flex-direction: column; justify-content: center; padding-left: 32px; margin: auto;"
-  >
-    <h1 style="color: #0ccdf0; font-size: 3rem; font-weight: bold; margin: 0;">
-      Let us find your Forever Home.
-    </h1>
-    <p style="color: white; font-size: 1rem; margin: 20px 0;">
-      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nesciunt illo tenetur fuga ducimus
-      numquam ea!
-    </p>
-    <div style="display: flex; gap: 20px;">
-      <a
-        href="#"
-        style="display: block; background-color: #0ccdf0; padding: 12px 24px; color: white; border-radius: 8px; text-decoration: none;"
-      >
-        Get Started
-      </a>
-      <a
-        href="#"
-        style="display: block; background-color: white; padding: 12px 24px; color: #0ccdf0; border-radius: 8px; text-decoration: none;"
-      >
-        Learn More
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- Service category options -->
-<section class="trending-categories">
-  <style>.trending-categories {
+.trending-categories {
   text-align: center;
   background: #f5f5f5; /* Replace with your desired background color */
   padding: 50px 0; /* Adjust the padding to your preference */
@@ -152,6 +66,131 @@ a:hover {
   margin-bottom: 10px; /* Space between text and the button */
 }
 
+
+.text-container {
+    font-family: 'Helvetica Neue', sans-serif; /* Replace with the specific font-family */
+    font-size: 24px;
+    letter-spacing: 2px; /* Adjust as needed */
+    text-align: center;
+    overflow: hidden;
+  }
+  .text-change {
+    display: inline-block;
+    color: #007bff; /* Replace with the exact color code from your image */
+    font-weight: bold;
+    position: relative;
+    top: 20px;
+    opacity: 0;
+  }
+  .text-change.enter {
+    animation: enter 0.5s forwards;
+  }
+  .text-change.exit {
+    animation: exit 0.5s forwards;
+  }
+  @keyframes enter {
+    0% { top: 20px; opacity: 0; }
+    100% { top: 0; opacity: 1; }
+  }
+  @keyframes exit {
+    0% { top: 0; opacity: 1; }
+    100% { top: -20px; opacity: 0; }
+  }
+  body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        nav {
+            display: block;
+            width: 100%;
+            background-color: white;
+        }
+
+        #content {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center; /* Center the text horizontally */
+        }
+
+        #login-prompt-container {
+            padding: 2em;
+            margin: 0 auto; /* Center the prompt container horizontally */
+            max-width: 600px; /* Max width for the container */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            border-radius: 8px;
+        }
+
+        .login-signup-btn {
+            background-color: #0ccdf0;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+        }
+
+.reviews-section {
+  display: flex;
+  justify-content: space-around; /* Or use 'space-between' depending on your layout */
+  align-items: center;
+  background-color: #f7f7f7; /* Your desired background color */
+  padding: 50px 0;
+}
+
+.review-item {
+  text-align: center;
+  max-width: 300px; /* Adjust width as per your design */
+}
+
+.review-item .icon {
+  margin-bottom: 20px; /* Space between icon and text */
+}
+
+.rating-text {
+  font-size: 1.5em;
+  color: #333; /* Your desired text color */
+}
+
+.rating-text .rating-number {
+  color: #007bff; /* Your desired rating number color */
+  font-weight: bold;
+}
+
+.reviews-count {
+  color: #333; /* Your desired review count color */
+  font-weight: bold;
+  text-decoration: underline; /* If you want underline */
+}
+
+.saving-text {
+  font-size: 1.5em;
+  color: #333; /* Your desired text color */
+  font-weight: bold;
+}
+
+.saving-detail {
+  color: #333; /* Your desired detail text color */
+  text-decoration: underline; /* If you want underline */
+}
+
 button {
   background-color: #0ccdf0; /* Button background color */
   color: white; /* Button text color */
@@ -164,7 +203,214 @@ button {
 button:hover {
   background-color: #09b1c5; /* Button hover state color */
 }
-</style>
+    </style>
+</head>
+
+<body>
+<?php require_once('nav_bar.php'); ?>
+<!-- Home Hero -->
+
+<?php if (!isset($_SESSION['user_id'])) { ?>
+
+<div id="login-pop-up" style="position:fixed; display: none; width: 400px; border: 1px solid #000; z-index: 1; left: 38%; right:50%;">
+
+  <div class="max-w-md w-full border py-8 px-6 rounded border-gray-300 bg-white">
+
+    <span class="text-md font-semibold text-lg" style="float: right;">[<a href="javascript:void(0)" onclick="document.getElementById('login-pop-up').style.display = 'none';">x</a>]</span>
+    <a href="javascript:void(0)"><img src="https://readymadeui.com/readymadeui.svg" alt="logo" class='w-40 mb-10' />
+    </a>
+
+    <h2 class="text-center text-3xl font-extrabold">
+      Log in to your account
+    </h2>
+    <form action="login.php" method="POST" class="mt-10 space-y-4">
+      <div>
+        <input name="email" type="email" autocomplete="email" required class="w-full text-sm px-4 py-3 rounded outline-none border-2 focus:border-blue-500" placeholder="Email address" />
+      </div>
+      <div>
+        <input name="password" type="password" autocomplete="current-password" required class="w-full text-sm px-4 py-3 rounded outline-none border-2 focus:border-blue-500" placeholder="Password" />
+      </div>
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center">
+          <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+          <label for="remember-me" class="ml-3 block text-sm">
+            Remember me
+          </label>
+        </div>
+        <div>
+          <a href="javascript:void(0);" class="text-sm text-blue-600 hover:text-blue-500">
+            Forgot Password?
+          </a>
+        </div>
+      </div>
+      <div class="!mt-10">
+        <button type="submit" class="w-full py-2.5 px-4 text-sm rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
+          Log in
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<?php } ?>
+
+<!-- 2*2 section -->
+
+<?php
+if (isset($_GET['become-professional'])) { ?>
+
+<?php if (!isset($_SESSION['user_id']) || !is_int( $_SESSION['user_id'] ) ) { ?>
+<div style="margin: 100px auto;">
+<h1>Please Login/ Sign Up to Continuel</h1>
+<button onclick="document.getElementById('login-pop-up').style.display = 'block';">Login / Sign Up</button>
+</div>
+
+<?php } else { ?>
+<div style="position: relative; height: 500px;">
+  <div style="position: absolute; top: 40px; display: inline; margin: 25px auto; width: 100%; overflow-x:scroll;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
+<div class="box-tools" bis_skin_checked="1">
+    <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add Partner<i class="fas fa-user-plus fa-fw"></i></button>
+</div>
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Id
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Name
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Phone
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Profession Name
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Profession
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Type
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    City
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    About
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Profile
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Registered At
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Modify
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+          
+<?php 
+
+$stmt = $pdo->query("SELECT `id`, `profession`, `profession_name`, `type`, `about`, `photo`, `city`, `name`, `phone`, `created_at` FROM `professionals` WHERE `user_id` = " . $_SESSION['user_id'] . ";");
+
+while ($row = $stmt->fetch()) { ?>
+
+    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                  <?= $row['id'] ?>
+                </th>
+                <td class="px-6 py-4">
+                  <?= $row['name'] ?>
+                </td>
+                <td class="px-6 py-4">
+                  <?= $row['phone'] ?>
+                </td>
+                <td class="px-6 py-4">
+                  <?= $row['profession_name'] ?>
+                </td>
+                <td class="px-6 py-4">
+                  <?= $row['profession'] ?>
+                </td>
+                <td class="px-6 py-4">
+                  <?= $row['type'] ?>
+                </td>
+                <td class="px-6 py-4">
+                  <?= $row['city'] ?>
+                </td>
+                <td class="px-6 py-4">
+                 <?= $row['about'] ?>
+                </td>
+                <td class="px-6 py-4">
+                  <?= $row['photo'] ?>
+                </td>
+                <td class="px-6 py-4">
+                  <?= $row['created_at'] ?>
+                </td>
+                <td class="px-6 py-4">
+                    <!-- a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a -->
+
+                    <form class="partner_edit" style="display: inline;">
+                      <input type="hidden" name="partner" value="edit" />
+                      <input type="hidden" name="partner_id" value="<?= $row['id'] ?>">
+                      <button type="submit">Edit</button>
+                    </form>
+                    / 
+                    <form action method="POST" style="display: inline;">
+                      <input type="hidden" name="partner" value="delete" />
+                      <input type="hidden" name="partner_id" value="<?= $row['id'] ?>">
+                      <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+
+<?php } ?>
+        </tbody>
+    </table>
+</div>
+</div>
+<?php } 
+} else { ?>
+
+
+
+  <section
+  class="relative bg-[url(https://images.unsplash.com/photo-1604014237800-1c9102c219da?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80)] bg-cover bg-center bg-no-repeat"
+  style="height: 700px; position: relative; margin-top: 0;"
+>
+  <div style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: rgba(0, 0, 0, 0.7);"></div>
+  <div
+    style="position: absolute; width: 100%; max-width: 1280px; height: 100%; display: flex; flex-direction: column; justify-content: center; padding-left: 32px; margin: auto;"
+  >
+    <h1 style="color: #0ccdf0; font-size: 3rem; font-weight: bold; margin: 0;">
+      Let us find your Forever Home.
+    </h1>
+    <p style="color: white; font-size: 1rem; margin: 20px 0;">
+      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nesciunt illo tenetur fuga ducimus
+      numquam ea!
+    </p>
+    <div style="display: flex; gap: 20px;">
+      <a
+        href="#"
+        style="display: block; background-color: #0ccdf0; padding: 12px 24px; color: white; border-radius: 8px; text-decoration: none;"
+      >
+        Get Started
+      </a>
+      <a
+        href="#"
+        style="display: block; background-color: white; padding: 12px 24px; color: #0ccdf0; border-radius: 8px; text-decoration: none;"
+      >
+        Learn More
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Service category options -->
+<section class="trending-categories">
+
   <h2>Trending Categories</h2>
   <p>Easily find, connect with, and buy from great businesses near you</p>
   <div class="categories-container">
@@ -229,45 +475,37 @@ button:hover {
   </div>
 </section>
 <!-- changing text -->
-<style>
-  .text-container {
-    font-family: 'Helvetica Neue', sans-serif; /* Replace with the specific font-family */
-    font-size: 24px;
-    letter-spacing: 2px; /* Adjust as needed */
-    text-align: center;
-    overflow: hidden;
-  }
-  .text-change {
-    display: inline-block;
-    color: #007bff; /* Replace with the exact color code from your image */
-    font-weight: bold;
-    position: relative;
-    top: 20px;
-    opacity: 0;
-  }
-  .text-change.enter {
-    animation: enter 0.5s forwards;
-  }
-  .text-change.exit {
-    animation: exit 0.5s forwards;
-  }
-  @keyframes enter {
-    0% { top: 20px; opacity: 0; }
-    100% { top: 0; opacity: 1; }
-  }
-  @keyframes exit {
-    0% { top: 0; opacity: 1; }
-    100% { top: -20px; opacity: 0; }
-  }
-</style>
-</head>
-<body>
 
 <section id="dynamic-text-section">
   <div class="text-container">
     We've done the <span class="text-change">reference checks</span> so you don't have to
   </div>
 </section>
+
+  <section class="reviews-section">
+  <div class="review-item">
+    <img src="path-to-your-icon.png" alt="Happy face icon" class="icon" />
+    <p class="rating-text">Our pros are rated <span class="rating-number">4.6 ★</span> on average from over</p>
+    <p class="reviews-count">85 000 Reviews</p>
+  </div>
+
+  <div class="review-item">
+    <img src="path-to-your-icon.png" alt="Wallet icon" class="icon" />
+    <p class="saving-text">Put money back in your pocket.</p>
+    <p class="saving-detail">Kandua customers use small businesses and pay 30% less on average.</p>
+  </div>
+</section>
+
+<!-- testimonial  -->
+
+<!-- FOOTER -->
+
+<?php } ?>
+
+
+<?php require_once('footer.php'); ?>
+
+
 
 <script>
   const phrases = ["background checks", "quality checks", "skill assessments", "interviews"];
@@ -289,70 +527,6 @@ button:hover {
   setInterval(updateText, 3000); // Change every 3 seconds to see the animation
   textChangeElement.classList.add('enter');
 </script>
-<!-- 2*2 section -->
-<style>.reviews-section {
-  display: flex;
-  justify-content: space-around; /* Or use 'space-between' depending on your layout */
-  align-items: center;
-  background-color: #f7f7f7; /* Your desired background color */
-  padding: 50px 0;
-}
-
-.review-item {
-  text-align: center;
-  max-width: 300px; /* Adjust width as per your design */
-}
-
-.review-item .icon {
-  margin-bottom: 20px; /* Space between icon and text */
-}
-
-.rating-text {
-  font-size: 1.5em;
-  color: #333; /* Your desired text color */
-}
-
-.rating-text .rating-number {
-  color: #007bff; /* Your desired rating number color */
-  font-weight: bold;
-}
-
-.reviews-count {
-  color: #333; /* Your desired review count color */
-  font-weight: bold;
-  text-decoration: underline; /* If you want underline */
-}
-
-.saving-text {
-  font-size: 1.5em;
-  color: #333; /* Your desired text color */
-  font-weight: bold;
-}
-
-.saving-detail {
-  color: #333; /* Your desired detail text color */
-  text-decoration: underline; /* If you want underline */
-}
-</style>
-<section class="reviews-section">
-  <div class="review-item">
-    <img src="path-to-your-icon.png" alt="Happy face icon" class="icon" />
-    <p class="rating-text">Our pros are rated <span class="rating-number">4.6 ★</span> on average from over</p>
-    <p class="reviews-count">85 000 Reviews</p>
-  </div>
-
-  <div class="review-item">
-    <img src="path-to-your-icon.png" alt="Wallet icon" class="icon" />
-    <p class="saving-text">Put money back in your pocket.</p>
-    <p class="saving-detail">Kandua customers use small businesses and pay 30% less on average.</p>
-  </div>
-</section>
-
-<!-- testimonial  -->
-
-<!-- FOOTER -->
-
-<?php require_once('footer.php'); ?>
 
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 

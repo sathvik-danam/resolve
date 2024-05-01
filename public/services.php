@@ -10,19 +10,6 @@
 
     <link rel="stylesheet" href="css/styles.css">
 
-
-    <style type="text/css">
-        nav {
-            position: absolute;
-            display: block;
-            width: 100vw;
-            /* 100% */
-            z-index: 1;
-            background-color: white;
-        }
-
-
-    </style>
 </head>
 
 <!-- Main body -->
@@ -30,6 +17,21 @@
 
 <body>
 <?php require_once('nav_bar.php'); ?>
+
+<!-- section 1  -->
+<!-- Home Services Section -->
+<div class="bg-white p-10">
+    <h1 class="text-4xl font-bold text-center mb-6">Home services at your doorstep</h1>
+    <div class="grid grid-cols-3 gap-6 mb-6">
+ 
+    </div>
+    <div class="flex justify-around">
+        <img src="path_to_image1.jpg" alt="Service Image 1">
+        <img src="path_to_image2.jpg" alt="Service Image 2">
+        <img src="path_to_image3.jpg" alt="Service Image 3">
+    </div>
+</div>
+
 </body>
 <!-- FOOTER -->
 

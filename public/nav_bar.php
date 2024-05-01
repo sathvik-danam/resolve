@@ -4,7 +4,7 @@
 
 <div style="margin: 0 auto; width: 1280px;">
 <div style="position: relative; display: inline-block; width: 350px; padding-top: 0; ">
-  <a href="index.php" style="position: absolute; top: -35px;"><img style="width: 280px; height: 46px;"src="img/logo2.png" class="h-8" alt="Resolve Logo"></a>
+  <a href="index.php" style="position: absolute; top: -35px;"><img style="width: 280px; height: 46px;" src="img/logo2.png" class="h-8" alt="Resolve Logo"></a>
 
 </div>
 
@@ -14,7 +14,7 @@
                             <a href="#" style="color: blue;" class="" aria-current="page">Home</a>
                         </li>
                         <li style="display: inline-block; padding-right: 50px;">
-                            <a href="Professional.php" style="color: black;" class="">Become A Professional</a>
+                            <a href="?become-professional" style="color: black;" class="">Become A Professional</a>
                         </li>
                         <li  style="display: inline-block; padding-right: 50px;">
                             <a href="#" style="color: black;" class="">Create Invitation</a>
@@ -53,9 +53,5 @@
 
 
 </div>
-
-</div>
-
-
 
 
