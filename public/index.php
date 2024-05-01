@@ -1,7 +1,9 @@
 <?php include('../config/config.php');
 //die(var_dump($_SESSION));
-?>
 
+//$_SESSION['user_id'] = 1;
+require_once('post.include.php');
+?>
 <!doctype html>
 <html>
 
@@ -16,6 +18,54 @@
 
 
     <style type="text/css">
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    *:focus {
+      outline: none;
+    }
+
+    body{
+      background-color: #FFF;
+      /*overflow-x: hidden;*/
+      font-family: 'Arial', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+    }
+    nav {
+      position: absolute;
+      display: block;
+      /* width: 100vw; */
+      /* 100% */
+      z-index: 2;
+    }
+    .form-control {
+    display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #ffffff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  box-shadow: inset 0 0 0 transparent;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;}
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-text {
+    display: block;
+    margin-top: 0.25rem;
+  }
+
 
 nav {
             position: absolute;
@@ -96,13 +146,6 @@ a:hover {
     0% { top: 0; opacity: 1; }
     100% { top: -20px; opacity: 0; }
   }
-  body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
 
         nav {
             display: block;
@@ -203,6 +246,51 @@ button {
 button:hover {
   background-color: #09b1c5; /* Button hover state color */
 }
+
+
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+ 
+.modal-title {
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 600px; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
     </style>
 </head>
 
@@ -260,6 +348,64 @@ button:hover {
 <?php
 if (isset($_GET['become-professional'])) { ?>
 
+<div id="myModal" class="modal" style="display: none; border: 1px solid #000;">
+  <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
+    <div class="modal-content" bis_skin_checked="1">
+      <div class="modal-header" bis_skin_checked="1">
+        <button id="myBtn" type="button" data-dismiss="modal" aria-label="Close" class="close" style="float: right;"><span aria-hidden="true">×</span></button>
+        <span id="addNewLabel" class="modal-title" style="">Add Partner</span>
+        <h5 id="addNewLabel" class="modal-title" style="display: none;">Update User's info</h5>
+      </div>
+      <form action method="POST">
+        <input type="hidden" name="partner" value="add" />
+        <input type="hidden" name="partner_id" />
+        <div class="modal-body" bis_skin_checked="1">
+
+        <label>Primary Profession</label>
+        <div class="form-group" bis_skin_checked="1">
+          <select id="profession" name="profession" class="form-control">
+<?php
+$stmt = $pdo->prepare("SELECT `name` FROM `categories`;");
+  $stmt->execute(array());
+  
+while ($row_fetch = $stmt->fetch()) { ?>
+            <option value="<?= $row_fetch['name'] ?>"><?= $row_fetch['name'] ?></option>
+     
+<?php } ?>
+          </select><!----></div> 
+        <label>Profession Sub-Types</label>
+        <div class="form-group" bis_skin_checked="1">
+        <select id="profession_name" name="profession_name" class="form-control">
+<?php
+$stmt = $pdo->prepare("SELECT `name` FROM `subcategories`;");
+  $stmt->execute(array());
+  
+while ($row_fetch = $stmt->fetch()) { ?>
+            <option value="<?= $row_fetch['name'] ?>"><?= $row_fetch['name'] ?></option>
+     
+<?php } ?>
+          </select>
+        
+        <!----></div> 
+        <label>City</label>
+        <div class="form-group" bis_skin_checked="1"><input type="text" id="city" name="city" placeholder="Enter City" class="form-control"> <!----></div> 
+        <label>Address</label>
+        <div class="form-group" bis_skin_checked="1"><textarea id="address" name="address" placeholder="Enter Address" class="form-control"></textarea> <!----></div> 
+        <label>About Your Profession</label>
+
+        <div class="form-group" bis_skin_checked="1"><textarea id="about" name="about" placeholder="Enter About" class="form-control"></textarea> <!----></div> 
+
+  
+          <div class="modal-footer" bis_skin_checked="1">
+            <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
+            <button type="submit" class="btn btn-primary" style="float: right;">Save changes</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <?php if (!isset($_SESSION['user_id']) || !is_int( $_SESSION['user_id'] ) ) { ?>
 <div style="margin: 100px auto;">
 <h1>Please Login/ Sign Up to Continuel</h1>
@@ -267,7 +413,7 @@ if (isset($_GET['become-professional'])) { ?>
 </div>
 
 <?php } else { ?>
-<div style="position: relative; height: 500px;">
+<div style="position: relative; height: 500px; margin-bottom: 50px;">
   <div style="position: absolute; top: 40px; display: inline; margin: 25px auto; width: 100%; overflow-x:scroll;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
     <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add Partner<i class="fas fa-user-plus fa-fw"></i></button>
@@ -275,15 +421,6 @@ if (isset($_GET['become-professional'])) { ?>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-                <th scope="col" class="px-6 py-3">
-                    Id
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Name
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Phone
-                </th>
                 <th scope="col" class="px-6 py-3">
                     Profession Name
                 </th>
@@ -295,6 +432,9 @@ if (isset($_GET['become-professional'])) { ?>
                 </th>
                 <th scope="col" class="px-6 py-3">
                     City
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Address
                 </th>
                 <th scope="col" class="px-6 py-3">
                     About
@@ -314,20 +454,11 @@ if (isset($_GET['become-professional'])) { ?>
           
 <?php 
 
-$stmt = $pdo->query("SELECT `id`, `profession`, `profession_name`, `type`, `about`, `photo`, `city`, `name`, `phone`, `created_at` FROM `professionals` WHERE `user_id` = " . $_SESSION['user_id'] . ";");
+$stmt = $pdo->query("SELECT `id`, `profession`, `profession_name`, `type`, `about`, `photo`, `city`, `address`, `name`, `phone`, `created_at` FROM `professionals` WHERE `user_id` = " . $_SESSION['user_id'] . ";");
 
 while ($row = $stmt->fetch()) { ?>
 
-    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  <?= $row['id'] ?>
-                </th>
-                <td class="px-6 py-4">
-                  <?= $row['name'] ?>
-                </td>
-                <td class="px-6 py-4">
-                  <?= $row['phone'] ?>
-                </td>
+    <tr class="odd:bg-black odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                 <td class="px-6 py-4">
                   <?= $row['profession_name'] ?>
                 </td>
@@ -339,6 +470,9 @@ while ($row = $stmt->fetch()) { ?>
                 </td>
                 <td class="px-6 py-4">
                   <?= $row['city'] ?>
+                </td>
+                <td class="px-6 py-4">
+                  <?= $row['address'] ?>
                 </td>
                 <td class="px-6 py-4">
                  <?= $row['about'] ?>
@@ -502,10 +636,10 @@ while ($row = $stmt->fetch()) { ?>
 
 <?php } ?>
 
-
+<div  style="position: relative;">
 <?php require_once('footer.php'); ?>
 
-
+</div>
 
 <script>
   const phrases = ["background checks", "quality checks", "skill assessments", "interviews"];
@@ -532,7 +666,138 @@ while ($row = $stmt->fetch()) { ?>
 
 <script type="text/javascript" src="javascript/app.js.php"></script>
 
-<script>
+<script type="text/javascript">
+
+
+
+
+
+
+//document.getElementById('myModal').style.display='block';
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on the button, open the modal 
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+ document.addEventListener('DOMContentLoaded', function () {
+    var forms = document.getElementsByClassName('partner_edit');
+console.log('testing 123');
+    for (var i = 0; i < forms.length; i++) {
+
+    forms[i].addEventListener('submit', function(event) {
+      
+        event.preventDefault(); // Prevent the default form submission
+
+
+        const formData = new FormData(this);
+        //let dataToShow = '';
+
+        // Loop through the entries of the form data.
+        for (let [key, value] of formData.entries()) {
+            //dataToShow += `${key}: ${value}<br>`; // Append each key-value pair to a string
+
+            if (`${key}` == 'partner_id') {
+              console.log('partner_id: ' + `${value}` ); 
+              document.getElementById('myModal').style.display = 'block';
+
+
+              var xhr = new XMLHttpRequest();
+              var url = "index.php"; // Replace with your endpoint URL
+              xhr.open("POST", url, true);
+              xhr.setRequestHeader("Content-Type", "application/json");
+
+              xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                  //console.log('what is tyhis' + xhr.responseText.split(',')[1] ); // Handle the response data here
+                  var data = JSON.parse(xhr.responseText);
+                  console.log(data);
+                  document.getElementsByName('partner')[0].value = 'edit';
+                  document.getElementsByName('partner_id')[0].value = data['partner_id'];
+
+                  var selectElement = document.getElementById('profession_name');
+                  if (selectElement.querySelector(`option[value="${data['profession_name']}"]`)) {
+                      selectElement.value = data['profession_name'];
+                  } else {
+                      console.error('The specified value does not exist in the options');
+                  }
+                  
+                  selectElement = document.getElementById('profession');
+                  if (selectElement.querySelector(`option[value="${data['profession']}"]`)) {
+                      selectElement.value = data['profession'];
+                  } else {
+                      console.error('The specified value does not exist in the options');
+                  }
+                  
+                  
+/*
+                  selectElement = document.getElementById('category');
+                  if (selectElement.querySelector(`option[value="${data['category']}"]`)) {
+                      selectElement.value = data['category'];
+                  } else {
+                      console.error('The specified value does not exist in the options');
+                  } // $_POST['profession'],
+*/
+
+                  //document.getElementsByName('profession')[0].value = data['profession']; // $_POST['name'],
+                  //document.getElementsByName('name')[0].value = data['name']; // $_POST['name'],
+                  //document.getElementsByName('phone')[0].value = data['phone'];  // $_POST['phone'],
+                  //document.getElementsByName('user_id')[0].value = data['user_id'];  // $_POST['user_id'].
+                  document.getElementsByName('city')[0].value = data['city']; // $_POST['city']
+                  document.getElementsByName('address')[0].value = data['address']; // $_POST['city']
+                  document.getElementsByName('about')[0].value = data['about'];  // $_POST['about']
+                  //document.getElementsByName('name')[0].value = data['name']; //$_POST['name']
+
+                }
+              };
+
+              var data = JSON.stringify({
+                "partner_id": `${value}`
+              });
+              
+              xhr.send(data);
+
+              return; }
+            }
+
+        //console.log(formData.entries());
+
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+        var type = document.getElementById('type').value;
+
+        // Example: Do something with the form data, like logging it or appending it somewhere
+        console.log("email:", email, "password:", email, "type:", type);
+
+        // Optionally, display the result somewhere on the page
+        //document.getElementById('result').innerText = 'Form submitted with Username: ' + username + ' and Email: ' + email;
+
+        // If needed, send the data to a server via AJAX
+        // sendData(username, email);
+    });
+  }
+});
+
       $(document).ready(function(){
         console.log('test');
 

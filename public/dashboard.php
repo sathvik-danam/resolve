@@ -1,166 +1,7 @@
 <?php
 require_once('../config/config.php');
 
-//$_SESSION['user_id'] = 1;
-
-
-if (isset($_GET['logout']) && session_status() != PHP_SESSION_NONE) :
-  $_SESSION = [];
-  session_destroy();
-endif;
-
-
-switch ($_SERVER['REQUEST_METHOD']) {
-  case 'POST':
-    //dd($_POST);
-    if (isset($_POST['user']) && $_POST['user'] == 'delete') {
-      $stmt = $pdo->prepare("DELETE FROM `users` WHERE `users`.`id` = :user_id;");
-      $stmt->execute(array(
-        ":user_id" => $_POST['user_id']
-      ));
-    } elseif (isset($_POST['user']) && $_POST['user'] == 'edit') {
-
-
-      $sql = "UPDATE `users` SET ";
-
-      // Start an array to hold SQL segments
-      $updates = array();
-      
-      // Always update these fields
-      $updates[] = "`name` = :user_name";
-      $updates[] = "`email` = :user_email";
-      $updates[] = "`type` = :user_type";
-      
-      // Check if password needs to be updated
-      if (isset($_POST['password']) && !empty($_POST['password'])) {
-          $updates[] = "`password` = :user_password";
-      }
-      
-      // Join all updates to complete the SQL statement
-      $sql .= implode(", ", $updates) . " WHERE `id` = :user_id";
-      
-      // Prepare the SQL statement
-      $stmt = $pdo->prepare($sql);
-      
-      // Bind parameters
-      $params = array(
-          ':user_id' => $_POST['user_id'],
-          ':user_name' => $_POST['name'],
-          ':user_email' => $_POST['email'],
-          ':user_type' => isset($_POST['type']) ? $_POST['type'] : $_SESSION['type']
-      );
-      
-      // Optionally add the password to the parameters
-      if (isset($_POST['password']) && !empty($_POST['password'])) {
-          $params[':user_password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
-      }
-      
-      // Execute the statement
-      $stmt->execute($params);
-      
-      // Optionally, check for success or handle errors
-      /*
-      if ($stmt->rowCount() > 0) {
-          echo "Profile updated successfully!";
-      } else {
-          echo "No changes were made to the profile.";
-      }*/
-
-    } elseif (isset($_POST['user']) && $_POST['user'] == 'add') {
-      //$stmt = $pdo->prepare("SELECT `id`, `email`, `password` FROM `users` WHERE `email` = :email;");
-
-      $stmt = $pdo->prepare("INSERT INTO users (`name`, `email`, `password`, `type`) VALUES (?, ?, ?, ?)");
-      $stmt->execute(array(
-        $_POST['name'],
-        $_POST['email'],
-        password_hash($_POST['password'], PASSWORD_DEFAULT),
-        $_POST['type']
-      ));
-    } elseif (isset($_POST['partner']) && $_POST['partner'] == 'delete') {
-      $stmt = $pdo->prepare("DELETE FROM `professionals` WHERE `professionals`.`id` = :profession_id;");
-      $stmt->execute(array(
-        ":profession_id" => $_POST['partner_id']
-      ));
-    } elseif (isset($_POST['partner']) && $_POST['partner'] == 'edit') {
-      //dd($_POST);
-      $stmt = $pdo->prepare($sql = "UPDATE `professionals` SET `profession` = :profession, `profession_name` = :name, `phone` = :phone, `user_id` = :user_id, `city` = :city, `about` => :about, `type` = :type WHERE `professionals`.`id` = :profession_id;");
-
-      //dd($sql);
-      $stmt->execute(array(
-        ':profession_id' => $_POST['partner_id'],
-        ':profession' => $_POST['profession'],
-        ':profession_name' => $_POST['name'],
-        ':phone' => $_POST['phone'],
-        ':user_id' => $_POST['user_id'],
-        ':city' => $_POST['city'],
-        ':about' => $_POST['about'],
-        ':type' => $_POST['type']
-      ));
-    } elseif (isset($_POST['partner']) && $_POST['partner'] == 'add') {
-      // id, profession, profession_name, type, about, photo, state, city, name, phone, email, address, slug, user_id, created_at, updated_at
-      $stmt = $pdo->prepare("INSERT INTO professionals (" . /*`category`,*/ "`profession`, `name`, `phone`, `user_id`, `city`, `about`, `type`) VALUES ( ?, ?, ?, ?, ?, ?, ?)");
-      $stmt->execute(array(
-        //$_POST['category'],
-        $_POST['profession'],
-        $_POST['name'],
-        $_POST['phone'],
-        $_POST['user_id'],
-        $_POST['city'],
-        $_POST['about'],
-        $_POST['type'],
-      ));
-    } elseif (isset($_POST['user']) && $_POST['city'] == 'delete') {
-      $stmt = $pdo->prepare("DELETE FROM `cities` WHERE `cities`.`id` = :city_id;");
-      $stmt->execute(array(
-        ":city_id" => $_POST['city_id']
-      ));
-    }  elseif (isset($_POST['city']) && $_POST['city'] == 'edit') {
-      $stmt = $pdo->prepare($sql = "UPDATE `cities` SET `city` = :city_name WHERE `cities`.`id` = :city_id;");
-
-      //dd($sql);
-      $stmt->execute(array(
-        ":city_id" => $_POST['city_id'],
-        ':city_name' => $_POST['name']
-      ));
-    } elseif (isset($_POST['city']) && $_POST['city'] == 'add') {
-      //$stmt = $pdo->prepare("SELECT `id`, `email`, `password` FROM `users` WHERE `email` = :email;");
-
-      $stmt = $pdo->prepare("INSERT INTO `cities` (`city`) VALUES (?)");
-      $stmt->execute(array(
-        $_POST['name'],
-      ));
-    } elseif(!empty($rawData = file_get_contents("php://input"))) {
-
-      //dd($rawData);
-
-      $decodedData = json_decode($rawData, true);
-      if ($decodedData['user'] == 'edit') die('{"testing": 123}');
-
-
-      $stmt = $pdo->prepare("SELECT `id`, `name`, `email`, `password`, `type` FROM `users` WHERE `id` = :user_id;");
-      $stmt->execute(array(
-        ":user_id" => $decodedData['user_id']
-      ));
-
-      $row_fetch = $stmt->fetch();
-      die(json_encode(['user_id' => $decodedData['user_id'], 'name' => $row_fetch['name'], 'email' => $row_fetch['email'], 'type' => $row_fetch['type']]));
-
-    }
-    break;
-
-}
-
-if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
-
-  $stmt = $pdo->prepare("SELECT `id`, `name`, `email`, `type` FROM `users` WHERE `id` = :user_id;");
-  $stmt->execute(array(
-    ":user_id" => $_SESSION['user_id']
-  ));
-  $row_fetch = $stmt->fetch();
-  $_SESSION = ['user_id' => (int) $row_fetch['id'], 'name' => $row_fetch['name'], 'email' => $row_fetch['email'], 'type' => (string) $row_fetch['type']];
-}
-
-//die('test');
+require_once('post.include.php');
 ?>
 <!doctype html>
 <html>
@@ -322,9 +163,33 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
         <div class="modal-body" bis_skin_checked="1">
 
         <label>Category</label>
-        <div class="form-group" bis_skin_checked="1"><input type="text" id="category" name="category" placeholder="Enter Category" class="form-control"> <!----></div> 
+        <div class="form-group" bis_skin_checked="1">
+        <select id="profession" name="profession" class="form-control">
+<?php
+$stmt = $pdo->prepare("SELECT `name` FROM `categories`;");
+  $stmt->execute(array());
+  
+while ($row_fetch = $stmt->fetch()) { ?>
+            <option value="<?= $row_fetch['name'] ?>"><?= $row_fetch['name'] ?></option>
+     
+<?php } ?>
+          </select>
+        </div> 
         <label>Profession</label>
-        <div class="form-group" bis_skin_checked="1"><input type="text" id="profession" name="profession" placeholder="Enter Profession" class="form-control"> <!----></div> 
+        <div class="form-group" bis_skin_checked="1">
+          
+        <select id="profession_name" name="profession_name" class="form-control">
+<?php
+$stmt = $pdo->prepare("SELECT `name` FROM `subcategories`;");
+  $stmt->execute(array());
+  
+while ($row_fetch = $stmt->fetch()) { ?>
+            <option value="<?= $row_fetch['name'] ?>"><?= $row_fetch['name'] ?></option>
+     
+<?php } ?>
+          </select>
+
+        <!----></div> 
         <label>Name</label>
         <div class="form-group" bis_skin_checked="1"><input type="text" id="name" name="name" placeholder="Enter Name" class="form-control"> <!----></div> 
 
@@ -428,7 +293,7 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
 
   <div style="overflow-x: auto; width: 100%; max-width: 100%;">
 
-    <div style="display: inline; float: left;  width: 20%; box-sizing: border-box; margin-top: 0; background-color: #232323;" class="relative flex flex-col bg-clip-border  bg-white text-gray-700 h-[calc(100vh)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
+    <div style="position:fixed; top: 0; left: 0; display: inline; float: left;  width: 20%; box-sizing: border-box; margin-top: 0; background-color: #232323;" class="relative flex flex-col bg-clip-border  bg-white text-gray-700 h-[calc(100vh)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
 
       <nav class="flex flex-col gap-1 min-w-[240px] p-2 font-sans text-base font-normal text-gray-700">
       <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
@@ -543,7 +408,7 @@ if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
     </div>
 <?php if (isset($_GET['users'])) { ?>
 
-<div style=" display: inline; float: left; margin: 25px 20px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
+<div style="position: absolute; top: 0; left: 100px; height: 95%; display: inline; float: left; margin: 25px 0 0 250px;" class="absolute overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
     <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add User<i class="fas fa-user-plus fa-fw"></i></button>
 </div>
@@ -646,7 +511,7 @@ $row_fetch = $stmt->fetch(); ?>
   
 <?php } elseif(isset($_GET['partners'])) { ?>
  
-<div style="position: absolute; top: 0; right: 100px; display: inline; float: right; margin: 25px 0 0 250px; width: 75%; overflow-x:scroll;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
+<div style="position: absolute; top: 0; right: 60px; height: 95%; display: inline; float: right; margin: 25px 0 0 275px; width: 75%; overflow-x:scroll;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
     <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add Partner<i class="fas fa-user-plus fa-fw"></i></button>
 </div>
@@ -663,10 +528,10 @@ $row_fetch = $stmt->fetch(); ?>
                     Phone
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Profession Name
+                    Profession
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Profession
+                    Profession  Name
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Type
@@ -707,11 +572,12 @@ while ($row = $stmt->fetch()) { ?>
                   <?= $row['phone'] ?>
                 </td>
                 <td class="px-6 py-4">
-                  <?= $row['profession_name'] ?>
-                </td>
-                <td class="px-6 py-4">
                   <?= $row['profession'] ?>
                 </td>
+                <td class="px-6 py-4">
+                  <?= $row['profession_name'] ?>
+                </td>
+
                 <td class="px-6 py-4">
                   <?= $row['type'] ?>
                 </td>
@@ -751,7 +617,7 @@ while ($row = $stmt->fetch()) { ?>
 
   <?php } elseif (isset($_GET['enquiries'])) { ?>
 
-<div style="display: inline; float: left; margin: 25px 20px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
+<div style="position: absolute; top: 0; left: 100px; height: 95%; display: inline; float: left; margin: 25px 0 0 250px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
 Enquiries Table
 </div>
@@ -1035,41 +901,41 @@ window.onclick = function(event) {
                   console.log(data);
                   document.getElementsByName('partner')[0].value = 'edit';
                   document.getElementsByName('partner_id')[0].value = data['partner_id'];
-
-
-
-                  var selectElement = document.getElementById('category');
-                  if (selectElement.querySelector(`option[value="${data['category']}"]`)) {
-                      selectElement.value = data['category'];
+ 
+                  var selectElement = document.getElementById('profession');
+                  if (selectElement.querySelector(`option[value="${data['profession_name']}"]`)) {
+                      selectElement.value = data['profession_name'];
                   } else {
                       console.error('The specified value does not exist in the options');
-                  } // $_POST['category'],
-
-                  selectElement = document.getElementById('category');
-                  if (selectElement.querySelector(`option[value="${data['category']}"]`)) {
-                      selectElement.value = data['category'];
-                  } else {
-                      console.error('The specified value does not exist in the options');
-                  } // $_POST['profession'],
+                  }
                   
-                  document.getElementsByName('name')[0].value = data['name']; // $_POST['name'],
-                  document.getElementsByName('phone')[0].value = data['phone'];  // $_POST['phone'],
-                  document.getElementsByName('user_id')[0].value = data['user_id'];  // $_POST['user_id'].
-                  document.getElementsByName('city')[0].value = data['city']; // $_POST['city']
-                  document.getElementsByName('about')[0].value = data['about'];  // $_POST['about']
-                  document.getElementsByName('name')[0].value = data['name']; //$_POST['name']
+                  selectElement = document.getElementById('profession_name');
+                  if (selectElement.querySelector(`option[value="${data['profession']}"]`)) {
+                      selectElement.value = data['profession'];
+                  } else {
+                      console.error('The specified value does not exist in the options');
+                  }
+                  
 
-                  selectElement = document.getElementById('type');
+                  //document.getElementsByName('profession')[0].value = data['profession']; // $_POST['name'],
+                  document.getElementsByName('name')[0].value = data['name'];  // $_POST['phone'],
+                  document.getElementsByName('type')[0].value = data['type'];  // $_POST['user_id'].
+                  document.getElementsByName('city')[0].value = data['city']; // $_POST['city']
+                  document.getElementsByName('phone')[0].value = data['phone']; // $_POST['city']
+                  document.getElementsByName('user_id')[0].value = data['user_id']; // $_POST['city']
+                  document.getElementsByName('about')[0].value = data['about'];  // $_POST['about']
+
+                  /* selectElement = document.getElementById('type');
                   if (selectElement.querySelector(`option[value="${data['type']}"]`)) {
                       selectElement.value = data['type'];
                   } else {
                       console.error('The specified value does not exist in the options');
-                  }
+                  } */
                 }
               };
 
               var data = JSON.stringify({
-                "user_id": `${value}`
+                "partner_id": `${value}`
               });
               
               xhr.send(data);

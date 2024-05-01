@@ -1,4 +1,4 @@
-<footer class="font-[sans-serif] bg-black px-10 py-14">
+<footer class="font-[sans-serif] bg-black px-10 py-14" style="position: relative;">
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-8">
         <div class="xl:col-span-2">
           <a href='javascript:void(0)'><img src="img/logo3.png" alt="logo" class='w-48' /></a>
