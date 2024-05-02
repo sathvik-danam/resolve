@@ -40,17 +40,26 @@ switch ($_SERVER['REQUEST_METHOD']) {
 */  
     //if (isset($_REQUEST['submit-login'])) {
 
-      if (isset($_POST['register'])) {
+      if (isset($_POST['register']) && $_POST['register'] == 'add') {
 
-        $stmt = $pdo->prepare("SELECT `id`, `email`, `password` FROM `users` WHERE `email` = :email;");
+        //$stmt = $pdo->prepare("SELECT `id`, `email`, `password` FROM `users` WHERE `email` = :email;");
 
         $stmt = $pdo->prepare("INSERT INTO users (`name`, `email`, `password`, `type`) VALUES (?, ?, ?, ?)");
         $stmt->execute(array(
           $_POST['name'],
           $_POST['email'],
           password_hash($_POST['password'], PASSWORD_DEFAULT),
-          'admin'
+          'User'
         ));
+
+        $stmt = $pdo->prepare("SELECT LAST_INSERT_ID();");
+        $stmt->execute();
+
+        $row_fetch = $stmt->fetch();
+
+        $_SESSION['user_id'] = (int) $row_fetch['LAST_INSERT_ID()'];
+
+        exit(header('Location: index.php'));
       } else {
 
         $stmt = $pdo->prepare("SELECT `id`, `email`, `password` FROM `users` WHERE `email` = :email;");

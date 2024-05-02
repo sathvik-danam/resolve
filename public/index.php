@@ -300,46 +300,96 @@ button:hover {
 
 <?php if (!isset($_SESSION['user_id'])) { ?>
 
-<div id="login-pop-up" style="position:fixed; display: none; width: 400px; border: 1px solid #000; z-index: 1; left: 38%; right:50%;">
+
+  <div id="login-pop-up" class="modal" bis_skin_checked="1" style="display: none;">
+  <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
+    <div class="relative modal-content" style="height: 550px;" bis_skin_checked="1">
+    
+    <span class="text-md font-semibold text-lg" style="float: right;">[<a href="javascript:void(0)" onclick="document.getElementById('login-pop-up').style.display = 'none';">x</a>]</span>
+    <a href="javascript:void(0)"><img src="https://readymadeui.com/readymadeui.svg" alt="logo" class='w-40 mb-10' /></a>
+    
+    <div id="register_view" style="position: absolute; left: 15%; background-color: white; width: 400px; margin: 0 auto; height: 350px; display: none;">
+      <form action="login.php" method="POST">
+        <input type="hidden" name="register" value="add">
+        <div class="space-y-6">
+          <div>
+            <label class="text-sm mb-2 block">Name</label>
+            <input name="name" type="text" class="bg-white border border-gray-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500" placeholder="Enter name" />
+          </div>
+          <div>
+            <label class="text-sm mb-2 block">Email</label>
+            <input name="email" type="text" class="bg-white border border-gray-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500" placeholder="Enter email" />
+          </div>
+          <div>
+            <label class="text-sm mb-2 block">Password</label>
+            <input name="password" type="password" class="bg-white border border-gray-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500" placeholder="Enter password" />
+          </div>
+        </div>
+        <div class="!mt-10">
+          <button type="submit" class="w-full py-3 px-4 text-sm font-semibold rounded text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
+            Create an account
+          </button>
+        </div>
+        <p class="text-sm mt-6 text-center">Already have an account? <a href="javascript:void(0);" onclick="toggleViews();" class="text-blue-600 font-semibold hover:underline ml-1">Login here</a></p>
+      </form>
+    </div>
+    
+    <div id="login_view" style="position: absolute; left: 15%; background-color: white; height: 400px; width: 400px; margin: 0 auto;">
+      <h2 class="text-center text-3xl font-extrabold">Log in to your account</h2>
+      <form action="login.php" method="POST" class="mt-10 space-y-4">
+        <div>
+          <input name="email" type="email" autocomplete="email" required class="w-full text-sm px-4 py-3 rounded outline-none border-2 focus:border-blue-500" placeholder="Email address" />
+        </div>
+        <div>
+          <input name="password" type="password" autocomplete="current-password" required class="w-full text-sm px-4 py-3 rounded outline-none border-2 focus:border-blue-500" placeholder="Password" />
+        </div>
+        <div class="flex items-center justify-between gap-4">
+          <div class="flex items-center">
+            <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+            <label for="remember-me" class="ml-3 block text-sm">Remember me</label>
+          </div>
+          <div>
+            <a href="javascript:void(0);" class="text-sm text-blue-600 hover:text-blue-500">Forgot Password?</a>
+          </div>
+        </div>
+        <div class="!mt-5">
+          <button type="submit" class="w-full py-2.5 px-4 text-sm rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">Log in</button>
+        </div>
+      </form>
+      <div class="!mt-5">
+        <button type="button" onclick="toggleViews();" class="w-full py-2.5 px-4 text-sm rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">Register</button>
+      </div>
+    </div>
+    
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleViews() {
+  var loginView = document.getElementById('login_view');
+  var registerView = document.getElementById('register_view');
+  if (loginView.style.display === 'none') {
+    loginView.style.display = 'block';
+    registerView.style.display = 'none';
+  } else {
+    loginView.style.display = 'none';
+    registerView.style.display = 'block';
+  }
+}
+</script>
+
+
+
+
+
+<!-- div  style="position:fixed; display: none; width: 400px; border: 1px solid #000; z-index: 1; left: 38%; right:50%;">
 
   <div class="max-w-md w-full border py-8 px-6 rounded border-gray-300 bg-white">
 
-    <span class="text-md font-semibold text-lg" style="float: right;">[<a href="javascript:void(0)" onclick="document.getElementById('login-pop-up').style.display = 'none';">x</a>]</span>
-    <a href="javascript:void(0)"><img src="https://readymadeui.com/readymadeui.svg" alt="logo" class='w-40 mb-10' />
-    </a>
-
-    <h2 class="text-center text-3xl font-extrabold">
-      Log in to your account
-    </h2>
-    <form action="login.php" method="POST" class="mt-10 space-y-4">
-      <div>
-        <input name="email" type="email" autocomplete="email" required class="w-full text-sm px-4 py-3 rounded outline-none border-2 focus:border-blue-500" placeholder="Email address" />
-      </div>
-      <div>
-        <input name="password" type="password" autocomplete="current-password" required class="w-full text-sm px-4 py-3 rounded outline-none border-2 focus:border-blue-500" placeholder="Password" />
-      </div>
-      <div class="flex items-center justify-between gap-4">
-        <div class="flex items-center">
-          <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-          <label for="remember-me" class="ml-3 block text-sm">
-            Remember me
-          </label>
-        </div>
-        <div>
-          <a href="javascript:void(0);" class="text-sm text-blue-600 hover:text-blue-500">
-            Forgot Password?
-          </a>
-        </div>
-      </div>
-      <div class="!mt-10">
-        <button type="submit" class="w-full py-2.5 px-4 text-sm rounded text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
-          Log in
-        </button>
-      </div>
-    </form>
   </div>
 
-</div>
+</div -->
 
 <?php } ?>
 
@@ -348,6 +398,12 @@ button:hover {
 <?php
 
 if (isset($_GET['page']) && !empty($_GET['page'])) { ?>
+
+  <div style="height: 500px; margin-top: 75px;">
+    First page of many 
+  </div>
+  
+  <?php } elseif (isset($_GET['create-invitation'])) { ?>
 
 <div style="height: 500px; margin-top: 75px;">
   First page of many 
@@ -675,11 +731,7 @@ while ($row = $stmt->fetch()) { ?>
 
 <script type="text/javascript">
 
-
-
-
-
-
+<?php if (!empty($_GET)) { ?>
 //document.getElementById('myModal').style.display='block';
 // Get the modal
 var modal = document.getElementById("myModal");
@@ -706,7 +758,7 @@ window.onclick = function(event) {
     modal.style.display = "none";
   }
 }
-
+<?php } ?>
  document.addEventListener('DOMContentLoaded', function () {
     var forms = document.getElementsByClassName('partner_edit');
 console.log('testing 123');

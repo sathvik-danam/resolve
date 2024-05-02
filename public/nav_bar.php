@@ -17,7 +17,7 @@
                             <a href="?become-professional" style="color: black;" class="">Become A Professional</a>
                         </li>
                         <li  style="display: inline-block; padding-right: 50px;">
-                            <a href="#" style="color: black;" class="">Create Invitation</a>
+                            <a href="?create-invitation" style="color: black;" class="">Create Invitation</a>
                         </li>
                         <li  style="display: inline-block; padding-right: 50px;">
                             <a href="services.php" style="color: black;" class="">Service</a>
