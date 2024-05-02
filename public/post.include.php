@@ -5,6 +5,7 @@
 switch ($_SERVER['REQUEST_METHOD']) {
   case 'POST':
     //dd($_POST);
+
     if (isset($_POST['user']) && $_POST['user'] == 'delete') {
       $stmt = $pdo->prepare("DELETE FROM `users` WHERE `users`.`id` = :user_id;");
       $stmt->execute(array(
@@ -110,23 +111,23 @@ switch ($_SERVER['REQUEST_METHOD']) {
     } elseif (isset($_POST['partner']) && $_POST['partner'] == 'add') {
       // id, profession, profession_name, type, about, photo, state, city, name, phone, email, address, slug, user_id, created_at, updated_at
       //dd(basename(APP_SELF));
-    if (basename(APP_SELF) == 'dashboard.php') {
+      if (basename(APP_SELF) == 'dashboard.php') {
 
-      $stmt = $pdo->prepare("INSERT INTO professionals (`profession`, `profession_name`, `type`, `about`, `city`,  `name`, `phone`, `user_id`, `created_at`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO professionals (`profession`, `profession_name`, `type`, `about`, `city`,  `name`, `phone`, `user_id`, `created_at`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-      $stmt->execute(array(
-        $_POST['profession'],
-        $_POST['profession_name'],
-        $_POST['type'],
-        $_POST['about'],
-        $_POST['city'],
-        $_POST['name'],
-        $_POST['phone'],
-        $_POST['user_id'],
-        date('Y-m-d H:i:s')
-      ));
+        $stmt->execute(array(
+          $_POST['profession'],
+          $_POST['profession_name'],
+          $_POST['type'],
+          $_POST['about'],
+          $_POST['city'],
+          $_POST['name'],
+          $_POST['phone'],
+          $_POST['user_id'],
+          date('Y-m-d H:i:s')
+        ));
 
-    } else {
+      } else {
 
         $stmt = $pdo->prepare("INSERT INTO professionals (`profession`, `profession_name`, " /*`type`,*/ . " `about`, `city`, `name`, `phone`, `address`, `user_id`,  `created_at`) VALUES ( ?, ?, " . /*?,*/ " ?, ?, ?, ?, ?, ?, ?)");
 
@@ -142,10 +143,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
           $_SESSION['user_id'],
           date('Y-m-d H:i:s')
         ));
-    }
-
-
-
+      }
 
     } elseif (isset($_POST['city']) && $_POST['city'] == 'delete') {
       $stmt = $pdo->prepare("DELETE FROM `cities` WHERE `cities`.`id` = :city_id;");
@@ -153,23 +151,60 @@ switch ($_SERVER['REQUEST_METHOD']) {
         ":city_id" => $_POST['city_id']
       ));
     }  elseif (isset($_POST['city']) && $_POST['city'] == 'edit') {
-      $stmt = $pdo->prepare($sql = "UPDATE `cities` SET `city` = :city_name WHERE `cities`.`id` = :city_id;");
+      $stmt = $pdo->prepare($sql = "UPDATE `cities` SET `city` = :city WHERE `cities`.`id` = :city_id;");
 
       //dd($sql);
       $stmt->execute(array(
         ":city_id" => $_POST['city_id'],
-        ':city_name' => $_POST['name']
+        ':city' => $_POST['name']
       ));
     } elseif (isset($_POST['city']) && $_POST['city'] == 'add') {
-      //$stmt = $pdo->prepare("SELECT `id`, `email`, `password` FROM `users` WHERE `email` = :email;");
-
       $stmt = $pdo->prepare("INSERT INTO `cities` (`city`) VALUES (?)");
       $stmt->execute(array(
         $_POST['name'],
       ));
+    } elseif (isset($_POST['category']) && $_POST['category'] == 'delete') {
+      $stmt = $pdo->prepare("DELETE FROM `categories` WHERE `categories`.`id` = :category_id;");
+      $stmt->execute(array(
+        ":category_id" => $_POST['category_id']
+      ));
+    } elseif (isset($_POST['category']) && $_POST['category'] == 'edit') {
+      $stmt = $pdo->prepare($sql = "UPDATE `categories` SET `name` = :name WHERE `categories`.`id` = :category_id;");
+
+      //dd($sql);
+      $stmt->execute(array(
+        ":category_id" => $_POST['category_id'],
+        ':name' => $_POST['name']
+      ));
+    } elseif (isset($_POST['category']) && $_POST['category'] == 'add') {
+      $stmt = $pdo->prepare("INSERT INTO `categories` (`name`) VALUES (?)");
+      $stmt->execute(array(
+        $_POST['name']
+      ));
+    }  elseif (isset($_POST['subcategory']) && $_POST['subcategory'] == 'delete') {
+      $stmt = $pdo->prepare("DELETE FROM `subcategories` WHERE `subcategories`.`id` = :subcategory_id;");
+      $stmt->execute(array(
+        ":subcategory_id" => $_POST['subcategory_id']
+      ));
+    } elseif (isset($_POST['subcategory']) && $_POST['subcategory'] == 'edit') {
+      $stmt = $pdo->prepare($sql = "UPDATE `subcategories` SET `name` = :name, `belongs_to` = :belongs_to WHERE `subcategories`.`id` = :subcategory_id;");
+
+      //dd($sql);
+      $stmt->execute(array(
+        ":subcategory_id" => $_POST['subcategory_id'],
+        ':name' => $_POST['name'],
+        ':belongs_to' => $_POST['belongs_to']
+      ));
+    } elseif (isset($_POST['subcategory']) && $_POST['subcategory'] == 'add') {
+      $stmt = $pdo->prepare("INSERT INTO `subcategories` (`name`, `belongs_to`) VALUES (?, ?)");
+      $stmt->execute(array(
+        $_POST['name'],
+        $_POST['belongs_to']
+      ));
     } elseif (!empty($rawData = file_get_contents("php://input"))) {
       $decodedData = json_decode($rawData, true);
-
+      
+    dd('{"test":"123"}');
       if (isset($decodedData['user_id'] )) {
         $stmt = $pdo->prepare("SELECT `id`, `name`, `email`, `password`, `type` FROM `users` WHERE `id` = :user_id;");
         $stmt->execute(array(
@@ -180,7 +215,16 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
         die(json_encode(['user_id' => $decodedData['user_id'], 'name' => $row_fetch['name'], 'email' => $row_fetch['email'], 'type' => $row_fetch['type']]));
       } elseif (isset($decodedData['city_id'])) {
-        
+       
+        $stmt = $pdo->prepare("SELECT `id`, `city` FROM `cities` WHERE `id` = :city_id;");
+        $stmt->execute(array(
+            ":city_id" => $decodedData['city_id']
+        ));
+
+        $row_fetch = $stmt->fetch();
+
+        die(json_encode(['city_id' => $decodedData['city_id'], 'city' => $row_fetch['city']]));
+
         // 
       } else if(isset($decodedData['partner_id'])) {
         //die(json_decode($decodedData, true));
@@ -192,6 +236,26 @@ switch ($_SERVER['REQUEST_METHOD']) {
         //die('{"test":"test"}');
         $row_fetch = $stmt->fetch();
         die(json_encode(['partner_id' => $decodedData['partner_id'], 'profession' => $row_fetch['profession'], 'profession_name' => $row_fetch['profession_name'], 'type' => $row_fetch['type'], 'about' => $row_fetch['about'], 'city' => $row_fetch['city'], 'name' => $row_fetch['name'], 'phone' => $row_fetch['phone'], 'address' => $row_fetch['address'], 'user_id' => $row_fetch['user_id'], 'created_at' => $row_fetch['created_at']]));
+      } else if(isset($decodedData['category_id'])) {
+        //die(json_decode($decodedData, true));
+        //die('{"test":"test"}');
+        $stmt = $pdo->prepare("SELECT `name` FROM `categories` WHERE `id` = :category_id;");
+        $stmt->execute(array(
+            ":category_id" => $decodedData['category_id']
+        ));
+        //die('{"test":"test"}');
+        $row_fetch = $stmt->fetch();
+        die(json_encode(['category_id' => $decodedData['category_id'], 'name' =>  $row_fetch['name']]));
+      } else if(isset($decodedData['subcategory_id'])) {
+        //die(json_decode($decodedData, true));
+        //die('{"test":"test"}');
+        $stmt = $pdo->prepare("SELECT `name`, `belongs_to` FROM `subcategories` WHERE `id` = :subcategory_id;");
+        $stmt->execute(array(
+            ":subcategory_id" => $decodedData['subcategory_id']
+        ));
+        //die('{"test":"test"}');
+        $row_fetch = $stmt->fetch();
+        die(json_encode(['subcategory_id' => $decodedData['subcategory_id'], 'name' =>  $row_fetch['name'], 'belongs_to' => $row_fetch['belongs_to']]));
       }
      
     }

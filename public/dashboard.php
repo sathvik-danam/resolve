@@ -11,7 +11,7 @@ require_once('post.include.php');
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+  <!-- link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css" -->
 
   <base href="<?= APP_URL_BASE ; /* /resolve/ */ ?>" /> <!-- always follow with a resolve/ -->
 
@@ -232,7 +232,76 @@ while ($row_fetch = $stmt->fetch()) { ?>
           <input type="hidden" name="city" value="add" />
           <input type="hidden" name="city_id" />
           <div class="modal-body" bis_skin_checked="1">
-            <div class="form-group" bis_skin_checked="1"><input type="text" id="name" name="name" placeholder="Enter Name" class="form-control"> <!----></div> 
+            <div class="form-group" bis_skin_checked="1"><input type="text" id="city" name="city" placeholder="Enter Name" class="form-control"> <!----></div> 
+          </div>
+          <div class="modal-footer" bis_skin_checked="1">
+            <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
+            <button type="submit" class="btn btn-primary" style="float: right;">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>
+
+
+<?php } elseif (isset($_GET['categories'])) { // 7x  ?>
+
+
+  
+<div id="myModal" class="modal" style="display: none;">
+  <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
+      <div class="modal-content" bis_skin_checked="1">
+        <div class="modal-header" bis_skin_checked="1">
+          <button id="myBtn" type="button" data-dismiss="modal" aria-label="Close" class="close" style="float: right;"><span aria-hidden="true">×</span></button>
+          <span id="addNewLabel" class="modal-title">Add New</span>
+
+        </div>
+        <form action method="POST">
+          <input type="hidden" name="category" value="add" />
+          <input type="hidden" name="category_id" />
+          <div class="modal-body" bis_skin_checked="1">
+            <div class="form-group" bis_skin_checked="1"><input type="text" id="name" name="name" placeholder="Enter Name" class="form-control"> </div> 
+          </div>
+          <div class="modal-footer" bis_skin_checked="1">
+            <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
+            <button type="submit" class="btn btn-primary" style="float: right;">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>
+
+
+<?php } elseif (isset($_GET['subcategories'])) { // 7x  ?>
+
+<div id="myModal" class="modal" style="display: none;">
+  <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
+      <div class="modal-content" bis_skin_checked="1">
+        <div class="modal-header" bis_skin_checked="1">
+          <button id="myBtn" type="button" data-dismiss="modal" aria-label="Close" class="close" style="float: right;"><span aria-hidden="true">×</span></button>
+          <span id="addNewLabel" class="modal-title">Add New</span>
+
+        </div>
+        <form action method="POST">
+          <input type="hidden" name="subcategory" value="add" />
+          <input type="hidden" name="subcategory_id" />
+          <div class="modal-body" bis_skin_checked="1">
+            <div class="form-group" bis_skin_checked="1">
+              <label>Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter Name" class="form-control"> <!----></div> 
+            <label>Belongs To Primary Profession</label>
+            <div class="form-group" bis_skin_checked="1">
+              <select name="belongs_to">
+<?php
+$stmt = $pdo->prepare("SELECT `name` FROM `categories`;");
+  $stmt->execute(array());
+  
+while ($row_fetch = $stmt->fetch()) { ?>
+            <option value="<?= $row_fetch['name'] ?>"><?= $row_fetch['name'] ?></option>
+<?php } ?>
+              </select>
+            <!----></div> 
+
           </div>
           <div class="modal-footer" bis_skin_checked="1">
             <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
@@ -357,7 +426,7 @@ while ($row_fetch = $stmt->fetch()) { ?>
           </div><a href="javascript:void(0);">Manage Profession</a>
         </div>
 <div id="hide-show_profession" style="display: 
-<?= (isset($_GET['create-profesion']) || isset($_GET['primary-profession']) || isset($_GET['profession-sub-types']) ? 'block':'none') ?>
+<?= (isset($_GET['categories']) || isset($_GET['subcategories']) || isset($_GET['create-profesion']) || isset($_GET['primary-profession']) || isset($_GET['profession-sub-types']) ? 'block':'none') ?>
 ;">
         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
@@ -369,14 +438,14 @@ while ($row_fetch = $stmt->fetch()) { ?>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
               <path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z" clip-rule="evenodd"></path>
             </svg>
-          </div><a href="javascript:void(0);">Primary Profession</a>
+          </div><a href="<?= basename(APP_SELF) . '?categories' ?>">Primary Profession</a>
         </div>
         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
               <path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z" clip-rule="evenodd"></path>
             </svg>
-          </div><a href="javascript:void(0);">Profession Sub-Types</a>
+          </div><a href="<?= basename(APP_SELF) . '?subcategories' ?>">Profession Sub-Types</a>
         </div>
 </div>
 
@@ -410,7 +479,7 @@ while ($row_fetch = $stmt->fetch()) { ?>
 
 <div style="position: absolute; top: 0; left: 100px; height: 95%; display: inline; float: left; margin: 25px 0 0 250px;" class="absolute overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
-    <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add User<i class="fas fa-user-plus fa-fw"></i></button>
+    <button class="btn btn-success px-5 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 lg:px-10 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" onclick="document.getElementById('myModal').style.display='block';">Add User<i class="fas fa-user-plus fa-fw"></i></button>
 </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -468,7 +537,7 @@ while ($row = $stmt->fetch()) { ?>
     </table>
 </div>
 <?php } elseif(isset($_GET['profile'])) {?>
-  <div style="position: relative; display: inline; float: left; margin: 25px 0 0 250px; width: 45%; overflow-x:scroll;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
+  <div style="position: absolute; top: 0; left: 100px; height: 95%; display: inline; float: left; margin: 25px 0 0 250px; width: 45%; overflow-x:scroll;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
   <h1 style="font-weight: bold; font-size: 20pt;">My Profile</h1>
   <form action method="POST">
         <input type="hidden" name="user" value="edit" />
@@ -577,7 +646,6 @@ while ($row = $stmt->fetch()) { ?>
                 <td class="px-6 py-4">
                   <?= $row['profession_name'] ?>
                 </td>
-
                 <td class="px-6 py-4">
                   <?= $row['type'] ?>
                 </td>
@@ -697,7 +765,7 @@ while ($row = $stmt->fetch()) { ?>
 </div>
 <?php } elseif (isset($_GET['cities'])) { ?>
 
-<div style="display: inline; float: left; margin: 25px 20px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
+<div style="position: absolute; top: 0; left: 300px; height: 95%; display: inline; float: left; margin: 25px 20px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
     <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add City<i class="fas fa-user-plus fa-fw"></i></button>
 </div>
@@ -730,11 +798,131 @@ while ($row = $stmt->fetch()) { ?>
                  <?= $row['city'] ?>
                 </td>
                 <td class="px-6 py-4">
-                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a> / 
+                    <form class="city_edit" style="display: inline;">
+                      <input type="hidden" name="city" value="edit">
+                      <input type="hidden" name="city_id" value="1">
+                      <button type="submit">Edit</button>
+                    </form>/ 
                     
                     <form action method="POST" style="display: inline;">
                       <input type="hidden" name="delete_city">
                       <input type="hidden" name="city_id" value="<?= $row['id'] ?>">
+                      <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+
+<?php } ?>
+        </tbody>
+    </table>
+</div>
+
+  <?php } elseif (isset($_GET['categories'])) { ?>
+
+<div style="position: absolute; top: 0; left: 325px; height: 95%; display: inline; float: left; margin: 25px 20px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
+<div class="box-tools" bis_skin_checked="1">
+    <h1 class="text-lg md:text-xl">Primary Profession Table</h1>
+    <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add Category<i class="fas fa-user-plus fa-fw"></i></button>
+</div>
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Id
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Name
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Modify
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+<?php 
+
+$stmt = $pdo->query("SELECT `id`, `name` FROM `categories`;");
+
+while ($row = $stmt->fetch()) { ?>
+
+    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    <?= $row['id'] ?>
+                </th>
+                <td class="px-6 py-4">
+                 <?= $row['name'] ?>
+                </td>
+                <td class="px-6 py-4">
+                    <form class="category_edit" style="display: inline;">
+                      <input type="hidden" name="category" value="edit">
+                      <input type="hidden" name="category_id" value="<?= $row['id'] ?>">
+                      <button type="submit">Edit</button>
+                    </form> / 
+                    
+                    <form action method="POST" style="display: inline;">
+                      <input type="hidden" name="category" value="delete">
+                      <input type="hidden" name="category_id" value="<?= $row['id'] ?>">
+                      <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+
+<?php } ?>
+        </tbody>
+    </table>
+</div>
+
+  <?php } elseif (isset($_GET['subcategories'])) { ?>
+
+<div style="position: absolute; top: 0; left: 325px; height: 95%; display: inline; float: left; margin: 25px 20px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
+<div class="box-tools" bis_skin_checked="1">
+    <h1 class="text-lg md:text-xl">Profession Sub-Types Table</h1>
+    <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add Professional Sub-Types<i class="fas fa-user-plus fa-fw"></i></button>
+</div>
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Id
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Name
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Belongs To
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Modify
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+<?php 
+
+$stmt = $pdo->query("SELECT `id`, `name`, `belongs_to` FROM `subcategories`;");
+
+while ($row = $stmt->fetch()) { ?>
+
+    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    <?= $row['id'] ?>
+                </th>
+                <td class="px-6 py-4">
+                 <?= $row['name'] ?>
+                </td>
+                <td class="px-6 py-4">
+                 <?= $row['belongs_to'] ?>
+                </td>
+                <td class="px-6 py-4">
+                    <form class="subcategory_edit" style="display: inline;">
+                      <input type="hidden" name="subcategory" value="edit">
+                      <input type="hidden" name="subcategory_id" value="<?= $row['id'] ?>">
+                      <button type="submit">Edit</button>
+                    </form> / 
+                    
+                    <form action method="POST" style="display: inline;">
+                      <input type="hidden" name="subcategory" value="delete">
+                      <input type="hidden" name="subcategory_id" value="<?= $row['id'] ?>">
                       <button type="submit">Delete</button>
                     </form>
                 </td>
@@ -758,7 +946,7 @@ while ($row = $stmt->fetch()) { ?>
   <script type="text/javascript" src="javascript/app.js.php"></script>
 
   <script type="text/javascript">
-<?php if (isset($_GET['users']) || isset($_GET['partners'])) { ?>
+<?php if (!empty($_GET) && !isset($_GET['profile'])) { ?>
 // Get the modal
 var modal = document.getElementById("myModal");
 
@@ -960,7 +1148,154 @@ window.onclick = function(event) {
     });
   }
 });
-<?php  } ?>
+<?php } elseif (isset($_GET['cities'])) { ?>
+ document.addEventListener('DOMContentLoaded', function () {
+    var forms = document.getElementsByClassName('city_edit');
+
+    for (var i = 0; i < forms.length; i++) {
+
+    forms[i].addEventListener('submit', function(event) {
+      
+        event.preventDefault(); // Prevent the default form submission
+
+        const formData = new FormData(this);
+        //let dataToShow = '';
+
+        // Loop through the entries of the form data.
+        for (let [key, value] of formData.entries()) {
+            //dataToShow += `${key}: ${value}<br>`; // Append each key-value pair to a string
+
+            if (`${key}` == 'city_id') {
+              console.log('city_id: ' + `${value}` ); 
+              document.getElementById('myModal').style.display = 'block';
+
+
+              var xhr = new XMLHttpRequest();
+              var url = "dashboard.php"; // Replace with your endpoint URL
+              xhr.open("POST", url, true);
+              xhr.setRequestHeader("Content-Type", "application/json");
+
+              xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                  //console.log('what is tyhis' + xhr.responseText.split(',')[1] ); // Handle the response data here
+                  var data = JSON.parse(xhr.responseText);
+                  console.log(data);
+                  document.getElementsByName('city')[0].value = 'edit';
+                  document.getElementsByName('city_id')[0].value = data['city_id'];
+                  document.getElementById('city').value = data['city'];
+                }
+              };
+
+              var data = JSON.stringify({
+                "city_id": `${value}`
+              });
+              
+              xhr.send(data);
+
+              return; }
+            }
+    });
+  }
+});
+<?php } elseif (isset($_GET['categories'])) { ?>
+ document.addEventListener('DOMContentLoaded', function () {
+    var forms = document.getElementsByClassName('category_edit'); // city_edit
+
+    for (var i = 0; i < forms.length; i++) {
+
+    forms[i].addEventListener('submit', function(event) {
+      
+        event.preventDefault(); // Prevent the default form submission
+
+        const formData = new FormData(this);
+        //let dataToShow = '';
+
+        // Loop through the entries of the form data.
+        for (let [key, value] of formData.entries()) {
+            //dataToShow += `${key}: ${value}<br>`; // Append each key-value pair to a string
+
+            if (`${key}` == 'category_id') {
+              console.log('category_id: ' + `${value}` ); 
+              document.getElementById('myModal').style.display = 'block';
+
+
+              var xhr = new XMLHttpRequest();
+              var url = "dashboard.php"; // Replace with your endpoint URL
+              xhr.open("POST", url, true);
+              xhr.setRequestHeader("Content-Type", "application/json");
+
+              xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                  //console.log('what is tyhis' + xhr.responseText.split(',')[1] ); // Handle the response data here
+                  var data = JSON.parse(xhr.responseText);
+                  console.log(data);
+                  document.getElementsByName('category')[0].value = 'edit';
+                  document.getElementsByName('category_id')[0].value = data['category_id'];
+                  document.getElementById('name').value = data['name'];
+                }
+              };
+
+              var data = JSON.stringify({
+                "category_id": `${value}`
+              });
+              
+              xhr.send(data);
+
+              return; }
+            }
+    });
+  }
+});
+<?php } elseif (isset($_GET['subcategories'])) { ?>
+ document.addEventListener('DOMContentLoaded', function () {
+    var forms = document.getElementsByClassName('subcategory_edit');
+
+    for (var i = 0; i < forms.length; i++) {
+
+    forms[i].addEventListener('submit', function(event) {
+      
+        event.preventDefault(); // Prevent the default form submission
+
+        const formData = new FormData(this);
+        //let dataToShow = '';
+
+        // Loop through the entries of the form data.
+        for (let [key, value] of formData.entries()) {
+            //dataToShow += `${key}: ${value}<br>`; // Append each key-value pair to a string
+
+            if (`${key}` == 'subcategory_id') {
+              console.log('subcategory_id: ' + `${value}` ); 
+              document.getElementById('myModal').style.display = 'block';
+
+
+              var xhr = new XMLHttpRequest();
+              var url = "dashboard.php"; // Replace with your endpoint URL
+              xhr.open("POST", url, true);
+              xhr.setRequestHeader("Content-Type", "application/json");
+
+              xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                  //console.log('what is tyhis' + xhr.responseText.split(',')[1] ); // Handle the response data here
+                  var data = JSON.parse(xhr.responseText);
+                  console.log(data);
+                  document.getElementsByName('subcategory')[0].value = 'edit';
+                  document.getElementsByName('subcategory_id')[0].value = data['subcategory_id'];
+                  document.getElementById('name').value = data['name'];
+                }
+              };
+
+              var data = JSON.stringify({
+                "subcategory_id": `${value}`
+              });
+              
+              xhr.send(data);
+
+              return; }
+            }
+    });
+  }
+});
+<?php } ?>
 
 /*
 document.addEventListener("DOMContentLoaded", function() {

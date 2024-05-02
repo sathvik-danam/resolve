@@ -346,7 +346,14 @@ button:hover {
 <!-- 2*2 section -->
 
 <?php
-if (isset($_GET['become-professional'])) { ?>
+
+if (isset($_GET['page']) && !empty($_GET['page'])) { ?>
+
+<div style="height: 500px; margin-top: 75px;">
+  First page of many 
+</div>
+
+<?php } elseif (isset($_GET['become-professional'])) { ?>
 
 <div id="myModal" class="modal" style="display: none; border: 1px solid #000;">
   <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
