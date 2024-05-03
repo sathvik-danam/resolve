@@ -1,8 +1,7 @@
 <?php
 require_once('../config/config.php');
 
-require_once('post.include.php');
-?>
+if (empty($_SESSION)) die(header('Location: ' . APP_URL_BASE)); ?>
 <!doctype html>
 <html>
 
@@ -16,6 +15,9 @@ require_once('post.include.php');
   <base href="<?= APP_URL_BASE ; /* /resolve/ */ ?>" /> <!-- always follow with a resolve/ -->
 
   <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+
+  <!-- link rel="stylesheet" type="text/css" href="css/adminlte.css" -->
+  <!-- link rel="stylesheet" type="text/css" href="css/app.css" -->
   <link rel="stylesheet" type="text/css" href="css/styles.css">
 
   <style type="text/css">
@@ -147,6 +149,41 @@ require_once('post.include.php');
 </div>
 
 
+<?php } elseif (isset($_GET['enquiries'])) { // 7x  ?>
+
+<div id="myModal" class="modal" style="display: none;">
+  <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
+    <div class="modal-content" bis_skin_checked="1">
+      <div class="modal-header" bis_skin_checked="1">
+        <button id="myBtn" type="button" data-dismiss="modal" aria-label="Close" class="close" style="float: right;"><span aria-hidden="true">×</span></button>
+        <span id="addNewLabel" class="modal-title" style="">Add New User</span>
+        <h5 id="addNewLabel" class="modal-title" style="display: none;">Update User's info</h5>
+
+      </div>
+      <form action method="POST">
+        <input type="hidden" name="user" value="add" />
+        <input type="hidden" name="user_id" />
+        <div class="modal-body" bis_skin_checked="1">
+        <div class="form-group" bis_skin_checked="1"><input type="text" id="name" name="name" placeholder="Enter Name" class="form-control"> <!----></div> 
+        <div class="form-group" bis_skin_checked="1"><input type="text" id="email" name="email" placeholder="Enter Email" class="form-control"> <!----></div> 
+        <div class="form-group" bis_skin_checked="1"><input type="password" id="password" name="password" placeholder="Enter Password" class="form-control"> <!----></div>
+        <div class="form-group" bis_skin_checked="1">
+        <select name="type" id="type" placeholder="User Type" class="form-control">
+          <option value="">Select User Role</option>
+          <option value="Admin">Admin</option>
+          <option value="User">User</option>
+          <option value="Author">Author</option>
+        </select> <!----></div></div>
+        <div class="modal-footer" bis_skin_checked="1">
+          <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
+          <button type="submit" class="btn btn-primary" style="float: right;">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
 <?php } else if (isset($_GET['partners'])) { // 7x  ?>
 
 <div id="myModal" class="modal" style="display: none;">
@@ -164,7 +201,7 @@ require_once('post.include.php');
 
         <label>Category</label>
         <div class="form-group" bis_skin_checked="1">
-        <select id="profession" name="profession" class="form-control">
+        <select id="category" name="category" class="form-control">
 <?php
 $stmt = $pdo->prepare("SELECT `name` FROM `categories`;");
   $stmt->execute(array());
@@ -178,7 +215,7 @@ while ($row_fetch = $stmt->fetch()) { ?>
         <label>Profession</label>
         <div class="form-group" bis_skin_checked="1">
           
-        <select id="profession_name" name="profession_name" class="form-control">
+        <select id="subcategory" name="subcategory" class="form-control">
 <?php
 $stmt = $pdo->prepare("SELECT `name` FROM `subcategories`;");
   $stmt->execute(array());
@@ -199,7 +236,17 @@ while ($row_fetch = $stmt->fetch()) { ?>
         <label>User ID</label>
         <div class="form-group" bis_skin_checked="1"><input type="text" id="user_id" name="user_id" placeholder="Enter User ID" class="form-control"> <!----></div> 
         <label>City</label>
-        <div class="form-group" bis_skin_checked="1"><input type="text" id="city" name="city" placeholder="Enter City" class="form-control"> <!----></div> 
+        <div class="form-group" bis_skin_checked="1">
+        <select name="city_id" class="form-control">
+          <?php
+$stmt = $pdo->prepare("SELECT `id`, `city` FROM `cities`;");
+  $stmt->execute(array());
+  
+while ($row_fetch_city = $stmt->fetch()) { ?>
+            <option value="<?= $row_fetch_city['id'] ?>"><?= $row_fetch_city['city'] ?></option>
+<?php } ?>
+
+</select><!----></div> 
           <label>Address</label>
           <div class="form-group" bis_skin_checked="1"><textarea id="about" name="about" placeholder="Enter Address" class="form-control"></textarea> <!----></div> 
           <label>About You And Your Profession</label>
@@ -232,7 +279,7 @@ while ($row_fetch = $stmt->fetch()) { ?>
           <input type="hidden" name="city" value="add" />
           <input type="hidden" name="city_id" />
           <div class="modal-body" bis_skin_checked="1">
-            <div class="form-group" bis_skin_checked="1"><input type="text" id="city" name="city" placeholder="Enter Name" class="form-control"> <!----></div> 
+            <div class="form-group" bis_skin_checked="1"><input type="text" id="city_name" name="city_name" placeholder="Enter Name" class="form-control"> <!----></div> 
           </div>
           <div class="modal-footer" bis_skin_checked="1">
             <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
@@ -243,6 +290,75 @@ while ($row_fetch = $stmt->fetch()) { ?>
     </div>
 </div>
 
+
+<?php } elseif (isset($_GET['create-profession'])) { ?>
+
+<div id="myModal" class="modal" style="display: none; border: 1px solid #000;">
+  <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
+    <div class="modal-content" bis_skin_checked="1">
+      <div class="modal-header" bis_skin_checked="1">
+        <button id="myBtn" type="button" data-dismiss="modal" aria-label="Close" class="close" style="float: right;"><span aria-hidden="true">×</span></button>
+        <span id="addNewLabel" class="modal-title" style="">Add Partner</span>
+        <h5 id="addNewLabel" class="modal-title" style="display: none;">Update User's info</h5>
+      </div>
+      <form action method="POST">
+        <input type="hidden" name="partner" value="add" />
+        <input type="hidden" name="partner_id" />
+        <div class="modal-body" bis_skin_checked="1">
+
+        <label>Primary Profession</label>
+        <div class="form-group" bis_skin_checked="1">
+          <select id="category" name="category" class="form-control">
+<?php
+$stmt = $pdo->prepare("SELECT `name` FROM `categories`;");
+  $stmt->execute(array());
+  
+while ($row_fetch = $stmt->fetch()) { ?>
+            <option value="<?= $row_fetch['name'] ?>"><?= $row_fetch['name'] ?></option>
+     
+<?php } ?>
+          </select><!----></div> 
+        <label>Profession Sub-Types</label>
+        <div class="form-group" bis_skin_checked="1">
+        <select id="subcategory" name="subcategory" class="form-control">
+<?php
+$stmt = $pdo->prepare("SELECT `name` FROM `subcategories`;");
+  $stmt->execute(array());
+  
+while ($row_fetch = $stmt->fetch()) { ?>
+            <option value="<?= $row_fetch['name'] ?>"><?= $row_fetch['name'] ?></option>
+     
+<?php } ?>
+          </select>
+        
+        <!----></div> 
+        <label>City</label>
+        <div class="form-group" bis_skin_checked="1"><select name="city_id" class="form-control">
+          <?php
+$stmt = $pdo->prepare("SELECT `id`, `city` FROM `cities`;");
+  $stmt->execute(array());
+  
+while ($row_fetch_city = $stmt->fetch()) { ?>
+            <option value="<?= $row_fetch_city['id'] ?>"><?= $row_fetch_city['city'] ?></option>
+<?php } ?>
+
+</select><!----></div> 
+        <label>Address</label>
+        <div class="form-group" bis_skin_checked="1"><textarea id="address" name="address" placeholder="Enter Address" class="form-control"></textarea> <!----></div> 
+        <label>About Your Profession</label>
+
+        <div class="form-group" bis_skin_checked="1"><textarea id="about" name="about" placeholder="Enter About" class="form-control"></textarea> <!----></div> 
+
+  
+          <div class="modal-footer" bis_skin_checked="1">
+            <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
+            <button type="submit" class="btn btn-primary" style="float: right;">Save changes</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <?php } elseif (isset($_GET['categories'])) { // 7x  ?>
 
@@ -315,7 +431,7 @@ while ($row_fetch = $stmt->fetch()) { ?>
 
 <?php } ?>
 
-<?php if (!isset($_SESSION['user_id']) && !is_int($_SESSION['user_id'])) { ?>
+<?php if (!isset($_SESSION['user_id'])) { ?>
 
     <div id="login-pop-up" style="position:fixed; display: none; width: 400px; border: 1px solid #000; z-index: 1; left: 38%; right:50%;">
 
@@ -380,11 +496,11 @@ while ($row_fetch = $stmt->fetch()) { ?>
               <path fill-rule="evenodd" d="M2.25 2.25a.75.75 0 000 1.5H3v10.5a3 3 0 003 3h1.21l-1.172 3.513a.75.75 0 001.424.474l.329-.987h8.418l.33.987a.75.75 0 001.422-.474l-1.17-3.513H18a3 3 0 003-3V3.75h.75a.75.75 0 000-1.5H2.25zm6.04 16.5l.5-1.5h6.42l.5 1.5H8.29zm7.46-12a.75.75 0 00-1.5 0v6a.75.75 0 001.5 0v-6zm-3 2.25a.75.75 0 00-1.5 0v3.75a.75.75 0 001.5 0V9zm-3 2.25a.75.75 0 00-1.5 0v1.5a.75.75 0 001.5 0v-1.5z" clip-rule="evenodd"></path>
             </svg>
           </div>
-          <a href="?"><?= $_SESSION['name'] . '<br />' . $_SESSION['type'] ?></a>
+          <a href="?"><?= (!isset($_SESSION['name']) ? 'user' : $_SESSION['name']) . '<br />' . (!isset($_SESSION['type']) ? 'User': $_SESSION['type']) ?></a>
         </div>  
       <hr />
 
-<?php if (in_array($_SESSION['type'], ['Admin'])) { ?>
+<?php if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['Admin'])) { ?>
           <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
@@ -433,7 +549,7 @@ while ($row_fetch = $stmt->fetch()) { ?>
         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
 
-          </div><a href="javascript:void(0);">Create Profession</a>
+          </div><a href="<?= APP_WWW ?>?create-profession">Create Profession</a>
         </div>
         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
@@ -451,7 +567,7 @@ while ($row_fetch = $stmt->fetch()) { ?>
         </div>
 </div>
 <?php }
-if (in_array($_SESSION['type'], ['User', 'Admin'])) { ?>
+if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['User', 'Admin'])) { ?>
 
         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
@@ -479,7 +595,200 @@ if (in_array($_SESSION['type'], ['User', 'Admin'])) { ?>
 <?php } ?>
       </nav>
     </div>
-<?php if (isset($_GET['users'])) { ?>
+<?php if (empty($_GET)) { ?>
+  
+<div style="position: absolute; top: 0; left: 100px; height: 95%; display: inline; float: left; margin: 25px 0 0 250px;" class="absolute overflow-x-auto shadow-md sm:rounded-lg">
+
+<section class="text-gray-600 body-font">
+  <div class="container px-5 py-24 mx-auto">
+    <div class="flex flex-col text-center w-full mb-20">
+      <h1 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">Dashboard Page</h1>
+      <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Welcome to your personalized dashboard, your central hub for all things important to you. This intuitive interface provides a comprehensive overview of your key metrics, tasks, and insights, empowering you to make informed decisions and stay on top of your priorities. From monitoring your progress to accessing valuable data, your dashboard is designed to streamline your workflow and enhance your productivity. Dive in and discover the power of having everything you need at your fingertips.</p>
+    </div>
+    <!-- First Row -->
+    <div class="flex flex-wrap -m-4 text-center">
+      <!-- First Item -->
+      <div class="p-4 md:w-1/3 sm:w-1/2 w-full">
+        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg">
+          <div><h3>
+
+<?php
+    $stmt = $pdo->query("SELECT COUNT(*) AS total FROM `users`;");
+
+    // Fetch the count result
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    echo $row['total']; ?>
+
+
+          </h3> <p>User Registrations</p></div> <div class="icon" bis_skin_checked="1"><i class="fa fa-user-plus"></i></div> <a href="dashboard.php?users" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- Second Item -->
+      <div class="p-4 md:w-1/3 sm:w-1/2 w-full">
+        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg">
+          <div class="inner" bis_skin_checked="1"><h3><?php
+    $stmt = $pdo->query("SELECT COUNT(*) AS total FROM `partners`;");
+
+    // Fetch the count result
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    echo $row['total']; ?></h3> <p>Partner Registrations</p></div> <div class="icon" bis_skin_checked="1"><i class="fas fa-briefcase"></i></div> <a href="dashboard.php?partners" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- Third Item -->
+      <div class="p-4 md:w-1/3 sm:w-1/2 w-full">
+        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg">
+          <div class="inner" bis_skin_checked="1"><h3><?php
+    $stmt = $pdo->query("SELECT COUNT(*) AS total FROM `cities`;");
+
+    // Fetch the count result
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    echo $row['total']; ?></h3> <p>Service Served in City</p></div> <div class="icon" bis_skin_checked="1"><i class="fas fa-city"></i></div> <a href="dashboard.php?cities" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+    </div>
+    <!-- Second Row -->
+    <div class="flex flex-wrap -m-4 text-center">
+      <!-- Fourth Item -->
+      <div class="p-4 md:w-1/3 sm:w-1/2 w-full">
+        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg">
+          <div class="inner" bis_skin_checked="1"><h3><?php
+    $stmt = $pdo->query("SELECT COUNT(*) AS total FROM `posts`;");
+
+    // Fetch the count result
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    echo $row['total']; ?></h3> <p>Professsion Created</p></div> <div class="icon" bis_skin_checked="1"><i class="fas fa-plane-departure"></i></div> <a href="dashboard.php?posts" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- Fifth Item -->
+      <div class="p-4 md:w-1/3 sm:w-1/2 w-full">
+        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg">
+        <div class="inner" bis_skin_checked="1"><h3><?php
+    $stmt = $pdo->query("SELECT COUNT(*) AS total FROM `categories`;");
+
+    // Fetch the count result
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    echo $row['total']; ?></h3> <p>Primary Profession</p></div> <div class="icon" bis_skin_checked="1"><i class="fas fa-star"></i></div> <a href="dashboard.php?categories" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- Sixth Item -->
+      <div class="p-4 md:w-1/3 sm:w-1/2 w-full">
+        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg">
+          <div class="small-box bg-info" bis_skin_checked="1">
+            <div class="inner" bis_skin_checked="1"><h3><?php
+    $stmt = $pdo->query("SELECT COUNT(*) AS total FROM `subcategories`;");
+
+    // Fetch the count result
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    echo $row['total']; ?></h3> <p>Sub Profession</p></div> <div class="icon" bis_skin_checked="1"><i class="fas fa-archive"></i></div> <a href="dashboard.php?subcategories" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+<?php } elseif (isset($_GET['create-profession'])) { ?> 
+  
+<div style="position: absolute; top: 0; left: 100px; height: 95%; width: 75%; display: inline; float: left; margin: 25px 0 0 250px;" class="absolute overflow-x-auto shadow-md sm:rounded-lg">
+
+
+<div style="position: relative; height: 500px; margin-bottom: 50px;">
+  <div style="position: absolute; top: 40px; display: inline; margin: 25px auto; width: 100%; overflow-x:scroll;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
+<div class="box-tools" bis_skin_checked="1">
+    <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add Partner<i class="fas fa-user-plus fa-fw"></i></button>
+</div>
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Category
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Subcategory
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Type
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    City
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Address
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    About
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Profile
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Registered At
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Modify
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+          
+<?php 
+
+$stmt = $pdo->query("SELECT `id`, `category`, `subcategory`, `type`, `about`, `photo`, `city`, `address`, `name`, `phone`, `created_at` FROM `partners` WHERE `user_id` = " . $_SESSION['user_id'] . ";");
+
+while ($row = $stmt->fetch()) { ?>
+
+    <tr class="odd:bg-black odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                <td class="px-6 py-4">
+                  <?= $row['category'] ?>
+                </td>
+                <td class="px-6 py-4">
+                  <?= $row['subcategory'] ?>
+                </td>
+                <td class="px-6 py-4">
+                  <?= $row['type'] ?>
+                </td>
+                <td class="px-6 py-4">
+                  <?= $row['city'] ?>
+                </td>
+                <td class="px-6 py-4">
+                  <?= $row['address'] ?>
+                </td>
+                <td class="px-6 py-4">
+                 <?= $row['about'] ?>
+                </td>
+                <td class="px-6 py-4">
+                  <?= $row['photo'] ?>
+                </td>
+                <td class="px-6 py-4">
+                  <?= $row['created_at'] ?>
+                </td>
+                <td class="px-6 py-4">
+                    <!-- a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a -->
+
+                    <form class="partner_edit" style="display: inline;">
+                      <input type="hidden" name="partner" value="edit" />
+                      <input type="hidden" name="partner_id" value="<?= $row['id'] ?>">
+                      <button type="submit">Edit</button>
+                    </form>
+                    / 
+                    <form action method="POST" style="display: inline;">
+                      <input type="hidden" name="partner" value="delete" />
+                      <input type="hidden" name="partner_id" value="<?= $row['id'] ?>">
+                      <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+
+<?php } ?>
+        </tbody>
+    </table>
+</div>
+</div>
+
+</div>
+  
+<?php } elseif (isset($_GET['users'])) { ?>
 
 <div style="position: absolute; top: 0; left: 100px; height: 95%; display: inline; float: left; margin: 25px 0 0 250px;" class="absolute overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
@@ -601,10 +910,10 @@ $row_fetch = $stmt->fetch(); ?>
                     Phone
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Profession
+                    Category
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Profession  Name
+                    Subcategory
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Type
@@ -630,7 +939,7 @@ $row_fetch = $stmt->fetch(); ?>
           
 <?php 
 
-$stmt = $pdo->query("SELECT `id`, `profession`, `profession_name`, `type`, `about`, `photo`, `city`, `name`, `phone`, `created_at` FROM `professionals`;");
+$stmt = $pdo->query("SELECT `id`, `category`, `subcategory`, `type`, `about`, `photo`, `city`, `name`, `phone`, `created_at` FROM `partners`;");
 
 while ($row = $stmt->fetch()) { ?>
 
@@ -645,10 +954,10 @@ while ($row = $stmt->fetch()) { ?>
                   <?= $row['phone'] ?>
                 </td>
                 <td class="px-6 py-4">
-                  <?= $row['profession'] ?>
+                  <?= $row['category'] ?>
                 </td>
                 <td class="px-6 py-4">
-                  <?= $row['profession_name'] ?>
+                  <?= $row['subcategory'] ?>
                 </td>
                 <td class="px-6 py-4">
                   <?= $row['type'] ?>
@@ -804,12 +1113,12 @@ while ($row = $stmt->fetch()) { ?>
                 <td class="px-6 py-4">
                     <form class="city_edit" style="display: inline;">
                       <input type="hidden" name="city" value="edit">
-                      <input type="hidden" name="city_id" value="1">
+                      <input type="hidden" name="city_id" value="<?= $row['id'] ?>">
                       <button type="submit">Edit</button>
                     </form>/ 
                     
                     <form action method="POST" style="display: inline;">
-                      <input type="hidden" name="delete_city">
+                      <input type="hidden" name="city" value="delete">
                       <input type="hidden" name="city_id" value="<?= $row['id'] ?>">
                       <button type="submit">Delete</button>
                     </form>
@@ -1094,25 +1403,25 @@ window.onclick = function(event) {
                   document.getElementsByName('partner')[0].value = 'edit';
                   document.getElementsByName('partner_id')[0].value = data['partner_id'];
  
-                  var selectElement = document.getElementById('profession');
-                  if (selectElement.querySelector(`option[value="${data['profession_name']}"]`)) {
-                      selectElement.value = data['profession_name'];
+                  var selectElement = document.getElementById('category');
+                  if (selectElement.querySelector(`option[value="${data['category']}"]`)) {
+                      selectElement.value = data['category'];
                   } else {
                       console.error('The specified value does not exist in the options');
                   }
                   
-                  selectElement = document.getElementById('profession_name');
-                  if (selectElement.querySelector(`option[value="${data['profession']}"]`)) {
-                      selectElement.value = data['profession'];
+                  selectElement = document.getElementById('subcategory');
+                  if (selectElement.querySelector(`option[value="${data['subcategory']}"]`)) {
+                      selectElement.value = data['subcategory'];
                   } else {
                       console.error('The specified value does not exist in the options');
                   }
                   
 
-                  //document.getElementsByName('profession')[0].value = data['profession']; // $_POST['name'],
+                  //document.getElementsByName('category')[0].value = data['category']; // $_POST['name'],
                   document.getElementsByName('name')[0].value = data['name'];  // $_POST['phone'],
                   document.getElementsByName('type')[0].value = data['type'];  // $_POST['user_id'].
-                  document.getElementsByName('city')[0].value = data['city']; // $_POST['city']
+                  document.getElementsByName('city_id')[0].value = data['city']; // $_POST['city']
                   document.getElementsByName('phone')[0].value = data['phone']; // $_POST['city']
                   document.getElementsByName('user_id')[0].value = data['user_id']; // $_POST['city']
                   document.getElementsByName('about')[0].value = data['about'];  // $_POST['about']
@@ -1186,7 +1495,7 @@ window.onclick = function(event) {
                   console.log(data);
                   document.getElementsByName('city')[0].value = 'edit';
                   document.getElementsByName('city_id')[0].value = data['city_id'];
-                  document.getElementById('city').value = data['city'];
+                  document.getElementById('city_name').value = data['city'];
                 }
               };
 
@@ -1201,6 +1510,107 @@ window.onclick = function(event) {
     });
   }
 });
+<?php } elseif (isset($_GET['create-profession'])) { ?>
+  
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var forms = document.getElementsByClassName('partner_edit');
+console.log('testing 123');
+    for (var i = 0; i < forms.length; i++) {
+
+    forms[i].addEventListener('submit', function(event) {
+      
+        event.preventDefault(); // Prevent the default form submission
+
+
+        const formData = new FormData(this);
+        //let dataToShow = '';
+
+        // Loop through the entries of the form data.
+        for (let [key, value] of formData.entries()) {
+            //dataToShow += `${key}: ${value}<br>`; // Append each key-value pair to a string
+
+            if (`${key}` == 'partner_id') {
+              console.log('partner_id: ' + `${value}` ); 
+              document.getElementById('myModal').style.display = 'block';
+
+
+              var xhr = new XMLHttpRequest();
+              var url = "index.php"; // Replace with your endpoint URL
+              xhr.open("POST", url, true);
+              xhr.setRequestHeader("Content-Type", "application/json");
+
+              xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                  //console.log('what is tyhis' + xhr.responseText.split(',')[1] ); // Handle the response data here
+                  var data = JSON.parse(xhr.responseText);
+                  console.log(data);
+                  document.getElementsByName('partner')[0].value = 'edit';
+                  document.getElementsByName('partner_id')[0].value = data['partner_id'];
+
+                  var selectElement = document.getElementById('category');
+                  if (selectElement.querySelector(`option[value="${data['category']}"]`)) {
+                      selectElement.value = data['category'];
+                  } else {
+                      console.error('The specified value does not exist in the options');
+                  }
+                   selectElement = document.getElementById('subcategory');
+                  if (selectElement.querySelector(`option[value="${data['subcategory']}"]`)) {
+                      selectElement.value = data['subcategory'];
+                  } else {
+                      console.error('The specified value does not exist in the options');
+                  }
+                  
+                  
+                  
+/*
+                  selectElement = document.getElementById('category');
+                  if (selectElement.querySelector(`option[value="${data['category']}"]`)) {
+                      selectElement.value = data['category'];
+                  } else {
+                      console.error('The specified value does not exist in the options');
+                  } // $_POST['category'],
+*/
+
+                  //document.getElementsByName('category')[0].value = data['category']; // $_POST['name'],
+                  //document.getElementsByName('name')[0].value = data['name']; // $_POST['name'],
+                  //document.getElementsByName('phone')[0].value = data['phone'];  // $_POST['phone'],
+                  //document.getElementsByName('user_id')[0].value = data['user_id'];  // $_POST['user_id'].
+                  document.getElementsByName('city')[0].value = data['city']; // $_POST['city']
+                  document.getElementsByName('address')[0].value = data['address']; // $_POST['city']
+                  document.getElementsByName('about')[0].value = data['about'];  // $_POST['about']
+                  //document.getElementsByName('name')[0].value = data['name']; //$_POST['name']
+
+                }
+              };
+
+              var data = JSON.stringify({
+                "partner_id": `${value}`
+              });
+              
+              xhr.send(data);
+
+              return; }
+            }
+
+        //console.log(formData.entries());
+
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+        var type = document.getElementById('type').value;
+
+        // Example: Do something with the form data, like logging it or appending it somewhere
+        console.log("email:", email, "password:", email, "type:", type);
+
+        // Optionally, display the result somewhere on the page
+        //document.getElementById('result').innerText = 'Form submitted with Username: ' + username + ' and Email: ' + email;
+
+        // If needed, send the data to a server via AJAX
+        // sendData(username, email);
+    });
+  }
+});
+  
 <?php } elseif (isset($_GET['categories'])) { ?>
  document.addEventListener('DOMContentLoaded', function () {
     var forms = document.getElementsByClassName('category_edit'); // city_edit

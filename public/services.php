@@ -95,6 +95,7 @@ h1 {
     color: black;
 }
 
+
 </style>
 </head>
 
@@ -129,12 +130,14 @@ foreach($categories as $key => $category) { ?>
   </button>
   <div class="gallery">
 <?php
-$stm = $pdo->prepare("SELECT `profession`, `photo1`, `slug` FROM `posts` WHERE `category` = '" . $category . "';");
-$stm->execute();
+$stm = $pdo->prepare("SELECT `subcategory`, `photo1`, `slug` FROM `posts` WHERE `category` = :category;");
+$stm->execute(array(
+':category' => $category
+));
 
 while ($row = $stm->fetch(PDO::FETCH_ASSOC)) { ?>
 
-<a href="SingleService.php?page=<?= $row['slug'] ?>"><img src="img/profession/<?= $row['photo1'] ?>" alt="<?= $row['profession'] ?>"></a>
+<a href="SingleService.php?page=<?= $row['slug'] ?>"><img src="img/profession/<?= $row['photo1'] ?>" alt="<?= $row['subcategory'] ?>"></a>
 
 <?php } ?>
 

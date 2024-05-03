@@ -4,7 +4,9 @@
 
 switch ($_SERVER['REQUEST_METHOD']) {
   case 'POST':
-    //dd($_POST);
+    // dd($_POST);
+
+    if (!empty($_SESSION)) {
 
     if (isset($_POST['user']) && $_POST['user'] == 'delete') {
       $stmt = $pdo->prepare("DELETE FROM `users` WHERE `users`.`id` = :user_id;");
@@ -70,25 +72,25 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $_POST['type']
       ));
     } elseif (isset($_POST['partner']) && $_POST['partner'] == 'delete') {
-      $stmt = $pdo->prepare("DELETE FROM `professionals` WHERE `professionals`.`id` = :profession_id;");
+      $stmt = $pdo->prepare("DELETE FROM `partners` WHERE `partners`.`id` = :partner_id;");
       $stmt->execute(array(
-        ":profession_id" => $_POST['partner_id']
+        ":partner_id" => $_POST['partner_id']
       ));
     } elseif (isset($_POST['partner']) && $_POST['partner'] == 'edit') {
 
 
-      $stmt = $pdo->prepare($sql = "UPDATE `professionals` SET `profession` = :profession, `profession_name` = :profession_name, `type` = :type, `about` = :about, `city` = :city, `name` = :name, `phone` = :phone, `address` = :address, `user_id` = :user_id WHERE `professionals`.`id` = :profession_id;");
+      $stmt = $pdo->prepare($sql = "UPDATE `partners` SET `category` = :category, `subcategory` = :subcategory, `type` = :type, `about` = :about, `city` = :city, `name` = :name, `phone` = :phone, `address` = :address, `user_id` = :user_id WHERE `partners`.`id` = :partner_id;");
 
       if (basename(APP_SELF) == 'dashboard.php') {
 
       //dd($_POST);
       $stmt->execute(array(
-        ':profession_id' => $_POST['partner_id'],
-        ':profession' => $_POST['profession'],
-        ':profession_name' => $_POST['profession_name'],
+        ':partner_id' => $_POST['partner_id'],
+        ':category' => $_POST['category'],
+        ':subcategory' => $_POST['subcategory'],
         ':type' => (isset($_POST['type']) ? $_POST['type'] : ''),
         ':about' => $_POST['about'],
-        ':city' => $_POST['city'],
+        ':city' => $_POST['city_id'],
         ':name' => (isset($_POST['name']) ? $_POST['name'] : ''),
         ':phone' => (isset($_POST['phone']) ? $_POST['phone'] : ''),
         ':address' => (isset($_POST['address']) ? $_POST['address'] : ''),
@@ -96,9 +98,9 @@ switch ($_SERVER['REQUEST_METHOD']) {
       ));
       } else {
         $stmt->execute(array(
-            ':profession_id' => $_POST['partner_id'],
-            ':profession' => $_POST['profession'],
-            ':profession_name' => $_POST['profession_name'],
+            ':partner_id' => $_POST['partner_id'],
+            ':category' => $_POST['category'],
+            ':subcategory' => $_POST['subcategory'],
             ':type' => (isset($_POST['type']) ? $_POST['type'] : ''),
             ':about' => $_POST['about'],
             ':city' => $_POST['city'],
@@ -109,42 +111,66 @@ switch ($_SERVER['REQUEST_METHOD']) {
           ));
       }
     } elseif (isset($_POST['partner']) && $_POST['partner'] == 'add') {
-      // id, profession, profession_name, type, about, photo, state, city, name, phone, email, address, slug, user_id, created_at, updated_at
+      // id, category, subcategory, type, about, photo, state, city, name, phone, email, address, slug, user_id, created_at, updated_at
       //dd(basename(APP_SELF));
       if (basename(APP_SELF) == 'dashboard.php') {
 
-        $stmt = $pdo->prepare("INSERT INTO professionals (`profession`, `profession_name`, `type`, `about`, `city`,  `name`, `phone`, `user_id`, `created_at`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO `partners` (`category`, `subcategory`, " /*`type`,*/ . " `about`, `city`, " /*`name`, `phone`,*/ . " `address`, `user_id`, `created_at`) VALUES ( ?, ?, ?, ?, ?, ?, ?);");
+
+
+         /*array (
+  'partner' => 'add',
+  'partner_id' => '',
+  'category' => 'Personal & More',
+  'subcategory' => 'Microwave Repair',
+  'city_id' => '2',
+  'address' => 'ghdfghfgh',
+  'about' => 'dgfhdgfh',
+)*/
 
         $stmt->execute(array(
-          $_POST['profession'],
-          $_POST['profession_name'],
-          $_POST['type'],
+          $_POST['category'],
+          $_POST['subcategory'],
+          //$_POST['type'],
           $_POST['about'],
-          $_POST['city'],
-          $_POST['name'],
-          $_POST['phone'],
-          $_POST['user_id'],
+          $_POST['city_id'],
+          $_POST['address'],
+          //$_POST['name'],
+          //$_POST['phone'],
+          $_SESSION['user_id'],
           date('Y-m-d H:i:s')
         ));
 
       } else {
 
-        $stmt = $pdo->prepare("INSERT INTO professionals (`profession`, `profession_name`, " /*`type`,*/ . " `about`, `city`, `name`, `phone`, `address`, `user_id`,  `created_at`) VALUES ( ?, ?, " . /*?,*/ " ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO `partners` (`category`, `subcategory`, " /*`type`,*/ . " `about`, `city`, `name`, `phone`, `address`, `user_id`,  `created_at`) VALUES ( ?, ?, " . /*?,*/ " ?, ?, ?, ?, ?, ?, ?)");
 
         $stmt->execute(array(
-          $_POST['profession'],
-          $_POST['profession_name'],
+          $_POST['category'],
+          $_POST['subcategory'],
           //$_POST['type'],
           $_POST['about'],
-          $_POST['city'],
+          $_POST['city_id'],
           $_SESSION['name'], //$_POST['name'],
-          '0005551212', //$_POST['phone']
+          NULL, //$_POST['phone']
           $_POST['address'],
           $_SESSION['user_id'],
           date('Y-m-d H:i:s')
         ));
       }
 
+    } elseif (isset($_POST['enquiry']) && $_POST['enquiry'] == 'add') {
+
+      // 'name' => 'admin', 'email' => 'admin@localhost', 'phone' => '1115551212', 'address' => '123 Fake Street', 'city' => 1, 'description' => 'dfghdfghgfdh',
+      //dd($_POST);
+      // 	id 	name 	email 	address 	phone 	subcategory_id 	description 	created_at 	updated_at 	
+
+      dd($_POST);
+
+      $stmt = $pdo->prepare("INSERT INTO `enquires` (`city`) VALUES (?)");
+      $stmt->execute(array(
+        $_POST['name'],
+      ));
     } elseif (isset($_POST['city']) && $_POST['city'] == 'delete') {
       $stmt = $pdo->prepare("DELETE FROM `cities` WHERE `cities`.`id` = :city_id;");
       $stmt->execute(array(
@@ -156,12 +182,12 @@ switch ($_SERVER['REQUEST_METHOD']) {
       //dd($sql);
       $stmt->execute(array(
         ":city_id" => $_POST['city_id'],
-        ':city' => $_POST['name']
+        ':city' => $_POST['city_name']
       ));
     } elseif (isset($_POST['city']) && $_POST['city'] == 'add') {
       $stmt = $pdo->prepare("INSERT INTO `cities` (`city`) VALUES (?)");
       $stmt->execute(array(
-        $_POST['name'],
+        $_POST['city_name'],
       ));
     } elseif (isset($_POST['category']) && $_POST['category'] == 'delete') {
       $stmt = $pdo->prepare("DELETE FROM `categories` WHERE `categories`.`id` = :category_id;");
@@ -204,7 +230,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
     } elseif (!empty($rawData = file_get_contents("php://input"))) {
       $decodedData = json_decode($rawData, true);
       
-    dd('{"test":"123"}');
+      //dd('{"test":"123"}');
       if (isset($decodedData['user_id'] )) {
         $stmt = $pdo->prepare("SELECT `id`, `name`, `email`, `password`, `type` FROM `users` WHERE `id` = :user_id;");
         $stmt->execute(array(
@@ -229,13 +255,13 @@ switch ($_SERVER['REQUEST_METHOD']) {
       } else if(isset($decodedData['partner_id'])) {
         //die(json_decode($decodedData, true));
 
-        $stmt = $pdo->prepare("SELECT `id`, `profession`, `profession_name`, `type`, `about`, `city`, `name`, `phone`, `address`, `user_id`,  `created_at` FROM `professionals` WHERE `id` = :partner_id;");
+        $stmt = $pdo->prepare("SELECT `id`, `category`, `subcategory`, `type`, `about`, `city`, `name`, `phone`, `address`, `user_id`,  `created_at` FROM `partners` WHERE `id` = :partner_id;");
         $stmt->execute(array(
             ":partner_id" => $decodedData['partner_id']
         ));
         //die('{"test":"test"}');
         $row_fetch = $stmt->fetch();
-        die(json_encode(['partner_id' => $decodedData['partner_id'], 'profession' => $row_fetch['profession'], 'profession_name' => $row_fetch['profession_name'], 'type' => $row_fetch['type'], 'about' => $row_fetch['about'], 'city' => $row_fetch['city'], 'name' => $row_fetch['name'], 'phone' => $row_fetch['phone'], 'address' => $row_fetch['address'], 'user_id' => $row_fetch['user_id'], 'created_at' => $row_fetch['created_at']]));
+        die(json_encode(['partner_id' => $decodedData['partner_id'], 'category' => $row_fetch['category'], 'subcategory' => $row_fetch['subcategory'], 'type' => $row_fetch['type'], 'about' => $row_fetch['about'], 'city' => $row_fetch['city'], 'name' => $row_fetch['name'], 'phone' => $row_fetch['phone'], 'address' => $row_fetch['address'], 'user_id' => $row_fetch['user_id'], 'created_at' => $row_fetch['created_at']]));
       } else if(isset($decodedData['category_id'])) {
         //die(json_decode($decodedData, true));
         //die('{"test":"test"}');
@@ -259,6 +285,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
       }
      
     }
+  }
     break;
 
 }

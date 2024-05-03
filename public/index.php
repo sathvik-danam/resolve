@@ -1,8 +1,5 @@
 <?php include('../config/config.php');
-//die(var_dump($_SESSION));
 
-//$_SESSION['user_id'] = 1;
-require_once('post.include.php');
 ?>
 <!doctype html>
 <html>
@@ -12,7 +9,7 @@ require_once('post.include.php');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <base href="/resolve/">
+    <base href="<?= APP_URL_BASE ?>">
 
     <link rel="stylesheet" href="css/styles.css">
 
@@ -247,49 +244,48 @@ button:hover {
   background-color: #09b1c5; /* Button hover state color */
 }
 
-
 .modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
- 
-.modal-title {
-    margin-bottom: 0;
-    line-height: 1.5;
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
   }
-
-/* Modal Content/Box */
-.modal-content {
-  background-color: #fefefe;
-  margin: 5% auto; /* 15% from the top and centered */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 600px; /* Could be more or less, depending on screen size */
-}
-
-/* The Close Button */
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
+  
+   
+  .modal-title {
+      margin-bottom: 0;
+      line-height: 1.5;
+    }
+  
+  /* Modal Content/Box */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 600px; /* Could be more or less, depending on screen size */
+  }
+  
+  /* The Close Button */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
 
     </style>
 </head>
@@ -301,12 +297,12 @@ button:hover {
 <?php if (!isset($_SESSION['user_id'])) { ?>
 
 
-  <div id="login-pop-up" class="modal" bis_skin_checked="1" style="display: none;">
+  <div id="login-pop-up" class="modal" bis_skin_checked="1" style="display: <?= (isset($_GET['login']) ? 'block' : 'none' ) ?>;">
   <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
     <div class="relative modal-content" style="height: 550px;" bis_skin_checked="1">
     
     <span class="text-md font-semibold text-lg" style="float: right;">[<a href="javascript:void(0)" onclick="document.getElementById('login-pop-up').style.display = 'none';">x</a>]</span>
-    <a href="javascript:void(0)"><img src="https://readymadeui.com/readymadeui.svg" alt="logo" class='w-40 mb-10' /></a>
+    <a href="javascript:void(0)"><img src="img/logo2.png" alt="logo" class='w-40 mb-10' /></a>
     
     <div id="register_view" style="position: absolute; left: 15%; background-color: white; width: 400px; margin: 0 auto; height: 350px; display: none;">
       <form action="login.php" method="POST">
@@ -411,63 +407,6 @@ if (isset($_GET['page']) && !empty($_GET['page'])) { ?>
 
 <?php } elseif (isset($_GET['become-professional'])) { ?>
 
-<div id="myModal" class="modal" style="display: none; border: 1px solid #000;">
-  <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
-    <div class="modal-content" bis_skin_checked="1">
-      <div class="modal-header" bis_skin_checked="1">
-        <button id="myBtn" type="button" data-dismiss="modal" aria-label="Close" class="close" style="float: right;"><span aria-hidden="true">×</span></button>
-        <span id="addNewLabel" class="modal-title" style="">Add Partner</span>
-        <h5 id="addNewLabel" class="modal-title" style="display: none;">Update User's info</h5>
-      </div>
-      <form action method="POST">
-        <input type="hidden" name="partner" value="add" />
-        <input type="hidden" name="partner_id" />
-        <div class="modal-body" bis_skin_checked="1">
-
-        <label>Primary Profession</label>
-        <div class="form-group" bis_skin_checked="1">
-          <select id="profession" name="profession" class="form-control">
-<?php
-$stmt = $pdo->prepare("SELECT `name` FROM `categories`;");
-  $stmt->execute(array());
-  
-while ($row_fetch = $stmt->fetch()) { ?>
-            <option value="<?= $row_fetch['name'] ?>"><?= $row_fetch['name'] ?></option>
-     
-<?php } ?>
-          </select><!----></div> 
-        <label>Profession Sub-Types</label>
-        <div class="form-group" bis_skin_checked="1">
-        <select id="profession_name" name="profession_name" class="form-control">
-<?php
-$stmt = $pdo->prepare("SELECT `name` FROM `subcategories`;");
-  $stmt->execute(array());
-  
-while ($row_fetch = $stmt->fetch()) { ?>
-            <option value="<?= $row_fetch['name'] ?>"><?= $row_fetch['name'] ?></option>
-     
-<?php } ?>
-          </select>
-        
-        <!----></div> 
-        <label>City</label>
-        <div class="form-group" bis_skin_checked="1"><input type="text" id="city" name="city" placeholder="Enter City" class="form-control"> <!----></div> 
-        <label>Address</label>
-        <div class="form-group" bis_skin_checked="1"><textarea id="address" name="address" placeholder="Enter Address" class="form-control"></textarea> <!----></div> 
-        <label>About Your Profession</label>
-
-        <div class="form-group" bis_skin_checked="1"><textarea id="about" name="about" placeholder="Enter About" class="form-control"></textarea> <!----></div> 
-
-  
-          <div class="modal-footer" bis_skin_checked="1">
-            <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
-            <button type="submit" class="btn btn-primary" style="float: right;">Save changes</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
 
 <?php if (!isset($_SESSION['user_id']) || !is_int( $_SESSION['user_id'] ) ) { ?>
 <div style="margin: 100px auto;">
@@ -476,98 +415,6 @@ while ($row_fetch = $stmt->fetch()) { ?>
 </div>
 
 <?php } else { ?>
-<div style="position: relative; height: 500px; margin-bottom: 50px;">
-  <div style="position: absolute; top: 40px; display: inline; margin: 25px auto; width: 100%; overflow-x:scroll;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
-<div class="box-tools" bis_skin_checked="1">
-    <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add Partner<i class="fas fa-user-plus fa-fw"></i></button>
-</div>
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-                <th scope="col" class="px-6 py-3">
-                    Profession Name
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Profession
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Type
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    City
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Address
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    About
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Profile
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Registered At
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Modify
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-          
-<?php 
-
-$stmt = $pdo->query("SELECT `id`, `profession`, `profession_name`, `type`, `about`, `photo`, `city`, `address`, `name`, `phone`, `created_at` FROM `professionals` WHERE `user_id` = " . $_SESSION['user_id'] . ";");
-
-while ($row = $stmt->fetch()) { ?>
-
-    <tr class="odd:bg-black odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <td class="px-6 py-4">
-                  <?= $row['profession_name'] ?>
-                </td>
-                <td class="px-6 py-4">
-                  <?= $row['profession'] ?>
-                </td>
-                <td class="px-6 py-4">
-                  <?= $row['type'] ?>
-                </td>
-                <td class="px-6 py-4">
-                  <?= $row['city'] ?>
-                </td>
-                <td class="px-6 py-4">
-                  <?= $row['address'] ?>
-                </td>
-                <td class="px-6 py-4">
-                 <?= $row['about'] ?>
-                </td>
-                <td class="px-6 py-4">
-                  <?= $row['photo'] ?>
-                </td>
-                <td class="px-6 py-4">
-                  <?= $row['created_at'] ?>
-                </td>
-                <td class="px-6 py-4">
-                    <!-- a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a -->
-
-                    <form class="partner_edit" style="display: inline;">
-                      <input type="hidden" name="partner" value="edit" />
-                      <input type="hidden" name="partner_id" value="<?= $row['id'] ?>">
-                      <button type="submit">Edit</button>
-                    </form>
-                    / 
-                    <form action method="POST" style="display: inline;">
-                      <input type="hidden" name="partner" value="delete" />
-                      <input type="hidden" name="partner_id" value="<?= $row['id'] ?>">
-                      <button type="submit">Delete</button>
-                    </form>
-                </td>
-            </tr>
-
-<?php } ?>
-        </tbody>
-    </table>
-</div>
-</div>
 <?php } 
 } else { ?>
 
@@ -794,19 +641,19 @@ console.log('testing 123');
                   document.getElementsByName('partner')[0].value = 'edit';
                   document.getElementsByName('partner_id')[0].value = data['partner_id'];
 
-                  var selectElement = document.getElementById('profession_name');
-                  if (selectElement.querySelector(`option[value="${data['profession_name']}"]`)) {
-                      selectElement.value = data['profession_name'];
+                  var selectElement = document.getElementById('category');
+                  if (selectElement.querySelector(`option[value="${data['category']}"]`)) {
+                      selectElement.value = data['category'];
+                  } else {
+                      console.error('The specified value does not exist in the options');
+                  }
+                   selectElement = document.getElementById('subcategory');
+                  if (selectElement.querySelector(`option[value="${data['subcategory']}"]`)) {
+                      selectElement.value = data['subcategory'];
                   } else {
                       console.error('The specified value does not exist in the options');
                   }
                   
-                  selectElement = document.getElementById('profession');
-                  if (selectElement.querySelector(`option[value="${data['profession']}"]`)) {
-                      selectElement.value = data['profession'];
-                  } else {
-                      console.error('The specified value does not exist in the options');
-                  }
                   
                   
 /*
@@ -815,10 +662,10 @@ console.log('testing 123');
                       selectElement.value = data['category'];
                   } else {
                       console.error('The specified value does not exist in the options');
-                  } // $_POST['profession'],
+                  } // $_POST['category'],
 */
 
-                  //document.getElementsByName('profession')[0].value = data['profession']; // $_POST['name'],
+                  //document.getElementsByName('category')[0].value = data['category']; // $_POST['name'],
                   //document.getElementsByName('name')[0].value = data['name']; // $_POST['name'],
                   //document.getElementsByName('phone')[0].value = data['phone'];  // $_POST['phone'],
                   //document.getElementsByName('user_id')[0].value = data['user_id'];  // $_POST['user_id'].

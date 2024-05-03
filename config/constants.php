@@ -5,6 +5,8 @@ define('APP_START', microtime(true));
 (defined('APP_START') && !is_float(APP_START)) and $errors['APP_START'] = APP_START;
 
 
+(!defined('APP_ENV') ) or define('APP_ENV', 'production');
+
 define('APP_DOMAIN', $_SERVER['HTTP_HOST'] ?? isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'localhost');
 (!is_string(APP_DOMAIN)) and $errors['APP_DOMAIN'] = 'APP_DOMAIN is not valid. (' . APP_DOMAIN . ')' . "\n";
 
