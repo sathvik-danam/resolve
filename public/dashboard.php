@@ -403,7 +403,7 @@ while ($row_fetch_city = $stmt->fetch()) { ?>
             <input type="text" id="name" name="name" placeholder="Enter Name" class="form-control"> <!----></div> 
             <label>Belongs To Primary Profession</label>
             <div class="form-group" bis_skin_checked="1">
-              <select name="belongs_to">
+              <select name="category">
 <?php
 $stmt = $pdo->prepare("SELECT `name` FROM `categories`;");
   $stmt->execute(array());
@@ -1315,7 +1315,7 @@ while ($row = $stmt->fetch()) { ?>
         <tbody>
 <?php 
 
-$stmt = $pdo->query("SELECT `id`, `name`, `belongs_to` FROM `subcategories`;");
+$stmt = $pdo->query("SELECT `id`, `category_id`, `name` FROM `subcategories`;");
 
 while ($row = $stmt->fetch()) { ?>
 
@@ -1324,10 +1324,10 @@ while ($row = $stmt->fetch()) { ?>
                     <?= $row['id'] ?>
                 </th>
                 <td class="px-6 py-4">
-                 <?= $row['name'] ?>
+                 <?= $row['category_id'] ?>
                 </td>
                 <td class="px-6 py-4">
-                 <?= $row['belongs_to'] ?>
+                 <?= $row['name'] ?>
                 </td>
                 <td class="px-6 py-4">
                     <form class="subcategory_edit" style="display: inline;">

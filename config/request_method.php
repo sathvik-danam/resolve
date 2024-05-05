@@ -281,19 +281,19 @@ switch ($_SERVER['REQUEST_METHOD']) {
         ":subcategory_id" => $_POST['subcategory_id']
       ));
     } elseif (isset($_POST['subcategory']) && $_POST['subcategory'] == 'edit') {
-      $stmt = $pdo->prepare($sql = "UPDATE `subcategories` SET `name` = :name, `belongs_to` = :belongs_to WHERE `subcategories`.`id` = :subcategory_id;");
+      $stmt = $pdo->prepare($sql = "UPDATE `subcategories` SET  `category_id` = :category_id, `name` = :name WHERE `subcategories`.`id` = :subcategory_id;");
 
       //dd($sql);
       $stmt->execute(array(
         ":subcategory_id" => $_POST['subcategory_id'],
         ':name' => $_POST['name'],
-        ':belongs_to' => $_POST['belongs_to']
+        ':category_id' => $_POST['category']
       ));
     } elseif (isset($_POST['subcategory']) && $_POST['subcategory'] == 'add') {
-      $stmt = $pdo->prepare("INSERT INTO `subcategories` (`name`, `belongs_to`) VALUES (?, ?)");
+      $stmt = $pdo->prepare("INSERT INTO `subcategories` (`category_id`, `name`) VALUES (?, ?)");
       $stmt->execute(array(
-        $_POST['name'],
-        $_POST['belongs_to']
+        $_POST['category'],
+        $_POST['name']
       ));
     } elseif (!empty($rawData = file_get_contents("php://input"))) {
       $decodedData = json_decode($rawData, true);
@@ -343,13 +343,13 @@ switch ($_SERVER['REQUEST_METHOD']) {
       } else if(isset($decodedData['subcategory_id'])) {
         //die(json_decode($decodedData, true));
         //die('{"test":"test"}');
-        $stmt = $pdo->prepare("SELECT `name`, `belongs_to` FROM `subcategories` WHERE `id` = :subcategory_id;");
+        $stmt = $pdo->prepare("SELECT  `category_id`, `name` FROM `subcategories` WHERE `id` = :subcategory_id;");
         $stmt->execute(array(
             ":subcategory_id" => $decodedData['subcategory_id']
         ));
         //die('{"test":"test"}');
         $row_fetch = $stmt->fetch();
-        die(json_encode(['subcategory_id' => $decodedData['subcategory_id'], 'name' =>  $row_fetch['name'], 'belongs_to' => $row_fetch['belongs_to']]));
+        die(json_encode(['subcategory_id' => $decodedData['subcategory_id'], 'category_id' => $row_fetch['category_id'], 'name' =>  $row_fetch['name'], ]));
       }
      
     }

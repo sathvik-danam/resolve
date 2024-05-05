@@ -18,7 +18,7 @@ UPDATE `enquiries` SET `approval_status` = '{\n \"1\": {\n \"user_id\": 1,\n \"s
 
 -----
 
-ALTER TABLE `partners` ADD  CONSTRAINT `fk_category_id` FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE `partners` ADD  CONSTRAINT `fk_partners_categories_category_id` FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 
 ALTER TABLE `partners` ADD  CONSTRAINT `fk_partners_subcategories_subcategory_id` FOREIGN KEY (`subcategory_id`) REFERENCES `subcategories`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
@@ -29,13 +29,18 @@ ALTER TABLE `partners` ADD  CONSTRAINT `fk_partners_users_user_id` FOREIGN KEY (
 
 
 
+ALTER TABLE `enquiries` ADD  CONSTRAINT `fk_enquiries_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
 ALTER TABLE `enquiries` ADD  CONSTRAINT `fk_enquiries_subcategories_subcategory_id` FOREIGN KEY (`subcategory_id`) REFERENCES `subcategories`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 
 ALTER TABLE `enquiries` ADD  CONSTRAINT `fk_enquiries_cities_city_id` FOREIGN KEY (`city_id`) REFERENCES `cities`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 
-ALTER TABLE `enquiries` ADD  CONSTRAINT `fk_enquiries_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+
+
+ALTER TABLE `subcategories` ADD  CONSTRAINT `fk_subcategories_categories_category_id` FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 
 ALTER TABLE `users` ADD  CONSTRAINT `fk_users_cities_city_id` FOREIGN KEY (`city_id`) REFERENCES `city`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;

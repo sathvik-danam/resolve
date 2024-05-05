@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 05, 2024 at 07:03 AM
+-- Generation Time: May 05, 2024 at 08:04 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -218,8 +218,8 @@ INSERT INTO `posts` (`id`, `category`, `subcategory`, `about`, `city`, `photo1`,
 
 CREATE TABLE `subcategories` (
   `id` int(10) UNSIGNED NOT NULL,
+  `category_id` int(10) UNSIGNED NOT NULL,
   `name` varchar(191) NOT NULL,
-  `belongs_to` varchar(191) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -228,59 +228,59 @@ CREATE TABLE `subcategories` (
 -- Dumping data for table `subcategories`
 --
 
-INSERT INTO `subcategories` (`id`, `name`, `belongs_to`, `created_at`, `updated_at`) VALUES
-(1, 'AC Service & Repair', 'Home Cleaning & Repairs', '2019-02-18 09:40:50', '2019-03-28 14:07:37'),
-(2, 'Refrigerator Repair', 'Home Cleaning & Repairs', '2019-02-18 09:41:05', '2019-03-28 14:07:26'),
-(3, 'Washing Machine Repair', 'Home Cleaning & Repairs', '2019-02-18 09:41:25', '2019-03-28 14:07:16'),
-(4, 'RO & Water Purifier Repair', 'Home Cleaning & Repairs', '2019-02-18 09:42:02', '2019-03-28 14:07:05'),
-(5, 'Microwave Repair', 'Home Cleaning & Repairs', '2019-02-18 09:42:17', '2019-03-28 14:06:55'),
-(6, 'Salon at Home for Women', 'Personal & More', '2019-02-18 09:42:35', '2019-03-28 14:06:45'),
-(7, 'Massage for women', 'Personal & More', '2019-02-18 09:44:37', '2019-03-28 14:06:34'),
-(8, 'Makeup & Hair Styling', 'Personal & More', '2019-02-18 09:44:55', '2019-03-28 14:06:00'),
-(9, 'Mehandi Artists', 'Wedding & Events', '2019-02-18 09:45:27', '2019-03-28 14:05:45'),
-(10, 'Massage for Men', 'Personal & More', '2019-02-18 09:45:50', '2019-03-28 14:05:33'),
-(11, 'Men\'s Haircut & Grooming', 'Personal & More', '2019-02-18 09:46:09', '2019-03-28 14:05:09'),
-(12, 'Electricians', 'Home Cleaning & Repairs', '2019-02-18 09:47:21', '2019-03-28 14:04:54'),
-(13, 'Plumbers', 'Home Cleaning & Repairs', '2019-02-18 09:47:30', '2019-03-28 14:04:45'),
-(14, 'Carpenters', 'Home Cleaning & Repairs', '2019-02-18 09:47:39', '2019-03-28 14:04:36'),
-(15, 'Bathroom Deep Cleaning', 'Home Cleaning & Repairs', '2019-02-18 09:47:49', '2019-03-28 14:04:24'),
-(16, 'Carpet Cleaning', 'Home Cleaning & Repairs', '2019-02-18 09:47:58', '2019-03-28 14:04:14'),
-(17, 'Home Deep Cleaning', 'Home Cleaning & Repairs', '2019-02-18 09:48:09', '2019-03-28 14:04:05'),
-(18, 'Kitchen Deep Cleaning', 'Home Cleaning & Repairs', '2019-02-18 09:48:22', '2019-03-28 14:03:53'),
-(19, 'Car Cleaning', 'Car Services', '2019-02-18 09:48:35', '2019-03-28 14:03:43'),
-(20, 'Pest Cleaning', 'Home Cleaning & Repairs', '2019-02-18 09:48:44', '2019-03-28 14:03:32'),
-(21, 'Web Design & Developer', 'IT Services', '2019-02-18 09:48:59', '2019-03-28 14:03:23'),
-(22, 'CA for Income Tax Filing', 'Business & Taxes', '2019-02-18 09:49:13', '2019-03-28 14:03:09'),
-(23, 'CA for Small Business', 'Business & Taxes', '2019-02-18 09:49:29', '2019-03-28 14:02:57'),
-(24, 'Lawer', 'Business & Taxes', '2019-02-18 09:49:36', '2019-03-28 14:02:47'),
-(25, 'Graphics Designer', 'IT Services', '2019-02-18 09:49:51', '2019-03-28 14:02:37'),
-(26, 'CA / CS for Company Registration', 'Business & Taxes', '2019-02-18 09:50:14', '2019-03-28 14:02:26'),
-(27, 'Visa Agency', 'Business & Taxes', '2019-02-18 09:50:23', '2019-03-28 14:02:06'),
-(28, 'Real Estate Lawyer', 'Business & Taxes', '2019-02-18 09:50:47', '2019-03-28 14:01:50'),
-(29, 'Vastu Shastra Consultants', 'Pandit & Pooja Service', '2019-02-18 09:51:10', '2019-03-28 14:01:41'),
-(30, 'Wedding Photography', 'Wedding & Events', '2019-02-18 09:51:38', '2019-03-28 14:01:22'),
-(31, 'Wedding Choreographer', 'Wedding & Events', '2019-02-18 09:51:55', '2019-03-28 14:00:09'),
-(32, 'Pre-Wedding Shoot', 'Wedding & Events', '2019-02-18 09:52:07', '2019-03-28 13:59:24'),
-(33, 'Party Decoration', 'Wedding & Events', '2019-02-18 09:52:24', '2019-03-28 13:59:11'),
-(34, 'Astrologer', 'Pandit & Pooja Service', '2019-02-18 09:52:34', '2019-03-28 13:58:56'),
-(35, 'DJ', 'Wedding & Events', '2019-02-18 09:52:40', '2019-03-28 13:58:36'),
-(36, 'Bartender', 'Wedding & Events', '2019-02-18 09:52:47', '2019-03-28 13:58:24'),
-(37, 'Baby Portfolio Photographer', 'Personal & More', '2019-02-18 09:53:20', '2019-03-28 13:58:03'),
-(38, 'Home Tutor', 'Education Service', '2019-02-18 09:53:30', '2019-03-28 13:57:43'),
-(39, 'CCTV Camera & Installation', 'Personal & More', '2019-02-18 09:53:47', '2019-03-28 13:57:29'),
-(40, 'Dry Cleaning', 'Home Cleaning & Repairs', '2019-02-18 09:53:58', '2019-03-28 13:57:11'),
-(41, 'Maternity Photographer', 'Personal & More', '2019-02-18 09:54:21', '2019-03-28 14:01:06'),
-(42, 'Packers & Movers', 'Personal & More', '2019-02-18 09:54:29', '2019-03-28 13:56:38'),
-(43, 'Divorce Lawyer', 'Business & Taxes', '2019-02-18 09:54:41', '2019-03-28 13:56:25'),
-(44, 'Car Wash', 'Car Services', '2019-02-18 18:49:54', '2019-03-28 13:56:16'),
-(45, 'Car Rent', 'Car Services', '2019-02-18 18:54:21', '2019-03-28 13:56:09'),
-(46, 'Maid Service', 'Home Cleaning & Repairs', '2019-02-22 18:36:33', '2019-03-28 13:56:00'),
-(47, 'General Home Tutors', 'Education Service', '2019-02-22 18:38:04', '2019-03-28 13:55:36'),
-(48, 'Website Development', 'IT Services', '2019-03-09 02:42:43', '2019-03-28 13:55:24'),
-(50, 'Home Tutors for Specific Subjects', 'Education Service', '2019-03-27 10:10:44', '2019-03-28 13:55:17'),
-(51, 'Professional Subject Tutors (E.g., Java, C++)', 'Education Service', '2019-03-27 10:12:12', '2019-03-28 13:55:08'),
-(52, 'Others', 'Others', '2019-03-27 10:12:22', '2019-03-28 14:00:18'),
-(53, 'Car Selling', 'Car Services', '2019-04-18 05:06:52', '2019-04-18 05:06:52');
+INSERT INTO `subcategories` (`id`, `category_id`, `name`, `created_at`, `updated_at`) VALUES
+(1, 3, 'AC Service & Repair', '2019-02-18 09:40:50', '2019-03-28 14:07:37'),
+(2, 3, 'Refrigerator Repair', '2019-02-18 09:41:05', '2019-03-28 14:07:26'),
+(3, 3, 'Washing Machine Repair', '2019-02-18 09:41:25', '2019-03-28 14:07:16'),
+(4, 3, 'RO & Water Purifier Repair', '2019-02-18 09:42:02', '2019-03-28 14:07:05'),
+(5, 3, 'Microwave Repair', '2019-02-18 09:42:17', '2019-03-28 14:06:55'),
+(6, 5, 'Salon at Home for Women', '2019-02-18 09:42:35', '2019-03-28 14:06:45'),
+(7, 5, 'Massage for women', '2019-02-18 09:44:37', '2019-03-28 14:06:34'),
+(8, 5, 'Makeup & Hair Styling', '2019-02-18 09:44:55', '2019-03-28 14:06:00'),
+(9, 6, 'Mehandi Artists', '2019-02-18 09:45:27', '2019-03-28 14:05:45'),
+(10, 5, 'Massage for Men', '2019-02-18 09:45:50', '2019-03-28 14:05:33'),
+(11, 5, 'Men\'s Haircut & Grooming', '2019-02-18 09:46:09', '2019-03-28 14:05:09'),
+(12, 3, 'Electricians', '2019-02-18 09:47:21', '2019-03-28 14:04:54'),
+(13, 3, 'Plumbers', '2019-02-18 09:47:30', '2019-03-28 14:04:45'),
+(14, 3, 'Carpenters', '2019-02-18 09:47:39', '2019-03-28 14:04:36'),
+(15, 3, 'Bathroom Deep Cleaning', '2019-02-18 09:47:49', '2019-03-28 14:04:24'),
+(16, 3, 'Carpet Cleaning', '2019-02-18 09:47:58', '2019-03-28 14:04:14'),
+(17, 3, 'Home Deep Cleaning', '2019-02-18 09:48:09', '2019-03-28 14:04:05'),
+(18, 3, 'Kitchen Deep Cleaning', '2019-02-18 09:48:22', '2019-03-28 14:03:53'),
+(19, 7, 'Car Cleaning', '2019-02-18 09:48:35', '2019-03-28 14:03:43'),
+(20, 3, 'Pest Cleaning', '2019-02-18 09:48:44', '2019-03-28 14:03:32'),
+(21, 11, 'Web Design & Developer', '2019-02-18 09:48:59', '2019-03-28 14:03:23'),
+(22, 4, 'CA for Income Tax Filing', '2019-02-18 09:49:13', '2019-03-28 14:03:09'),
+(23, 4, 'CA for Small Business', '2019-02-18 09:49:29', '2019-03-28 14:02:57'),
+(24, 4, 'Lawer', '2019-02-18 09:49:36', '2019-03-28 14:02:47'),
+(25, 11, 'Graphics Designer', '2019-02-18 09:49:51', '2019-03-28 14:02:37'),
+(26, 4, 'CA / CS for Company Registration', '2019-02-18 09:50:14', '2019-03-28 14:02:26'),
+(27, 4, 'Visa Agency', '2019-02-18 09:50:23', '2019-03-28 14:02:06'),
+(28, 4, 'Real Estate Lawyer', '2019-02-18 09:50:47', '2019-03-28 14:01:50'),
+(29, 10, 'Vastu Shastra Consultants', '2019-02-18 09:51:10', '2019-03-28 14:01:41'),
+(30, 6, 'Wedding Photography', '2019-02-18 09:51:38', '2019-03-28 14:01:22'),
+(31, 6, 'Wedding Choreographer', '2019-02-18 09:51:55', '2019-03-28 14:00:09'),
+(32, 6, 'Pre-Wedding Shoot', '2019-02-18 09:52:07', '2019-03-28 13:59:24'),
+(33, 6, 'Party Decoration', '2019-02-18 09:52:24', '2019-03-28 13:59:11'),
+(34, 10, 'Astrologer', '2019-02-18 09:52:34', '2019-03-28 13:58:56'),
+(35, 6, 'DJ', '2019-02-18 09:52:40', '2019-03-28 13:58:36'),
+(36, 6, 'Bartender', '2019-02-18 09:52:47', '2019-03-28 13:58:24'),
+(37, 5, 'Baby Portfolio Photographer', '2019-02-18 09:53:20', '2019-03-28 13:58:03'),
+(38, 8, 'Home Tutor', '2019-02-18 09:53:30', '2019-03-28 13:57:43'),
+(39, 5, 'CCTV Camera & Installation', '2019-02-18 09:53:47', '2019-03-28 13:57:29'),
+(40, 3, 'Dry Cleaning', '2019-02-18 09:53:58', '2019-03-28 13:57:11'),
+(41, 5, 'Maternity Photographer', '2019-02-18 09:54:21', '2019-03-28 14:01:06'),
+(42, 5, 'Packers & Movers', '2019-02-18 09:54:29', '2019-03-28 13:56:38'),
+(43, 4, 'Divorce Lawyer', '2019-02-18 09:54:41', '2019-03-28 13:56:25'),
+(44, 7, 'Car Wash', '2019-02-18 18:49:54', '2019-03-28 13:56:16'),
+(45, 7, 'Car Rent', '2019-02-18 18:54:21', '2019-03-28 13:56:09'),
+(46, 3, 'Maid Service', '2019-02-22 18:36:33', '2019-03-28 13:56:00'),
+(47, 8, 'General Home Tutors', '2019-02-22 18:38:04', '2019-03-28 13:55:36'),
+(48, 11, 'Website Development', '2019-03-09 02:42:43', '2019-03-28 13:55:24'),
+(50, 8, 'Home Tutors for Specific Subjects', '2019-03-27 10:10:44', '2019-03-28 13:55:17'),
+(51, 8, 'Professional Subject Tutors (E.g., Java, C++)', '2019-03-27 10:12:12', '2019-03-28 13:55:08'),
+(52, 12, 'Others', '2019-03-27 10:12:22', '2019-03-28 14:00:18'),
+(53, 7, 'Car Selling', '2019-04-18 04:06:52', '2019-04-18 04:06:52');
 
 -- --------------------------------------------------------
 
@@ -329,17 +329,17 @@ ALTER TABLE `cities`
 --
 ALTER TABLE `enquiries`
   ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_enquiries_users_user_id` (`user_id`),
   ADD KEY `fk_enquiries_subcategories_subcategory_id` (`subcategory_id`),
-  ADD KEY `fk_enquiries_cities_city_id` (`city_id`),
-  ADD KEY `fk_enquiries_users_user_id` (`user_id`);
+  ADD KEY `fk_enquiries_cities_city_id` (`city_id`);
 
 --
 -- Indexes for table `partners`
 --
 ALTER TABLE `partners`
   ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_partners_categories_category_id` (`category_id`),
   ADD KEY `fk_partners_subcategories_subcategory_id` (`subcategory_id`),
-  ADD KEY `fk_partners_categories_category_id` (`category_id`) USING BTREE,
   ADD KEY `fk_partners_cities_city_id` (`city_id`),
   ADD KEY `fk_partners_users_user_id` (`user_id`);
 
@@ -354,7 +354,8 @@ ALTER TABLE `posts`
 -- Indexes for table `subcategories`
 --
 ALTER TABLE `subcategories`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_subcategories_categories_category_id` (`category_id`);
 
 --
 -- Indexes for table `users`
@@ -401,7 +402,7 @@ ALTER TABLE `posts`
 -- AUTO_INCREMENT for table `subcategories`
 --
 ALTER TABLE `subcategories`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -425,10 +426,16 @@ ALTER TABLE `enquiries`
 -- Constraints for table `partners`
 --
 ALTER TABLE `partners`
-  ADD CONSTRAINT `fk_category_id` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_partners_categories_category_id` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_partners_cities_city_id` FOREIGN KEY (`city_id`) REFERENCES `cities` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_partners_subcategories_subcategory_id` FOREIGN KEY (`subcategory_id`) REFERENCES `subcategories` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_partners_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+--
+-- Constraints for table `subcategories`
+--
+ALTER TABLE `subcategories`
+  ADD CONSTRAINT `fk_subcategories_categories_category_id` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 --
 -- Constraints for table `users`
