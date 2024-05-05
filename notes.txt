@@ -1,0 +1,115 @@
+UPDATE `enquiries` SET `approval_status` = '{ \"1\": { \"user_id\": 1, \"status\": 1 }, \"2\": { \"user_id\": 2, \"status\": 0 }, \"3\": { \"user_id\": 3, \"status\": 1 } }' WHERE `enquiries`.`id` = 1; 
+
+json_encode('{
+    "1": {
+        "user_id": 1,
+        "status": 1
+    },
+    "2": {
+        "user_id": 2,
+        "status": 0
+    },
+    "3": {
+        "user_id": 3,
+        "status": 1
+    } }')l
+
+UPDATE `enquiries` SET `approval_status` = '{\n \"1\": {\n \"user_id\": 1,\n \"status\": 1\n },\n \"2\": {\n \"user_id\": 2,\n \"status\": 0\n },\n \"3\": {\n \"user_id\": 3,\n \"status\": 1\n } }' WHERE `enquiries`.`id` = 1; 
+
+-----
+
+ALTER TABLE `partners` ADD  CONSTRAINT `fk_category_id` FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+
+ALTER TABLE `partners` ADD  CONSTRAINT `fk_partners_subcategories_subcategory_id` FOREIGN KEY (`subcategory_id`) REFERENCES `subcategories`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+ALTER TABLE `partners` ADD  CONSTRAINT `fk_partners_cities_city_id` FOREIGN KEY (`city_id`) REFERENCES `cities`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+ALTER TABLE `partners` ADD  CONSTRAINT `fk_partners_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+
+
+ALTER TABLE `enquiries` ADD  CONSTRAINT `fk_enquiries_subcategories_subcategory_id` FOREIGN KEY (`subcategory_id`) REFERENCES `subcategories`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+
+ALTER TABLE `enquiries` ADD  CONSTRAINT `fk_enquiries_cities_city_id` FOREIGN KEY (`city_id`) REFERENCES `cities`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+
+ALTER TABLE `enquiries` ADD  CONSTRAINT `fk_enquiries_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+
+ALTER TABLE `users` ADD  CONSTRAINT `fk_users_cities_city_id` FOREIGN KEY (`city_id`) REFERENCES `city`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+
+
+
+-----
+
+
+
+1 	Appliance Repair
+2 	Beauty & Spa
+3 	Home Cleaning & Repair
+4 	Business & Taxes
+5 	Personal & More
+6 	Wedding & Events
+7 	Car Services
+8 	Education Service
+9 	Maid Service
+10 	Pandit & Pooja Service
+11 	IT Services
+12 	Others
+
+
+1 	AC Service & Repair 	Home Cleaning & Repairs
+2 	Refrigerator Repair 	Home Cleaning & Repairs
+3 	Washing Machine Repair 	Home Cleaning & Repairs
+4 	RO & Water Purifier Repair 	Home Cleaning & Repairs
+5 	Microwave Repair 	Home Cleaning & Repairs
+6 	Salon at Home for Women 	Personal & More
+7 	Massage for women 	Personal & More 	
+8 	Makeup & Hair Styling 	Personal & More 	
+9 	Mehandi Artists 	Wedding & Events 	
+10 	Massage for Men 	Personal & More 	
+11 	Men's Haircut & Grooming 	Personal & More 
+12 	Electricians 	Home Cleaning & Repairs 	
+13 	Plumbers 	Home Cleaning & Repairs 	
+14 	Carpenters 	Home Cleaning & Repairs 	
+15 	Bathroom Deep Cleaning 	Home Cleaning & Repairs 
+16 	Carpet Cleaning 	Home Cleaning & Repairs 
+17 	Home Deep Cleaning 	Home Cleaning & Repairs
+18 	Kitchen Deep Cleaning 	Home Cleaning & Repairs 
+19 	Car Cleaning 	Car Services 
+20 	Pest Cleaning 	Home Cleaning & Repairs 
+21 	Web Design & Developer 	IT Services
+22 	CA for Income Tax Filing 	Business & Taxes
+23 	CA for Small Business 	Business & Taxes 
+24 	Lawer 	Business & Taxes
+25 	Graphics Designer 	IT Services
+26 	CA / CS for Company Registration 	Business & Taxes
+27 	Visa Agency 	Business & Taxes 
+28 	Real Estate Lawyer 	Business & Taxes 	
+29 	Vastu Shastra Consultants 	Pandit & Pooja Service
+30 	Wedding Photography 	Wedding & Events 	
+31 	Wedding Choreographer 	Wedding & Events 	
+32 	Pre-Wedding Shoot 	Wedding & Events 	
+33 	Party Decoration 	Wedding & Events 	
+34 	Astrologer 	Pandit & Pooja Service 	
+35 	DJ 	Wedding & Events 	
+36 	Bartender 	Wedding & Events 	
+37 	Baby Portfolio Photographer 	Personal & More 
+38 	Home Tutor 	Education Service 	
+39 	CCTV Camera & Installation 	Personal & More 
+40 	Dry Cleaning 	Home Cleaning & Repairs 
+41 	Maternity Photographer 	Personal & More 
+42 	Packers & Movers 	Personal & More 
+43 	Divorce Lawyer 	Business & Taxes 
+44 	Car Wash 	Car Services 	
+45 	Car Rent 	Car Services 	
+46 	Maid Service 	Home Cleaning & Repairs 	
+47 	General Home Tutors 	Education Service 	
+48 	Website Development 	IT Services 	
+50 	Home Tutors for Specific Subjects 	Education Service
+51 	Professional Subject Tutors (E.g., Java, C++) 	Education Service
+52 	Others 	Others 	
+53 	Car Selling 	Car Services

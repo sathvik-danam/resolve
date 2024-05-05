@@ -33,18 +33,35 @@ endif;
   if (isset($_GET['logout']) && session_status() != PHP_SESSION_NONE) :
     $_SESSION = [];
     session_destroy();
+    exit(header('Location: ' . APP_URL_BASE));
   endif;
   
   
   
   if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
   
-    $stmt = $pdo->prepare("SELECT `id`, `name`, `email`, `type` FROM `users` WHERE `id` = :user_id;");
+    $stmt = $pdo->prepare("SELECT `id`, `name`, `email`, `address`, `phone`, `type` FROM `users` WHERE `id` = :user_id;");
     $stmt->execute(array(
       ":user_id" => $_SESSION['user_id']
     ));
     $row_fetch = $stmt->fetch();
-    $_SESSION = ['user_id' => (int) $row_fetch['id'], 'name' => $row_fetch['name'], 'email' => $row_fetch['email'], 'type' => (string) $row_fetch['type']];
+    $_SESSION = ['user_id' => (int) $row_fetch['id'], 'name' => $row_fetch['name'], 'email' => $row_fetch['email'], 'address' => $row_fetch['address'], 'phone' => $row_fetch['phone'], 'type' => (string) $row_fetch['type'], 'professions' => []];
+
+      
+    $stmt = $pdo->prepare("SELECT `subcategory_id` FROM `partners` WHERE `user_id` = :user_id;");
+    $stmt->execute(array(
+      ":user_id" => $_SESSION['user_id']
+    ));
+
+    while($row_fetch = $stmt->fetch()) {
+      if (!in_array($row_fetch['subcategory_id'], $_SESSION['professions'])) {
+        $_SESSION['professions'][] = $row_fetch['subcategory_id'];
+      }
+
+    }
+// dd($_SESSION['professions']);
+
+//dd($_SESSION);
   } else {
     /*
   //die(var_dump($_SESSION));
@@ -62,5 +79,3 @@ endif;
   
   
   // die(var_dump($_SESSION));
-  ?>
-  

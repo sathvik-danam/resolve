@@ -1,5 +1,9 @@
 <?php include('../config/config.php');
 
+header('Cache-Control: no-cache, no-store, must-revalidate'); 
+header('Pragma: no-cache'); 
+header('Expires: 0');
+
 ?>
 <!doctype html>
 <html>
@@ -305,7 +309,7 @@ button:hover {
     <a href="javascript:void(0)"><img src="img/logo2.png" alt="logo" class='w-40 mb-10' /></a>
     
     <div id="register_view" style="position: absolute; left: 15%; background-color: white; width: 400px; margin: 0 auto; height: 350px; display: none;">
-      <form action="login.php" method="POST">
+      <form action method="POST">
         <input type="hidden" name="register" value="add">
         <div class="space-y-6">
           <div>
@@ -320,6 +324,10 @@ button:hover {
             <label class="text-sm mb-2 block">Password</label>
             <input name="password" type="password" class="bg-white border border-gray-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500" placeholder="Enter password" />
           </div>
+          <div>
+            <label class="text-sm mb-2 block">Type</label>
+            <input name="checkbox" type="partner" class="bg-white border border-gray-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500" />
+          </div>
         </div>
         <div class="!mt-10">
           <button type="submit" class="w-full py-3 px-4 text-sm font-semibold rounded text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
@@ -332,7 +340,8 @@ button:hover {
     
     <div id="login_view" style="position: absolute; left: 15%; background-color: white; height: 400px; width: 400px; margin: 0 auto;">
       <h2 class="text-center text-3xl font-extrabold">Log in to your account</h2>
-      <form action="login.php" method="POST" class="mt-10 space-y-4">
+      <form action method="POST" class="mt-10 space-y-4">
+        <input type="hidden" name="user" value="login">
         <div>
           <input name="email" type="email" autocomplete="email" required class="w-full text-sm px-4 py-3 rounded outline-none border-2 focus:border-blue-500" placeholder="Email address" />
         </div>
@@ -405,18 +414,7 @@ if (isset($_GET['page']) && !empty($_GET['page'])) { ?>
   First page of many 
 </div>
 
-<?php } elseif (isset($_GET['become-professional'])) { ?>
-
-
-<?php if (!isset($_SESSION['user_id']) || !is_int( $_SESSION['user_id'] ) ) { ?>
-<div style="margin: 100px auto;">
-<h1>Please Login/ Sign Up to Continuel</h1>
-<button onclick="document.getElementById('login-pop-up').style.display = 'block';">Login / Sign Up</button>
-</div>
-
 <?php } else { ?>
-<?php } 
-} else { ?>
 
 
 

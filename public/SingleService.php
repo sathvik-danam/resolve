@@ -140,9 +140,21 @@ $row_fetch_user = $stmt->fetch();
 }
 
 ?> 
-        <!----></div> 
+        <!----></div>
+        <label>Profession</label>
+        <div class="form-group" bis_skin_checked="1">
+          <select name="subcategory" class="form-control">
+          <?php
+$stmt = $pdo->prepare("SELECT `id`, `name` FROM `subcategories`;");
+  $stmt->execute(array());
+  
+while ($row_fetch_subcategory = $stmt->fetch()) { ?>
+            <option value="<?= $row_fetch_subcategory['id'] ?>"><?= $row_fetch_subcategory['name'] ?></option>
+<?php } ?>
+
+</select> <!----></div>
         <label>Name</label>
-        <div class="form-group" bis_skin_checked="1"><input type="text" id="name" name="name" value="<?= $row_fetch_user['name']; ?>" placeholder="Enter Name" class="form-control"> <!----></div> 
+        <div class="form-group" bis_skin_checked="1"><input type="hidden" name="user_id" value="<?= $row_fetch_user['id']; ?>"><input type="text" id="name" name="name" value="<?= $row_fetch_user['name']; ?>" placeholder="Enter Name" class="form-control"> <!----></div> 
          
         <label>Email</label>
         <div class="form-group" bis_skin_checked="1"><input type="text" id="email" name="email" value="<?= $row_fetch_user['email']; ?>" placeholder="Enter Email" class="form-control"> <!----></div> 

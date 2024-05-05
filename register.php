@@ -1,12 +1,5 @@
 <?php 
-require_once('database.php');
-
-if (session_status() == PHP_SESSION_NONE):
-  require_once 'session.php'; // session_start();
-endif;
-
-session_start();
-
+require_once('config/config.php');
 
 switch ($_SERVER['REQUEST_METHOD']) {
   case 'POST':

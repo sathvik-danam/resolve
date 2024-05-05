@@ -6,6 +6,49 @@ switch ($_SERVER['REQUEST_METHOD']) {
   case 'POST':
     // dd($_POST);
 
+    if (isset($_POST['register']) && $_POST['register'] == 'add') {
+
+      //$stmt = $pdo->prepare("SELECT `id`, `email`, `password` FROM `users` WHERE `email` = :email;");
+
+      $stmt = $pdo->prepare("INSERT INTO users (`name`, `email`, `password`, `type`) VALUES (?, ?, ?, ?)");
+      $stmt->execute(array(
+        $_POST['name'],
+        $_POST['email'],
+        password_hash($_POST['password'], PASSWORD_DEFAULT),
+        'User'
+      ));
+
+      $stmt = $pdo->prepare("SELECT LAST_INSERT_ID();");
+      $stmt->execute();
+
+      $row_fetch = $stmt->fetch();
+
+      $_SESSION['user_id'] = (int) $row_fetch['LAST_INSERT_ID()'];
+
+      exit(header('Location: ' . APP_URL_BASE . 'dashboard.php'));
+    } elseif (isset($_POST['user']) && $_POST['user'] == 'login') {
+
+      $stmt = $pdo->prepare("SELECT `id`, `email`, `password` FROM `users` WHERE `email` = :email;");
+      $stmt->execute(array(
+        ":email" => $_POST['email']
+      ));
+      $row_login = $stmt->fetch();
+
+      if (!empty($row_login)) {
+
+        if (password_verify($_POST['password'], $row_login['password'])) { // $_POST['password'] == $row_login['password']
+          $_SESSION['user_id'] = (int) $row_login['id'];
+
+          exit(header('Location: ' . APP_URL_BASE . 'dashboard.php'));	
+        } else {
+          $login_error = 'Password did not match.'; // exit(header('Location: failed.php'));
+        }
+
+      } else {
+        $login_error = 'Username did not match.'; // exit(header('Location: failed.php'));
+      }
+    }
+
     if (!empty($_SESSION)) {
 
     if (isset($_POST['user']) && $_POST['user'] == 'delete') {
@@ -64,12 +107,12 @@ switch ($_SERVER['REQUEST_METHOD']) {
     } elseif (isset($_POST['user']) && $_POST['user'] == 'add') {
       //$stmt = $pdo->prepare("SELECT `id`, `email`, `password` FROM `users` WHERE `email` = :email;");
 
-      $stmt = $pdo->prepare("INSERT INTO users (`name`, `email`, `password`, `type`) VALUES (?, ?, ?, ?)");
+      $stmt = $pdo->prepare("INSERT INTO users (`name`, `email`, `password`) VALUES (?, ?, ?" /*, ?*/ . ";");
       $stmt->execute(array(
         $_POST['name'],
         $_POST['email'],
         password_hash($_POST['password'], PASSWORD_DEFAULT),
-        $_POST['type']
+        /* $_POST['type'] */
       ));
     } elseif (isset($_POST['partner']) && $_POST['partner'] == 'delete') {
       $stmt = $pdo->prepare("DELETE FROM `partners` WHERE `partners`.`id` = :partner_id;");
@@ -77,27 +120,26 @@ switch ($_SERVER['REQUEST_METHOD']) {
         ":partner_id" => $_POST['partner_id']
       ));
     } elseif (isset($_POST['partner']) && $_POST['partner'] == 'edit') {
+//dd($_POST);
 
-
-      $stmt = $pdo->prepare($sql = "UPDATE `partners` SET `category` = :category, `subcategory` = :subcategory, `type` = :type, `about` = :about, `city` = :city, `name` = :name, `phone` = :phone, `address` = :address, `user_id` = :user_id WHERE `partners`.`id` = :partner_id;");
+      $stmt = $pdo->prepare($sql = "UPDATE `partners` SET `category_id` = :category_id, `subcategory_id` = :subcategory_id, `type` = :type, `about` = :about, `city_id` = :city_id, `name` = :name, `phone` = :phone, `address` = :address, `user_id` = :user_id WHERE `partners`.`id` = :partner_id;");
 
       if (basename(APP_SELF) == 'dashboard.php') {
-
-      //dd($_POST);
-      $stmt->execute(array(
+        $array = array(
         ':partner_id' => $_POST['partner_id'],
-        ':category' => $_POST['category'],
-        ':subcategory' => $_POST['subcategory'],
+        ':category_id' => $_POST['category'],
+        ':subcategory_id' => $_POST['subcategory'],
         ':type' => (isset($_POST['type']) ? $_POST['type'] : ''),
         ':about' => $_POST['about'],
-        ':city' => $_POST['city_id'],
+        ':city_id' => $_POST['city_id'],
         ':name' => (isset($_POST['name']) ? $_POST['name'] : ''),
         ':phone' => (isset($_POST['phone']) ? $_POST['phone'] : ''),
         ':address' => (isset($_POST['address']) ? $_POST['address'] : ''),
         ':user_id' => (isset($_POST['user_id']) ? $_POST['user_id'] : '')
-      ));
+        );
+      //dd($_POST);
       } else {
-        $stmt->execute(array(
+        $array = array(
             ':partner_id' => $_POST['partner_id'],
             ':category' => $_POST['category'],
             ':subcategory' => $_POST['subcategory'],
@@ -108,14 +150,15 @@ switch ($_SERVER['REQUEST_METHOD']) {
             ':phone' => (isset($_POST['phone']) ? $_POST['phone'] : ''),
             ':address' => (isset($_POST['address']) ? $_POST['address'] : ''),
             ':user_id' => (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : '')
-          ));
+        );
       }
+      $stmt->execute($array);
     } elseif (isset($_POST['partner']) && $_POST['partner'] == 'add') {
       // id, category, subcategory, type, about, photo, state, city, name, phone, email, address, slug, user_id, created_at, updated_at
       //dd(basename(APP_SELF));
       if (basename(APP_SELF) == 'dashboard.php') {
 
-        $stmt = $pdo->prepare("INSERT INTO `partners` (`category`, `subcategory`, " /*`type`,*/ . " `about`, `city`, " /*`name`, `phone`,*/ . " `address`, `user_id`, `created_at`) VALUES ( ?, ?, ?, ?, ?, ?, ?);");
+        $stmt = $pdo->prepare("INSERT INTO `partners` (`category_id`, `subcategory_id`, `type`, `about`, `city_id`, " /*`name`,*/ . "`phone`, `address`, `user_id`, `created_at`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 
 
          /*array (
@@ -131,19 +174,19 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $stmt->execute(array(
           $_POST['category'],
           $_POST['subcategory'],
-          //$_POST['type'],
+          $_POST['type'],
           $_POST['about'],
           $_POST['city_id'],
           $_POST['address'],
           //$_POST['name'],
-          //$_POST['phone'],
+          $_POST['phone'],
           $_SESSION['user_id'],
           date('Y-m-d H:i:s')
         ));
 
       } else {
 
-        $stmt = $pdo->prepare("INSERT INTO `partners` (`category`, `subcategory`, " /*`type`,*/ . " `about`, `city`, `name`, `phone`, `address`, `user_id`,  `created_at`) VALUES ( ?, ?, " . /*?,*/ " ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO `partners` (`category_id`, `subcategory_id`, " /*`type`,*/ . " `about`, `city_id`, `name`, `phone`, `address`, `user_id`,  `created_at`) VALUES ( ?, ?, " . /*?,*/ " ?, ?, ?, ?, ?, ?, ?)");
 
         $stmt->execute(array(
           $_POST['category'],
@@ -160,17 +203,42 @@ switch ($_SERVER['REQUEST_METHOD']) {
       }
 
     } elseif (isset($_POST['enquiry']) && $_POST['enquiry'] == 'add') {
+      /* array (
+  'enquiry' => 'add',
+  'enquiry_id' => '',
+  'subcategory' => '5',
+  'user_id' => '2',
+  'name' => 'John',
+  'email' => 'random@localhost',
+  'phone' => '545556568',
+  'address' => '456 Testing',
+  'city_id' => '2',
+  'description' => 'Technical details',
+) */     //dd($_POST);
+      // 	 	created_at 	updated_at 	
 
-      // 'name' => 'admin', 'email' => 'admin@localhost', 'phone' => '1115551212', 'address' => '123 Fake Street', 'city' => 1, 'description' => 'dfghdfghgfdh',
       //dd($_POST);
-      // 	id 	name 	email 	address 	phone 	subcategory_id 	description 	created_at 	updated_at 	
 
-      dd($_POST);
-
-      $stmt = $pdo->prepare("INSERT INTO `enquires` (`city`) VALUES (?)");
+      $stmt = $pdo->prepare("INSERT INTO `enquiries` ( `user_id`, `email`, `address`, `phone`, `subcategory_id`, `city_id` , `description` ,`approval_status`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
       $stmt->execute(array(
-        $_POST['name'],
+        $_POST['user_id'], 
+        $_POST['email'],
+        $_POST['address'],
+        $_POST['phone'],
+        $_POST['subcategory'],
+        $_POST['city_id'],
+        $_POST['description'],
+        '{}'//approval_status`
       ));
+      die(header('Location: ' . APP_URL_BASE . 'dashboard.php?enquiries' ));
+    } elseif (isset($_POST['enquiry']) && $_POST['enquiry'] == 'edit') {
+
+      if (isset($_POST['enquiry_id']) && $_SESSION['type'] == 'Partner') {
+        $stmt = $pdo->prepare($sql = "UPDATE `enquiries` SET `approval_status` WHERE `enquiries`.`id` = :enquiry_id;");
+
+        // 
+      }
+
     } elseif (isset($_POST['city']) && $_POST['city'] == 'delete') {
       $stmt = $pdo->prepare("DELETE FROM `cities` WHERE `cities`.`id` = :city_id;");
       $stmt->execute(array(
@@ -255,7 +323,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
       } else if(isset($decodedData['partner_id'])) {
         //die(json_decode($decodedData, true));
 
-        $stmt = $pdo->prepare("SELECT `id`, `category`, `subcategory`, `type`, `about`, `city`, `name`, `phone`, `address`, `user_id`,  `created_at` FROM `partners` WHERE `id` = :partner_id;");
+        $stmt = $pdo->prepare("SELECT `id`, `category_id`, `subcategory_id`, `type`, `about`, `city_id`, `name`, `phone`, `address`, `user_id`,  `created_at` FROM `partners` WHERE `id` = :partner_id;");
         $stmt->execute(array(
             ":partner_id" => $decodedData['partner_id']
         ));
@@ -289,19 +357,3 @@ switch ($_SERVER['REQUEST_METHOD']) {
     break;
 
 }
-
-
-
-
-
-
-if (!empty($_SESSION) && isset($_SESSION['user_id'])) {
-
-  $stmt = $pdo->prepare("SELECT `id`, `name`, `email`, `type` FROM `users` WHERE `id` = :user_id;");
-  $stmt->execute(array(
-    ":user_id" => $_SESSION['user_id']
-  ));
-  $row_fetch = $stmt->fetch();
-  $_SESSION = ['user_id' => (int) $row_fetch['id'], 'name' => $row_fetch['name'], 'email' => $row_fetch['email'], 'type' => (string) $row_fetch['type']];
-}
-

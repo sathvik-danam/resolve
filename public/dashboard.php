@@ -184,7 +184,7 @@ if (empty($_SESSION)) die(header('Location: ' . APP_URL_BASE)); ?>
 </div>
 
 
-<?php } else if (isset($_GET['partners'])) { // 7x  ?>
+<?php } else if (isset($_GET['partners']) || isset($_GET['skills']) ) { // 7x  ?>
 
 <div id="myModal" class="modal" style="display: none;">
   <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
@@ -198,7 +198,7 @@ if (empty($_SESSION)) die(header('Location: ' . APP_URL_BASE)); ?>
         <input type="hidden" name="partner" value="add" />
         <input type="hidden" name="partner_id" />
         <div class="modal-body" bis_skin_checked="1">
-
+        <div class="form-group" bis_skin_checked="1"><input type="hidden" id="user_id" name="user_id" class="form-control"> <!----></div> 
         <label>Category</label>
         <div class="form-group" bis_skin_checked="1">
         <select id="category" name="category" class="form-control">
@@ -224,17 +224,9 @@ while ($row_fetch = $stmt->fetch()) { ?>
             <option value="<?= $row_fetch['name'] ?>"><?= $row_fetch['name'] ?></option>
      
 <?php } ?>
-          </select>
-
-        <!----></div> 
-        <label>Name</label>
-        <div class="form-group" bis_skin_checked="1"><input type="text" id="name" name="name" placeholder="Enter Name" class="form-control"> <!----></div> 
-
-
-        <label>Phone</label>
-        <div class="form-group" bis_skin_checked="1"><input type="text" id="phone" name="phone" placeholder="Enter Phone #" class="form-control"> <!----></div> 
-        <label>User ID</label>
-        <div class="form-group" bis_skin_checked="1"><input type="text" id="user_id" name="user_id" placeholder="Enter User ID" class="form-control"> <!----></div> 
+          </select> <!----></div>
+        <label>About</label>
+        <div class="form-group" bis_skin_checked="1"><textarea id="about" name="about" placeholder="Enter About" class="form-control"></textarea> <!----></div> 
         <label>City</label>
         <div class="form-group" bis_skin_checked="1">
         <select name="city_id" class="form-control">
@@ -247,12 +239,18 @@ while ($row_fetch_city = $stmt->fetch()) { ?>
 <?php } ?>
 
 </select><!----></div> 
+
+          <label>Phone</label>
+          <div class="form-group" bis_skin_checked="1"><input id="phone" type="tel" name="phone" minlength="10" maxlength="10" value="<?= $_SESSION['phone'] ?>" placeholder="Enter Phone" class="form-control"></textarea> <!----></div> 
           <label>Address</label>
-          <div class="form-group" bis_skin_checked="1"><textarea id="about" name="about" placeholder="Enter Address" class="form-control"></textarea> <!----></div> 
+          <div class="form-group" bis_skin_checked="1"><textarea id="address" name="address" placeholder="Enter Address" class="form-control"></textarea> <!----></div> 
           <label>About You And Your Profession</label>
 
           <label>Partner Type</label>
-          <div class="form-group" bis_skin_checked="1"><input type="text" id="type" name="type" placeholder="Partner Type" class="form-control"> <!----></div> 
+          <div class="form-group" bis_skin_checked="1">
+          <select name="type" class="form-control">
+            <option>Partner</option>
+          </select> <!----></div> 
 
           <div class="modal-footer" bis_skin_checked="1">
             <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
@@ -362,8 +360,6 @@ while ($row_fetch_city = $stmt->fetch()) { ?>
 
 <?php } elseif (isset($_GET['categories'])) { // 7x  ?>
 
-
-  
 <div id="myModal" class="modal" style="display: none;">
   <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
       <div class="modal-content" bis_skin_checked="1">
@@ -445,7 +441,8 @@ while ($row_fetch = $stmt->fetch()) { ?>
         <h2 class="text-center text-3xl font-extrabold">
           Log in to your account
         </h2>
-        <form action="login.php" method="POST" class="mt-10 space-y-4">
+        <form action method="POST" class="mt-10 space-y-4">
+          <input type="hidden" name="user" value="login">
           <div>
             <input name="email" type="email" autocomplete="email" required class="w-full text-sm px-4 py-3 rounded outline-none border-2 focus:border-blue-500" placeholder="Email address" />
           </div>
@@ -500,8 +497,32 @@ while ($row_fetch = $stmt->fetch()) { ?>
         </div>  
       <hr />
 
-<?php if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['Admin'])) { ?>
-          <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
+<?php if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['Partner'])) { ?> 
+
+        <div id="hide-show_profession_btn" role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
+          <div id="" class="grid place-items-center mr-4">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
+              <path fill-rule="evenodd" d="M2.25 2.25a.75.75 0 000 1.5H3v10.5a3 3 0 003 3h1.21l-1.172 3.513a.75.75 0 001.424.474l.329-.987h8.418l.33.987a.75.75 0 001.422-.474l-1.17-3.513H18a3 3 0 003-3V3.75h.75a.75.75 0 000-1.5H2.25zm6.04 16.5l.5-1.5h6.42l.5 1.5H8.29zm7.46-12a.75.75 0 00-1.5 0v6a.75.75 0 001.5 0v-6zm-3 2.25a.75.75 0 00-1.5 0v3.75a.75.75 0 001.5 0V9zm-3 2.25a.75.75 0 00-1.5 0v1.5a.75.75 0 001.5 0v-1.5z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+          <a href="javascript:void(0);">Partner Dashboard</a>
+        </div>
+<div id="hide-show_partners" style="display: block;"> 
+         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
+          <div class="grid place-items-center mr-4">
+          <i class="fa fa-user"></i>
+          </div><a href="dashboard.php?partners">Skills</a>
+        </div>
+        <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
+          <div class="grid place-items-center mr-4">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
+              <path fill-rule="evenodd" d="M2.25 2.25a.75.75 0 000 1.5H3v10.5a3 3 0 003 3h1.21l-1.172 3.513a.75.75 0 001.424.474l.329-.987h8.418l.33.987a.75.75 0 001.422-.474l-1.17-3.513H18a3 3 0 003-3V3.75h.75a.75.75 0 000-1.5H2.25zm6.04 16.5l.5-1.5h6.42l.5 1.5H8.29zm7.46-12a.75.75 0 00-1.5 0v6a.75.75 0 001.5 0v-6zm-3 2.25a.75.75 0 00-1.5 0v3.75a.75.75 0 001.5 0V9zm-3 2.25a.75.75 0 00-1.5 0v1.5a.75.75 0 001.5 0v-1.5z" clip-rule="evenodd"></path>
+            </svg>
+          </div><a href="dashboard.php?enquiries">Enquiries</a>
+        </div>
+</div>
+<?php } elseif (isset($_SESSION['type']) && in_array($_SESSION['type'], ['Admin'])) { ?>
+        <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-gray-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
               <path fill-rule="evenodd" d="M2.25 2.25a.75.75 0 000 1.5H3v10.5a3 3 0 003 3h1.21l-1.172 3.513a.75.75 0 001.424.474l.329-.987h8.418l.33.987a.75.75 0 001.422-.474l-1.17-3.513H18a3 3 0 003-3V3.75h.75a.75.75 0 000-1.5H2.25zm6.04 16.5l.5-1.5h6.42l.5 1.5H8.29zm7.46-12a.75.75 0 00-1.5 0v6a.75.75 0 001.5 0v-6zm-3 2.25a.75.75 0 00-1.5 0v3.75a.75.75 0 001.5 0V9zm-3 2.25a.75.75 0 00-1.5 0v1.5a.75.75 0 001.5 0v-1.5z" clip-rule="evenodd"></path>
@@ -567,16 +588,14 @@ while ($row_fetch = $stmt->fetch()) { ?>
         </div>
 </div>
 <?php }
-if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['User', 'Admin'])) { ?>
-
+if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['User'])) { ?>
         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
-              <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd"></path>
+              <path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z" clip-rule="evenodd"></path>
             </svg>
-          </div><a href="<?= basename(APP_SELF) ; ?>?profile">Profile</a>
+          </div><a href="dashboard.php?enquiries">Enquiries</a>
         </div>
-
 
         <!-- div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 outline-none">
           <div class="grid place-items-center mr-4">
@@ -585,6 +604,15 @@ if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['User', 'Admin'])) 
             </svg>
           </div>Developer
         </div -->
+<?php } ?>
+        <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
+          <div class="grid place-items-center mr-4">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
+              <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd"></path>
+            </svg>
+          </div><a href="<?= basename(APP_SELF); ?>?profile">Profile</a>
+        </div>
+
         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="h-5 w-5">
@@ -592,7 +620,6 @@ if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['User', 'Admin'])) 
             </svg>
           </div><!-- i class="fa-solid fa-power-off"></i --><a href="?logout">Log Out</a>
         </div>
-<?php } ?>
       </nav>
     </div>
 <?php if (empty($_GET)) { ?>
@@ -734,22 +761,24 @@ if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['User', 'Admin'])) 
           
 <?php 
 
-$stmt = $pdo->query("SELECT `id`, `category`, `subcategory`, `type`, `about`, `photo`, `city`, `address`, `name`, `phone`, `created_at` FROM `partners` WHERE `user_id` = " . $_SESSION['user_id'] . ";");
+$stmt = $pdo->prepare("SELECT `id`, `category_id`, `subcategory_id`, `type`, `about`, `photo`, `city_id`, `address`, `name`, `phone`, `created_at` FROM `partners` WHERE `user_id` = :user_id;");
+
+$stmt->execute(array('user_id' => $_SESSION['user_id'] ));
 
 while ($row = $stmt->fetch()) { ?>
 
     <tr class="odd:bg-black odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                 <td class="px-6 py-4">
-                  <?= $row['category'] ?>
+                  <?= $row['category_id'] ?>
                 </td>
                 <td class="px-6 py-4">
-                  <?= $row['subcategory'] ?>
+                  <?= $row['subcategory_id'] ?>
                 </td>
                 <td class="px-6 py-4">
                   <?= $row['type'] ?>
                 </td>
                 <td class="px-6 py-4">
-                  <?= $row['city'] ?>
+                  <?= $row['city_id'] ?>
                 </td>
                 <td class="px-6 py-4">
                   <?= $row['address'] ?>
@@ -891,7 +920,7 @@ $row_fetch = $stmt->fetch(); ?>
 </div>
   
   
-<?php } elseif(isset($_GET['partners'])) { ?>
+<?php } elseif (isset($_GET['partners'])) { ?>
  
 <div style="position: absolute; top: 0; right: 60px; height: 95%; display: inline; float: right; margin: 25px 0 0 275px; width: 75%; overflow-x:scroll;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
@@ -900,14 +929,13 @@ $row_fetch = $stmt->fetch(); ?>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
+<?php if ($_SESSION['type'] == 'Admin') { ?>
                 <th scope="col" class="px-6 py-3">
                     Id
                 </th>
+<?php } ?>
                 <th scope="col" class="px-6 py-3">
                     Name
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Phone
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Category
@@ -920,6 +948,9 @@ $row_fetch = $stmt->fetch(); ?>
                 </th>
                 <th scope="col" class="px-6 py-3">
                     City
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Phone
                 </th>
                 <th scope="col" class="px-6 py-3">
                     About
@@ -939,31 +970,67 @@ $row_fetch = $stmt->fetch(); ?>
           
 <?php 
 
-$stmt = $pdo->query("SELECT `id`, `category`, `subcategory`, `type`, `about`, `photo`, `city`, `name`, `phone`, `created_at` FROM `partners`;");
+$stmt = $pdo->prepare($sql = "SELECT `id`, `category_id`, `subcategory_id`, `type`, `about`, `photo`, `city_id`, `name`, `phone`, `created_at` FROM `partners` " . ($_SESSION['type'] == 'Partner' ? ' WHERE `user_id` = :user_id' : '') . ";");
+//dd($sql);
+$array = [];
+
+if ($_SESSION['type'] == 'Partner') {
+  $array = array('user_id' => $_SESSION['user_id']);
+}
+$stmt->execute($array);
+
 
 while ($row = $stmt->fetch()) { ?>
 
     <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+<?php if ($_SESSION['type'] == 'Admin') { ?>
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   <?= $row['id'] ?>
                 </th>
+<?php } ?>
+
                 <td class="px-6 py-4">
-                  <?= $row['name'] ?>
+<?php
+//dd($row);
+/*
+$stmt = $pdo->prepare("SELECT `name` FROM `users` WHERE `id` = :user_id;");
+$stmt->execute(array('user_id' => $_SESSION['user_id']));
+$row_user = $stmt->fetch();
+*/           
+?><?= $_SESSION['name']; ?>
                 </td>
                 <td class="px-6 py-4">
-                  <?= $row['phone'] ?>
+<?php
+//dd($row);
+$stmt_category = $pdo->prepare("SELECT `name` FROM `categories` WHERE `id` = :category_id;");
+$stmt_category->execute(array('category_id' => $row['category_id']));
+$row_category = $stmt_category->fetch();
+             
+?><?= $row_category['name']; ?>
                 </td>
                 <td class="px-6 py-4">
-                  <?= $row['category'] ?>
-                </td>
-                <td class="px-6 py-4">
-                  <?= $row['subcategory'] ?>
+                <?php
+//dd($row);
+$stmt_subcategory = $pdo->prepare("SELECT `name` FROM `subcategories` WHERE `id` = :subcategory_id;");
+$stmt_subcategory->execute(array('subcategory_id' => $row['subcategory_id']));
+$row_subcategory = $stmt_subcategory->fetch();
+             
+?><?= $row_subcategory['name']; ?>
                 </td>
                 <td class="px-6 py-4">
                   <?= $row['type'] ?>
                 </td>
                 <td class="px-6 py-4">
-                  <?= $row['city'] ?>
+                <?php
+//dd($row);
+$stmt_city = $pdo->prepare("SELECT `city` FROM `cities` WHERE `id` = :city_id;");
+$stmt_city->execute(array('city_id' => $row['city_id']));
+$row_city = $stmt_city->fetch();
+             
+?><?= $row_city['city']; ?>
+                </td>
+                <td class="px-6 py-4">
+                  <?= !is_null($row['phone']) ? (preg_replace('/(\d{3})(\d{0,3})(\d{0,3})/', '$1-$2-$3', $row['phone']) ?: (!is_null($row['phone']) ? (preg_replace('/(\d{3})(\d{0,3})(\d{0,3})/', '$1-$2-$3', $_SESSION['phone'])) : '')) : ''; ?>
                 </td>
                 <td class="px-6 py-4">
                  <?= $row['about'] ?>
@@ -1005,18 +1072,14 @@ Enquiries Table
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-
-            <th scope="col" class="px-6 py-3">
-                    ID
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Name
-                </th>
                 <th scope="col" class="px-6 py-3">
                     Email
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Phone
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Profession
                 </th>
                 <th scope="col" class="px-6 py-3">
                     City
@@ -1025,7 +1088,7 @@ Enquiries Table
                     Address
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Enquiry
+                    Approval Status
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Modify
@@ -1034,33 +1097,73 @@ Enquiries Table
         </thead>
         <tbody>
 <?php 
+//dd($_SESSION);
+//dd(implode(',', $_SESSION['professions']));
 
-$stmt = $pdo->query("SELECT `id`, `name`, `email`, `phone` FROM `enquiries`;");
+$stmt = $pdo->prepare("SELECT `id`, `user_id`, `email`, `phone`, `subcategory_id`, `city_id`, `address`, `approval_status` FROM `enquiries` " . ($_SESSION['type'] == 'User' ? ' WHERE `user_id` = :user_id' : ($_SESSION['type'] == 'Partner' ? ' WHERE `subcategory_id` IN (' . implode(',', $_SESSION['professions']) . ')' : '')) . ";");
 
-while ($row = $stmt->fetch()) { ?>
+$array = [];
+if ($_SESSION['type'] == 'User') {
+  $array = array('user_id' => $_SESSION['user_id']);
+} elseif ($_SESSION['type'] == 'Partner') {
+  //$array = array('subcategory_id' => key($_SESSION['professions']));
+} else  {
+
+}
+
+$stmt->execute($array);
+
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) { ?>
 
     <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                 <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  <?= $row['id'] ?>
-                </td>
-                <td class="px-6 py-4">
-                 <?= $row['name'] ?>
-                </td>
-                <td class="px-6 py-4">
                   <?= $row['email'] ?>
                 </td>
                 <td class="px-6 py-4">
-                 <?= $row['phone'] ?>
+                <?= !is_null($row['phone']) ? (preg_replace('/(\d{3})(\d{0,3})(\d{0,3})/', '$1-$2-$3', $row['phone']) ?: (!is_null($row['phone']) ? (preg_replace('/(\d{3})(\d{0,3})(\d{0,3})/', '$1-$2-$3', $_SESSION['phone'])) : '')) : ''; ?>
                 </td>
                 <td class="px-6 py-4">
-                  <?= /* $row['city'] */ null; ?>
+<?php
+$stmt_subcategory = $pdo->prepare("SELECT `name` FROM `subcategories` WHERE `id` = :id;");
+$stmt_subcategory->execute(array('id' => $row['subcategory_id']));
+$row_subcategory = $stmt_subcategory->fetch();
+             
+?><?= $row_subcategory['name']; ?>
                 </td>
                 <td class="px-6 py-4">
-                 <?= /* $row['address'] */ null; ?>
+<?php
+//dd($row);
+$stmt_city = $pdo->prepare("SELECT `city` FROM `cities` WHERE `id` = :city_id;");
+$stmt_city->execute(array('city_id' => $row['city_id']));
+$row_city = $stmt_city->fetch();
+             
+?><?= $row_city['city']; ?>
                 </td>
                 <td class="px-6 py-4">
-                  <?= /* $row['enquiry'] */ null; ?>
+                 <?= $row['address'] ?>
                 </td>
+                <th scope="col" class="px-6 py-3">         
+<?php
+if (in_array($_SESSION['type'], ['User', 'Admin'])) { $approvals = json_decode($row['approval_status']);
+//dd($approvals);
+$yes = $no = 0;
+foreach($approvals as $key => $approval) {
+  if ($approval->{'status'} == 1) $yes++;
+  else $no++;
+}
+?>
+                  Yes: <?= $yes ?> - No: <?= $no ?>
+<?php } else { ?>
+
+                          Status:
+<form style="display: inline;"action method="POST">
+                        <input type="hidden" name="enquiry" value="edit">
+                        <input type="hidden" name="enquiry_id" value="<?= $row['id'] ?>">
+
+                        <button type="submit">Yes<button>
+</form>
+  <?php } ?>
+                </th>
                 <td class="px-6 py-4">
                     <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a> / 
                     
@@ -1252,6 +1355,8 @@ while ($row = $stmt->fetch()) { ?>
 
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
+<script  type="text/javascript" src="<?=(!defined('APP_URL_BASE') and '//' . APP_DOMAIN . APP_URL_PATH)?>javascript/jquery.inputmask.min.js"></script>
+
 <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 
@@ -1367,7 +1472,7 @@ window.onclick = function(event) {
     });
   }
 });
-<?php } elseif (isset($_GET['partners'])) { ?>
+<?php } elseif (isset($_GET['partners']) || isset($_GET['skills'])) { ?>
  document.addEventListener('DOMContentLoaded', function () {
     var forms = document.getElementsByClassName('partner_edit');
 
@@ -1419,7 +1524,7 @@ window.onclick = function(event) {
                   
 
                   //document.getElementsByName('category')[0].value = data['category']; // $_POST['name'],
-                  document.getElementsByName('name')[0].value = data['name'];  // $_POST['phone'],
+                  //document.getElementsByName('name')[0].value = data['name'];  // $_POST['phone'],
                   document.getElementsByName('type')[0].value = data['type'];  // $_POST['user_id'].
                   document.getElementsByName('city_id')[0].value = data['city']; // $_POST['city']
                   document.getElementsByName('phone')[0].value = data['phone']; // $_POST['city']
@@ -1734,9 +1839,21 @@ document.addEventListener("DOMContentLoaded", function() {
 */
 
       $(document).ready(function(){
-        console.log('test');
-
-        $('#hide-show_users_btn').click(function() {
+        // console.log('test');
+/*
+        jQuery('input[name="phone"]').inputmask({
+    "mask": "(999) 999-9999",
+    removeMaskOnSubmit: true,
+    onUnMask: function(maskedValue, unmaskedValue) {
+      newvalue = unmaskedValue.replace(/(\d{3})(\d{0,3})(\d{0,3})/, function(match, p1, p2, p3) {
+        return p1 + "-" + p2 + "-" + p3;
+      });
+      return unmaskedValue.replace(/(\d{3})(\d{0,3})(\d{0,3})/, function(match, p1, p2, p3) {
+        return p1 + p2 + p3;
+      });;
+    }
+  });
+  */     $('#hide-show_users_btn').click(function() {
           console.log('pressed');
 
           if ($('#hide-show_users').css('display') == 'none') {
@@ -1749,6 +1866,21 @@ document.addEventListener("DOMContentLoaded", function() {
             });
           }
         });
+
+        $('#hide-show_partners_btn').click(function() {
+          console.log('pressed');
+
+          if ($('#hide-show_partners').css('display') == 'none') {
+            $('#hide-show_partners').slideDown( "slow", function() {
+          // Animation complete.
+            });
+          } else {
+            $('#hide-show_partners').slideUp( "slow", function() {
+          // Animation complete.
+            });
+          }
+        });
+
 
         $('#hide-show_profession_btn').click(function() {
           console.log('pressed');
