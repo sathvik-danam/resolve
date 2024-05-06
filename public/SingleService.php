@@ -101,7 +101,7 @@
 <?php
 
 if (isset($_GET['page']) && $_GET['page'] != '') {     
-    $stmt = $pdo->prepare("SELECT `category`, `subcategory`, `city`, `about`, `photo1` FROM `posts` WHERE `slug` = :page_slug;");
+    $stmt = $pdo->prepare("SELECT `category_id`, `subcategory_id`, `city_id`, `about`, `photo1` FROM `posts` WHERE `slug` = :page_slug;");
   $stmt->execute(array(':page_slug' => $_GET['page']));
   $row_fetch = $stmt->fetch();
 
@@ -167,7 +167,7 @@ while ($row_fetch_subcategory = $stmt->fetch()) { ?>
 
         <label>City</label>
         <div class="form-group" bis_skin_checked="1">
-          <select name="city_id" class="form-control">
+          <select name="city" class="form-control">
           <?php
 $stmt = $pdo->prepare("SELECT `id`, `city` FROM `cities`;");
   $stmt->execute(array());

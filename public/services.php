@@ -110,34 +110,44 @@ h1 {
 
 <!-- Testing the scrollbar  -->
 <?php
-$stm = $pdo->prepare("SELECT DISTINCT `category` FROM `posts`;");
-$stm->execute();
+$stm = $pdo->prepare("SELECT DISTINCT `category_id` FROM `posts`;");
+$stm->execute(array());
 
 // Initialize the array to hold the categories
 $categories = [];
 
 // Fetch all rows and add each category to the categories array
 while ($row = $stm->fetch(PDO::FETCH_ASSOC)) {
-    $categories[] = $row['category'];
+    $categories[] = $row['category_id'];
 }
 //dd($categories);
 
-foreach($categories as $key => $category) { ?>
+foreach($categories as $key => $category_id) { ?>
 <div class="gallery-container" style="width: 1300px; margin: 75px auto;">
-  <h1  class="text-lg md:text-xl"><?= $category ?></h1>
+  <h1  class="text-lg md:text-xl"><?php
+
+$stmt_category = $pdo->prepare("SELECT `name` FROM `categories` WHERE `id` = :category_id;");
+$stmt_category->execute(array('category_id' => $category_id));
+$row_category = $stmt_category->fetch();
+?><?= $row_category['name'];?></h1>
   <button class="arrow left-arrow" onclick="scrollLeft()">
     &#8592;
   </button>
   <div class="gallery">
 <?php
-$stm = $pdo->prepare("SELECT `subcategory`, `photo1`, `slug` FROM `posts` WHERE `category` = :category;");
+$stm = $pdo->prepare("SELECT `subcategory_id`, `photo1`, `slug` FROM `posts` WHERE `category_id` = :category_id;");
 $stm->execute(array(
-':category' => $category
+':category_id' => $category_id
 ));
 
 while ($row = $stm->fetch(PDO::FETCH_ASSOC)) { ?>
 
-<a href="SingleService.php?page=<?= $row['slug'] ?>"><img src="img/profession/<?= $row['photo1'] ?>" alt="<?= $row['subcategory'] ?>"></a>
+<a href="SingleService.php?page=<?= $row['slug'] ?>"><img src="img/profession/<?= $row['photo1'] ?>" alt="<?php
+
+$stmt_subcategory = $pdo->prepare("SELECT `name` FROM `subcategories` WHERE `id` = :subcategory_id;");
+$stmt_subcategory->execute(array('subcategory_id' => $row['subcategory_id']));
+$row_subcategory = $stmt_subcategory->fetch();
+?><?= $row_subcategory['name']; ?>"></a>
 
 <?php } ?>
 

@@ -1082,20 +1082,46 @@ $row_city = $stmt_city->fetch();
                 <td class="px-6 py-4">
                  <?= $row['address'] ?>
                 </td>
-                <th scope="col" class="px-6 py-3">         
-<?php 
+                <th scope="col" class="px-6 py-3">
+<?php
+
+// Decode the JSON string as an object
 $approvals = json_decode($row['approval_status'], false);
-if (in_array($_SESSION['type'], ['User', 'Admin'])) {
-dd($approvals);
-$yes = $no = 0;
-foreach($approvals as $key => $approval) {
-  if ($approval == 1) $yes++;
-  else $no++;
+
+// Check if $approvals is null and initialize as an object if so
+if ($approvals === null) {
+    $approvals = new stdClass();  // Ensures $approvals is always an object
 }
+
+$yes = $no = 0; // Initialize counters for 'Yes' and 'No' approvals
+
+                // Check if $approvals is not empty and iterate to count approvals
+if (!empty($approvals)) {
+    foreach ($approvals as $key => $approval) {
+        if ($approval == 1) {
+            $yes++; // Increment 'Yes' count
+        } else {
+            $no++; // Increment 'No' count
+        }
+    }
+}
+
+// Check if the user is a 'User' or 'Admin' and either modify or add their approval status
+if (in_array($_SESSION['type'], ['User', 'Admin'])) {
+    // If user's approval status is already present in the approvals, toggle it
+    if (isset($approvals->{$_SESSION['user_id']})) {
+        $approvals->{$_SESSION['user_id']} = (int)!$approvals->{$_SESSION['user_id']};
+        // Adjust counts based on new value
+        if ($approvals->{$_SESSION['user_id']} == 1) {
+            $no--;
+        } else {
+            $yes--;
+        }
+    }
+
 ?>
                   Yes: <?= $yes ?> - No: <?= $no ?>
 <?php } else { ?>
-
                           Status:
 <form style="display: inline;"action method="POST">
                         <input type="hidden" name="enquiry" value="edit">
@@ -1106,11 +1132,11 @@ foreach($approvals as $key => $approval) {
   <?php } ?>
                 </th>
                 <td class="px-6 py-4">
-                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a> / 
+                    <a href="javascript:void(0);" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a> / 
                     
                     <form action method="POST" style="display: inline;">
-                      <input type="hidden" name="delete_user">
-                      <input type="hidden" name="user_id" value="<?= $row['id'] ?>">
+                      <input type="hidden" name="enquiry" value="delete">
+                      <input type="hidden" name="enquiry_id" value="<?= $row['id'] ?>">
                       <button type="submit">Delete</button>
                     </form>
                 </td>

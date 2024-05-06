@@ -216,6 +216,11 @@ if (!isset($_POST['category']) && isset($_POST['subcategory'])) {
         ));
       }
 
+    } elseif (isset($_POST['enquiry']) && $_POST['enquiry'] == 'delete') {
+      $stmt = $pdo->prepare("DELETE FROM `enquiries` WHERE `enquiries`.`id` = :enquiry_id;");
+      $stmt->execute(array(
+        ":enquiry_id" => $_POST['enquiry_id']
+      ));
     } elseif (isset($_POST['enquiry']) && $_POST['enquiry'] == 'add') {
       /* array (
   'enquiry' => 'add',
@@ -255,6 +260,11 @@ if (!isset($_POST['category']) && isset($_POST['subcategory'])) {
 
         $approvals = json_decode($row['approval_status'], false); // {"1":1,"2":0,"3":1}
 //dd($approvals, false);
+// Check if $approvals is null and initialize as an object if so
+if ($approvals === null) {
+  $approvals = new stdClass();  // Ensures $approvals is always an object
+}
+
 // Check if $approvals is non-empty and the current session user_id exists in $approvals
 if (!empty($approvals) && property_exists($approvals, $_SESSION['user_id'])) {
   // Toggle the approval status if it exists
