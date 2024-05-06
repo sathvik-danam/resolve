@@ -130,7 +130,7 @@ if (!isset($_POST['category']) && isset($_POST['subcategory'])) {
 
       $stmt = $pdo->prepare($sql = "UPDATE `partners` SET `category_id` = :category_id, `subcategory_id` = :subcategory_id, `type` = :type, `about` = :about, `city_id` = :city_id, " /*`name` = :name,*/ . " `phone` = :phone, `address` = :address, `user_id` = :user_id WHERE `partners`.`id` = :partner_id;");
 
-      dd($_POST);
+      //dd($_POST);
       if (basename(APP_SELF) == 'dashboard.php') {
         $array = array(
         ':partner_id' => $_POST['partner_id'],
@@ -138,7 +138,7 @@ if (!isset($_POST['category']) && isset($_POST['subcategory'])) {
         ':subcategory_id' => $_POST['subcategory'],
         ':type' => (isset($_POST['type']) ? $_POST['type'] : ''),
         ':about' => $_POST['about'],
-        ':city_id' => $_POST['city_id'],
+        ':city_id' => (isset($_POST['city_id']) ? $_POST['city_id'] : 1),
         //':name' => (isset($_POST['name']) ? $_POST['name'] : ''),
         ':phone' => (isset($_POST['phone']) ? $_POST['phone'] : ''),
         ':address' => (isset($_POST['address']) ? $_POST['address'] : ''),
@@ -159,6 +159,9 @@ if (!isset($_POST['category']) && isset($_POST['subcategory'])) {
             ':user_id' => (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : '')
         );
       }
+
+//dd($_POST);
+
       $stmt->execute($array);
     } elseif (isset($_POST['partner']) && $_POST['partner'] == 'add') {
       // id, category, subcategory, type, about, photo, state, city, name, phone, email, address, slug, user_id, created_at, updated_at
@@ -172,7 +175,7 @@ if (!isset($_POST['category']) && isset($_POST['subcategory'])) {
         } 
 
 
-        $stmt = $pdo->prepare("INSERT INTO `partners` (`category_id`, `subcategory_id`, `type`, `about`, `city_id`, " /*`name`,*/ . "`phone`, `address`, `user_id`, `created_at`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+        $stmt = $pdo->prepare("INSERT INTO `partners` (`category_id`, `subcategory_id`, `type`, `about`, `city_id`, " /*`name`,*/ . "`address`, `phone`, `user_id`, `created_at`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 
 
          /*array (
@@ -222,6 +225,7 @@ if (!isset($_POST['category']) && isset($_POST['subcategory'])) {
         ":enquiry_id" => $_POST['enquiry_id']
       ));
     } elseif (isset($_POST['enquiry']) && $_POST['enquiry'] == 'add') {
+
       /* array (
   'enquiry' => 'add',
   'enquiry_id' => '',
@@ -245,14 +249,49 @@ if (!isset($_POST['category']) && isset($_POST['subcategory'])) {
         $_POST['address'],
         $_POST['phone'],
         $_POST['subcategory'],
-        $_POST['city_id'],
+        $_POST['city'],
         $_POST['description'],
         '{}'//approval_status`
       ));
       die(header('Location: ' . APP_URL_BASE . 'dashboard.php?enquiries' ));
-    } elseif (isset($_POST['enquiry']) && $_POST['enquiry'] == 'edit') {
+    } elseif (isset($_POST['enquiry'])) {
 
-      if (isset($_POST['enquiry_id']) && $_SESSION['type'] == 'Partner') {
+      if ($_POST['enquiry'] == 'edit') {
+// dd($_POST);
+        $stmt = $pdo->prepare($sql = "UPDATE `enquiries` SET `email` = :email, `phone` = :phone, `address` = :address, `subcategory_id` = :subcategory_id, `city_id` = :city_id, `description` = :description WHERE `enquiries`.`id` = :enquiry_id;");
+
+
+         $stmt->execute(array(
+          ':email' => $_POST['email'],
+          ':phone' => $_POST['phone'],
+          ':address' => $_POST['address'],
+          ':subcategory_id' => (isset($_POST['subcategory']) ? $_POST['subcategory'] : '52'),
+          ':city_id' => $_POST['city'],
+          ':description' => $_POST['description'],
+          ':enquiry_id' => (isset($_POST['enquiry_id']) ? $_POST['enquiry_id'] : '')
+          ));
+/*
+Email
+Phone
+Address
+subcategory_id)
+City_id
+Description
+
+array (
+  'enquiry' => 'edit',
+  'enquiry_id' => '12',
+  'user_id' => '2',
+  'subcategory' => '1',
+  'name' => 'John',
+  'email' => 'user@localhost',
+  'phone' => '1234567889',
+  'address' => '456 Testing',
+  'city' => '2',
+  'description' => 'Description here'
+*/
+
+      } else if (isset($_POST['enquiry_id']) && $_SESSION['type'] == 'Partner') {
 
         $stmt = $pdo->prepare($sql = "SELECT `approval_status` FROM `enquiries` WHERE `enquiries`.`id` = :enquiry_id;");
         $stmt->execute(array('enquiry_id' => $_POST['enquiry_id']));
@@ -277,8 +316,8 @@ if (!empty($approvals) && property_exists($approvals, $_SESSION['user_id'])) {
 
         $stmt = $pdo->prepare($sql = "UPDATE `enquiries` SET `approval_status` = :approval_status WHERE `enquiries`.`id` = :enquiry_id;");
         $stmt->execute(array(
-          'approval_status' => json_encode($approvals),
-          'enquiry_id' => $_POST['enquiry_id']
+          ':approval_status' => json_encode($approvals),
+          ':enquiry_id' => $_POST['enquiry_id']
         ));
 
       }
@@ -364,7 +403,17 @@ if (!empty($approvals) && property_exists($approvals, $_SESSION['user_id'])) {
         die(json_encode(['city_id' => $decodedData['city_id'], 'city' => $row_fetch['city']]));
 
         // 
-      } else if(isset($decodedData['partner_id'])) {
+      } else if (isset($decodedData['enquiry_id'])) {
+        //die(json_decode($decodedData, true));
+        //die('{"test":"test"}');
+        $stmt = $pdo->prepare("SELECT `email`, `phone`, `address`, `subcategory_id`, `city_id`, `description` FROM `enquiries` WHERE `id` = :enquiry_id;");
+        $stmt->execute(array(
+            ":enquiry_id" => $decodedData['enquiry_id']
+        ));
+        //die('{"test":"test"}');
+        $row_fetch = $stmt->fetch();
+        die(json_encode(['enquiry_id' => $decodedData['enquiry_id'], 'name' => $_SESSION['name'], 'email' => $row_fetch['email'], 'phone' => $row_fetch['phone'], 'address' => $row_fetch['address'], 'subcategory_id' => $row_fetch['subcategory_id'], 'city_id' => $row_fetch['city_id'], 'description' => $row_fetch['description'] ]));
+      }  else if (isset($decodedData['partner_id'])) {
         //die(json_decode($decodedData, true));
 
         $stmt = $pdo->prepare("SELECT `id`, `category_id`, `subcategory_id`, `type`, `about`, `city_id`, `name`, `phone`, `address`, `user_id`,  `created_at` FROM `partners` WHERE `id` = :partner_id;");
@@ -373,8 +422,8 @@ if (!empty($approvals) && property_exists($approvals, $_SESSION['user_id'])) {
         ));
         //die('{"test":"test"}');
         $row_fetch = $stmt->fetch();
-        die(json_encode(['partner_id' => $decodedData['partner_id'], 'category' => $row_fetch['category_id'], 'subcategory' => $row_fetch['subcategory_id'], 'type' => $row_fetch['type'], 'about' => $row_fetch['about'], 'city_id' => $row_fetch['city_id'], 'name' => $row_fetch['name'], 'phone' => $row_fetch['phone'], 'address' => $row_fetch['address'], 'user_id' => $row_fetch['user_id'], 'created_at' => $row_fetch['created_at']]));
-      } else if(isset($decodedData['category_id'])) {
+        die(json_encode(['partner_id' => $decodedData['partner_id'], 'category_id' => $row_fetch['category_id'], 'subcategory_id' => $row_fetch['subcategory_id'], 'type' => $row_fetch['type'], 'about' => $row_fetch['about'], 'city_id' => $row_fetch['city_id'], 'name' => $row_fetch['name'], 'phone' => $row_fetch['phone'], 'address' => $row_fetch['address'], 'user_id' => $row_fetch['user_id'], 'created_at' => $row_fetch['created_at']]));
+      } else if (isset($decodedData['category_id'])) {
         //die(json_decode($decodedData, true));
         //die('{"test":"test"}');
         $stmt = $pdo->prepare("SELECT `name` FROM `categories` WHERE `id` = :category_id;");
@@ -398,6 +447,8 @@ if (!empty($approvals) && property_exists($approvals, $_SESSION['user_id'])) {
      
     }
   }
+
+    exit(header('Location: ' . APP_WWW . (!empty(APP_QUERY) ? '?' . http_build_query(APP_QUERY): '' )));
     break;
 
     case 'GET':

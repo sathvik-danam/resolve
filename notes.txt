@@ -1,12 +1,4 @@
 
-
-
-Fatal error: Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'city' in 'field list' in C:\xampp\htdocs\resolve\public\SingleService.php:105 Stack trace: #0 C:\xampp\htdocs\resolve\public\SingleService.php(105): PDOStatement->execute(Array) #1 {main} thrown in C:\xampp\htdocs\resolve\public\SingleService.php on line 105
-
-
-
-
-
 UPDATE `enquiries` SET `approval_status` = '{ \"1\": { \"user_id\": 1, \"status\": 1 }, \"2\": { \"user_id\": 2, \"status\": 0 }, \"3\": { \"user_id\": 3, \"status\": 1 } }' WHERE `enquiries`.`id` = 1; 
 
 

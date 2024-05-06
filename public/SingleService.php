@@ -120,7 +120,7 @@ if (isset($_GET['page']) && $_GET['page'] != '') {
         <button id="myBtn" type="button" data-dismiss="modal" aria-label="Close" class="close" style="float: right;"><span aria-hidden="true">×</span></button>
 
       </div>
-      <form action method="POST">
+      <form action="<?= APP_URL_BASE ?>" method="POST">
         <input type="hidden" name="enquiry" value="add" />
         <input type="hidden" name="enquiry_id" />
         <div class="modal-body" bis_skin_checked="1">
@@ -132,29 +132,29 @@ if (isset($_GET['page']) && $_GET['page'] != '') {
         <?php
 if (!empty($_SESSION)) {
 
-$stmt = $pdo->prepare("SELECT * FROM `users` WHERE id = :user_id;");
-$stmt->execute(array(
+$stmt_users = $pdo->prepare("SELECT * FROM `users` WHERE id = :user_id;");
+$stmt_users->execute(array(
   ':user_id' => $_SESSION['user_id']
 ));
-$row_fetch_user = $stmt->fetch();
+$row_fetch_user = $stmt_users->fetch();
 }
 
 ?> 
-        <!----></div>
+        <input type="hidden" name="user_id" value="<?= $row_fetch_user['id']; ?>"><!----></div>
         <label>Profession</label>
         <div class="form-group" bis_skin_checked="1">
           <select name="subcategory" class="form-control">
           <?php
-$stmt = $pdo->prepare("SELECT `id`, `name` FROM `subcategories`;");
-  $stmt->execute(array());
+$stmt_subcategory = $pdo->prepare("SELECT `id`, `name` FROM `subcategories`;");
+$stmt_subcategory->execute(array());
   
-while ($row_fetch_subcategory = $stmt->fetch()) { ?>
-            <option value="<?= $row_fetch_subcategory['id'] ?>"><?= $row_fetch_subcategory['name'] ?></option>
+while ($row_fetch_subcategory = $stmt_subcategory->fetch()) { ?>
+            <option value="<?= $row_fetch_subcategory['id'] ?>" <?= ($row_fetch['subcategory_id'] == $row_fetch_subcategory['id'] ? 'selected' : '' ) ?>><?= $row_fetch_subcategory['name'] ?></option>
 <?php } ?>
 
-</select> <!----></div>
+</select><!----></div>
         <label>Name</label>
-        <div class="form-group" bis_skin_checked="1"><input type="hidden" name="user_id" value="<?= $row_fetch_user['id']; ?>"><input type="text" id="name" name="name" value="<?= $row_fetch_user['name']; ?>" placeholder="Enter Name" class="form-control"> <!----></div> 
+        <div class="form-group" bis_skin_checked="1"><input type="text" id="name" name="name" value="<?= $row_fetch_user['name']; ?>" placeholder="Enter Name" class="form-control"> <!----></div> 
          
         <label>Email</label>
         <div class="form-group" bis_skin_checked="1"><input type="text" id="email" name="email" value="<?= $row_fetch_user['email']; ?>" placeholder="Enter Email" class="form-control"> <!----></div> 
@@ -169,10 +169,10 @@ while ($row_fetch_subcategory = $stmt->fetch()) { ?>
         <div class="form-group" bis_skin_checked="1">
           <select name="city" class="form-control">
           <?php
-$stmt = $pdo->prepare("SELECT `id`, `city` FROM `cities`;");
-  $stmt->execute(array());
+$stmt_cities = $pdo->prepare("SELECT `id`, `city` FROM `cities`;");
+  $stmt_cities->execute(array());
   
-while ($row_fetch_city = $stmt->fetch()) { ?>
+while ($row_fetch_city = $stmt_cities->fetch()) { ?>
             <option value="<?= $row_fetch_city['id'] ?>" <?= ($row_fetch_user['city_id'] == $row_fetch_city['id'] ? 'selected' : '') ?>><?= $row_fetch_city['city'] ?></option>
 <?php } ?>
 
@@ -205,7 +205,14 @@ while ($row_fetch_city = $stmt->fetch()) { ?>
 <section class="relative bg-cover bg-center bg-no-repeat" style="background-image: url('<?= (isset($row_fetch['photo1']) ? 'img/profession/' . $row_fetch['photo1'] : 'https://images.unsplash.com/photo-1604014237800-1c9102c219da?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80') ?>'); height: 350px;">
     <div class="absolute inset-0 bg-black opacity-50"></div>
     <div class="relative max-w-5xl mx-auto h-full flex items-center pl-8">
-        <h1 class="text-cyan-300 text-3xl font-bold"><?= (isset($row_fetch['category']) ? $row_fetch['category'] : 'Let us find your Forever Home.') ?></h1>
+        <h1 class="text-cyan-300 text-3xl font-bold"><?php
+        if (isset($row_fetch['category_id'])) { 
+          $stmt_category = $pdo->prepare("SELECT `name` FROM `categories` WHERE `id` = :category_id;");
+          $stmt_category->execute(array('category_id' => $row_fetch['category_id']));
+          $row_category = $stmt_category->fetch();
+                       
+          ?><?= $row_category['name']; ?>
+        <?php } ?></h1>
     </div>
 </section>
 
