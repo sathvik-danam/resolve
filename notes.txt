@@ -1,5 +1,9 @@
 UPDATE `enquiries` SET `approval_status` = '{ \"1\": { \"user_id\": 1, \"status\": 1 }, \"2\": { \"user_id\": 2, \"status\": 0 }, \"3\": { \"user_id\": 3, \"status\": 1 } }' WHERE `enquiries`.`id` = 1; 
 
+
+UPDATE `enquiries` SET `approval_status` = '{\n \"1\": {\n \"user_id\": 1,\n \"status\": 1\n },\n \"2\": {\n \"user_id\": 2,\n \"status\": 0\n },\n \"3\": {\n \"user_id\": 3,\n \"status\": 1\n } }' WHERE `enquiries`.`id` = 1; 
+
+
 json_encode('{
     "1": {
         "user_id": 1,
@@ -12,9 +16,93 @@ json_encode('{
     "3": {
         "user_id": 3,
         "status": 1
-    } }')l
+    } }')
 
-UPDATE `enquiries` SET `approval_status` = '{\n \"1\": {\n \"user_id\": 1,\n \"status\": 1\n },\n \"2\": {\n \"user_id\": 2,\n \"status\": 0\n },\n \"3\": {\n \"user_id\": 3,\n \"status\": 1\n } }' WHERE `enquiries`.`id` = 1; 
+json_encode('{
+    "1": 1,
+    "2": 0,
+    "3": 1}')
+
+UPDATE `enquiries` SET `approval_status` = '{\r\n \"1\": 1,\r\n \"2\": 0,\r\n \"3\": 1\r\n}' WHERE `enquiries`.`id` = 1; 
+
+
+DocumentRoot "C:/xampp/htdocs/arvice_uportal/public"
+<Directory "C:/xampp/htdocs/arvice_uportal/public">
+    #
+    # Possible values for the Options directive are "None", "All",
+    # or any combination of:
+    #   Indexes Includes FollowSymLinks SymLinksifOwnerMatch ExecCGI MultiViews
+    #
+    # Note that "MultiViews" must be named *explicitly* --- "Options All"
+    # doesn't give it to you.
+    #
+    # The Options directive is both complicated and important.  Please see
+    # http://httpd.apache.org/docs/2.4/mod/core.html#options
+    # for more information.
+    #
+    Options Indexes FollowSymLinks Includes ExecCGI
+
+    #
+    # AllowOverride controls what directives may be placed in .htaccess files.
+    # It can be "All", "None", or any combination of the keywords:
+    #   AllowOverride FileInfo AuthConfig Limit
+    #
+    AllowOverride All
+
+    #
+    # Controls who can get stuff from this server.
+    #
+    Require all granted
+</Directory>
+
+Alias /applications "C:/xampp/htdocs/barrydit_composer/applications"
+<Directory "C:/xampp/htdocs/barrydit_composer/applications">
+  Options Indexes FollowSymLinks
+  AllowOverride All
+  Require all granted
+</Directory>
+
+Alias /clientele "C:/xampp/htdocs/barrydit_composer/clientele"
+<Directory "C:/xampp/htdocs/barrydit_composer/clientele">
+  Options Indexes FollowSymLinks
+  AllowOverride All
+  Require all granted
+</Directory>
+
+Alias /projects "C:/xampp/htdocs/barrydit_composer/projects"
+<Directory "C:/xampp/htdocs/barrydit_composer/projects">
+  Options Indexes FollowSymLinks
+  AllowOverride All
+  Require all granted
+</Directory>
+
+Alias /resources "C:/xampp/htdocs/barrydit_composer/resources"
+<Directory "C:/xampp/htdocs/barrydit_composer/resources">
+  Options Indexes FollowSymLinks
+  AllowOverride All
+  Require all granted
+</Directory>
+
+Alias /composer "C:/xampp/htdocs/barrydit_composer/public"
+<Directory "C:/xampp/htdocs/barrydit_composer/public">
+  Options Indexes FollowSymLinks
+  AllowOverride All
+  Require all granted
+</Directory>
+
+Alias /resolve "C:/xampp/htdocs/resolve/public"
+<Directory "C:/xampp/htdocs/resolve/public">
+  Options Indexes FollowSymLinks
+  AllowOverride All
+  Require all granted
+</Directory>
+
+
+-----
+
+'UPDATE `partners` SET `category_id` = :category_id, `subcategory_id` = :subcategory_id, `type` = :type, `about` = :about, `city_id` = :city_id, `name` = :name, `phone` = :phone, `address` = :address, `user_id` = :user_id WHERE `partners`.`id` = :partner_id;'
+
+Execution time: 0.018 secs
 
 -----
 
@@ -38,9 +126,8 @@ ALTER TABLE `enquiries` ADD  CONSTRAINT `fk_enquiries_cities_city_id` FOREIGN KE
 
 
 
-
-
 ALTER TABLE `subcategories` ADD  CONSTRAINT `fk_subcategories_categories_category_id` FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
 
 
 ALTER TABLE `users` ADD  CONSTRAINT `fk_users_cities_city_id` FOREIGN KEY (`city_id`) REFERENCES `city`(`id`) ON DELETE NO ACTION ON UPDATE CASCADE;

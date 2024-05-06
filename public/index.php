@@ -298,6 +298,24 @@ button:hover {
 <?php require_once('nav_bar.php'); ?>
 <!-- Home Hero -->
 
+
+<?php if (isset($errors['DATABASE'])) { ?>
+  
+
+  <div id="database-error" class="modal" bis_skin_checked="1" style="display: block;">
+  <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
+    <div class="relative modal-content" style="height: 550px;" bis_skin_checked="1">
+    
+    <span class="text-md font-semibold text-lg" style="float: right;">[<a href="javascript:void(0)" onclick="document.getElementById('database-error').style.display = 'none';">x</a>]</span>
+    <a href="javascript:void(0)"><img src="img/logo2.png" alt="logo" class='w-40 mb-10' /></a>
+    <p class="text-center text-3xl font-extrabold"><?= $errors['DATABASE'] ?></p>
+    <p>With out this connection, the web appliocaiton can not operate, and no information can move in or out.</p>
+    </div>
+  </div>
+</div>
+
+  <?php } ?>
+
 <?php if (!isset($_SESSION['user_id'])) { ?>
 
 

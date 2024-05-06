@@ -17,8 +17,18 @@ $options = [
 ];
 
 /* Make sure DB exists ... */
+
+//$pdo = new PDO($dsn, DB_UNAME, DB_PWORD, $options);
+
+//if (!is_object($pdo)) {}
+
+/**/
+//dd($pdo);
+
 try {
   $pdo = new PDO($dsn, DB_UNAME, DB_PWORD, $options);
 } catch (PDOException $e) {
-   die('testing connection failed');
+   ////die('testing connection failed');
+  $errors['DATABASE'] = 'Database Failed to connect.';
+
 }

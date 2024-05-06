@@ -122,8 +122,15 @@ switch ($_SERVER['REQUEST_METHOD']) {
     } elseif (isset($_POST['partner']) && $_POST['partner'] == 'edit') {
 //dd($_POST);
 
-      $stmt = $pdo->prepare($sql = "UPDATE `partners` SET `category_id` = :category_id, `subcategory_id` = :subcategory_id, `type` = :type, `about` = :about, `city_id` = :city_id, `name` = :name, `phone` = :phone, `address` = :address, `user_id` = :user_id WHERE `partners`.`id` = :partner_id;");
+if (!isset($_POST['category']) && isset($_POST['subcategory'])) {
+  $stmt = $pdo->query("SELECT `category_id` FROM `subcategories` WHERE `id` = " . (int) $_POST['subcategory'] . ";");
+  $row = $stmt->fetch(PDO::FETCH_ASSOC);
+  $_POST['category'] = $row['category_id'];
+} 
 
+      $stmt = $pdo->prepare($sql = "UPDATE `partners` SET `category_id` = :category_id, `subcategory_id` = :subcategory_id, `type` = :type, `about` = :about, `city_id` = :city_id, " /*`name` = :name,*/ . " `phone` = :phone, `address` = :address, `user_id` = :user_id WHERE `partners`.`id` = :partner_id;");
+
+      dd($_POST);
       if (basename(APP_SELF) == 'dashboard.php') {
         $array = array(
         ':partner_id' => $_POST['partner_id'],
@@ -132,7 +139,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
         ':type' => (isset($_POST['type']) ? $_POST['type'] : ''),
         ':about' => $_POST['about'],
         ':city_id' => $_POST['city_id'],
-        ':name' => (isset($_POST['name']) ? $_POST['name'] : ''),
+        //':name' => (isset($_POST['name']) ? $_POST['name'] : ''),
         ':phone' => (isset($_POST['phone']) ? $_POST['phone'] : ''),
         ':address' => (isset($_POST['address']) ? $_POST['address'] : ''),
         ':user_id' => (isset($_POST['user_id']) ? $_POST['user_id'] : '')
@@ -141,12 +148,12 @@ switch ($_SERVER['REQUEST_METHOD']) {
       } else {
         $array = array(
             ':partner_id' => $_POST['partner_id'],
-            ':category' => $_POST['category'],
-            ':subcategory' => $_POST['subcategory'],
+            ':category_id' => $_POST['category'],
+            ':subcategory_id' => $_POST['subcategory'],
             ':type' => (isset($_POST['type']) ? $_POST['type'] : ''),
             ':about' => $_POST['about'],
-            ':city' => $_POST['city'],
-            ':name' => (isset($_POST['name']) ? $_POST['name'] : ''),
+            ':city_id' => $_POST['city'],
+            //':name' => (isset($_POST['name']) ? $_POST['name'] : ''),
             ':phone' => (isset($_POST['phone']) ? $_POST['phone'] : ''),
             ':address' => (isset($_POST['address']) ? $_POST['address'] : ''),
             ':user_id' => (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : '')
@@ -157,6 +164,13 @@ switch ($_SERVER['REQUEST_METHOD']) {
       // id, category, subcategory, type, about, photo, state, city, name, phone, email, address, slug, user_id, created_at, updated_at
       //dd(basename(APP_SELF));
       if (basename(APP_SELF) == 'dashboard.php') {
+
+        if (!isset($_POST['category']) && isset($_POST['subcategory'])) {
+          $stmt = $pdo->query("SELECT `category_id` FROM `subcategories` WHERE `id` = " . (int) $_POST['subcategory'] . ";");
+          $row = $stmt->fetch(PDO::FETCH_ASSOC);
+          $_POST['category'] = $row['category_id'];
+        } 
+
 
         $stmt = $pdo->prepare("INSERT INTO `partners` (`category_id`, `subcategory_id`, `type`, `about`, `city_id`, " /*`name`,*/ . "`phone`, `address`, `user_id`, `created_at`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 
@@ -234,9 +248,29 @@ switch ($_SERVER['REQUEST_METHOD']) {
     } elseif (isset($_POST['enquiry']) && $_POST['enquiry'] == 'edit') {
 
       if (isset($_POST['enquiry_id']) && $_SESSION['type'] == 'Partner') {
-        $stmt = $pdo->prepare($sql = "UPDATE `enquiries` SET `approval_status` WHERE `enquiries`.`id` = :enquiry_id;");
 
-        // 
+        $stmt = $pdo->prepare($sql = "SELECT `approval_status` FROM `enquiries` WHERE `enquiries`.`id` = :enquiry_id;");
+        $stmt->execute(array('enquiry_id' => $_POST['enquiry_id']));
+        $row = $stmt->fetch();
+
+        $approvals = json_decode($row['approval_status'], false); // {"1":1,"2":0,"3":1}
+//dd($approvals, false);
+// Check if $approvals is non-empty and the current session user_id exists in $approvals
+if (!empty($approvals) && property_exists($approvals, $_SESSION['user_id'])) {
+  // Toggle the approval status if it exists
+  $approvals->{$_SESSION['user_id']} = (int)!$approvals->{$_SESSION['user_id']};
+} else {
+  // Set approval to true if user_id does not exist or $approvals is empty
+  $approvals->{$_SESSION['user_id']} = 1;
+}
+//dd(json_encode($approvals), true);
+
+        $stmt = $pdo->prepare($sql = "UPDATE `enquiries` SET `approval_status` = :approval_status WHERE `enquiries`.`id` = :enquiry_id;");
+        $stmt->execute(array(
+          'approval_status' => json_encode($approvals),
+          'enquiry_id' => $_POST['enquiry_id']
+        ));
+
       }
 
     } elseif (isset($_POST['city']) && $_POST['city'] == 'delete') {
@@ -329,7 +363,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
         ));
         //die('{"test":"test"}');
         $row_fetch = $stmt->fetch();
-        die(json_encode(['partner_id' => $decodedData['partner_id'], 'category' => $row_fetch['category'], 'subcategory' => $row_fetch['subcategory'], 'type' => $row_fetch['type'], 'about' => $row_fetch['about'], 'city' => $row_fetch['city'], 'name' => $row_fetch['name'], 'phone' => $row_fetch['phone'], 'address' => $row_fetch['address'], 'user_id' => $row_fetch['user_id'], 'created_at' => $row_fetch['created_at']]));
+        die(json_encode(['partner_id' => $decodedData['partner_id'], 'category' => $row_fetch['category_id'], 'subcategory' => $row_fetch['subcategory_id'], 'type' => $row_fetch['type'], 'about' => $row_fetch['about'], 'city_id' => $row_fetch['city_id'], 'name' => $row_fetch['name'], 'phone' => $row_fetch['phone'], 'address' => $row_fetch['address'], 'user_id' => $row_fetch['user_id'], 'created_at' => $row_fetch['created_at']]));
       } else if(isset($decodedData['category_id'])) {
         //die(json_decode($decodedData, true));
         //die('{"test":"test"}');
@@ -356,4 +390,13 @@ switch ($_SERVER['REQUEST_METHOD']) {
   }
     break;
 
+    case 'GET':
+      if (basename(APP_SELF) == 'dashboard.php' && isset($_GET['partners']) && $_GET['partners'] != 'add') {
+
+        exit(header('Location: ' . APP_URL_BASE . 'dashboard.php?partners=add&category=1'));
+
+      }
+
+      // partners=add&category_id=1
+      break;
 }

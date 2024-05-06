@@ -137,7 +137,7 @@ if (empty($_SESSION)) die(header('Location: ' . APP_URL_BASE)); ?>
           <option value="">Select User Role</option>
           <option value="Admin">Admin</option>
           <option value="User">User</option>
-          <option value="Author">Author</option>
+          <option value="Partner">Partner</option>
         </select> <!----></div></div>
         <div class="modal-footer" bis_skin_checked="1">
           <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
@@ -172,7 +172,7 @@ if (empty($_SESSION)) die(header('Location: ' . APP_URL_BASE)); ?>
           <option value="">Select User Role</option>
           <option value="Admin">Admin</option>
           <option value="User">User</option>
-          <option value="Author">Author</option>
+          <option value="Partner">Partner</option>
         </select> <!----></div></div>
         <div class="modal-footer" bis_skin_checked="1">
           <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
@@ -184,9 +184,9 @@ if (empty($_SESSION)) die(header('Location: ' . APP_URL_BASE)); ?>
 </div>
 
 
-<?php } else if (isset($_GET['partners']) || isset($_GET['skills']) ) { // 7x  ?>
+<?php } else if (isset($_GET['partners']) || /* isset($_GET['create-profession']) ||*/ isset($_GET['skills']) ) { // 7x  ?>
 
-<div id="myModal" class="modal" style="display: none;">
+<div id="myModal" class="modal" style="display: <?= ($_GET['partners'] == 'add' && isset($_GET['category']) ? 'block' : 'none') ?>;">
   <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
     <div class="modal-content" bis_skin_checked="1">
       <div class="modal-header" bis_skin_checked="1">
@@ -194,37 +194,69 @@ if (empty($_SESSION)) die(header('Location: ' . APP_URL_BASE)); ?>
         <span id="addNewLabel" class="modal-title" style="">Add Partner</span>
         <h5 id="addNewLabel" class="modal-title" style="display: none;">Update User's info</h5>
       </div>
-      <form action method="POST">
-        <input type="hidden" name="partner" value="add" />
-        <input type="hidden" name="partner_id" />
-        <div class="modal-body" bis_skin_checked="1">
-        <div class="form-group" bis_skin_checked="1"><input type="hidden" id="user_id" name="user_id" class="form-control"> <!----></div> 
-        <label>Category</label>
+<?php if (isset($_GET['category'])) { ?>
+      <form action="<?= APP_WWW ?>" method="GET">
+        <input type="hidden" name="partners" value="add" />
+
+      <label>Category</label>
         <div class="form-group" bis_skin_checked="1">
-        <select id="category" name="category" class="form-control">
+        <select id="category" name="category" class="form-control" onchange="this.form.submit();">
 <?php
-$stmt = $pdo->prepare("SELECT `name` FROM `categories`;");
+$stmt = $pdo->prepare("SELECT `id`, `name` FROM `categories`;");
   $stmt->execute(array());
   
 while ($row_fetch = $stmt->fetch()) { ?>
-            <option value="<?= $row_fetch['name'] ?>"><?= $row_fetch['name'] ?></option>
+            <option value="<?= $row_fetch['id'] ?>" <?= ($row_fetch['id'] == $_GET['category'] ? 'selected' : '' )?>><?= $row_fetch['name'] ?></option>
      
 <?php } ?>
           </select>
+      </form>
+
+<?php } ?>
+
+      <form action="dashboard.php?partners=add" method="POST">
+
+        <div class="modal-body" bis_skin_checked="1">
+        <div class="form-group" bis_skin_checked="1">
+          <input type="hidden" name="partner" value="add" />
+          <input type="hidden" name="partner_id" />
+          <input type="hidden" id="user_id" name="user_id" class="form-control">
+          <?php if (isset($_GET['category']) && is_int((int) $_GET['category'])) { ?> 
+          <input type="hidden" name="category" value="<?= $_GET['category'] ?>">  
+          <?php } ?><!----></div> 
+
         </div> 
         <label>Profession</label>
         <div class="form-group" bis_skin_checked="1">
           
         <select id="subcategory" name="subcategory" class="form-control">
-<?php
-$stmt = $pdo->prepare("SELECT `name` FROM `subcategories`;");
-  $stmt->execute(array());
-  
-while ($row_fetch = $stmt->fetch()) { ?>
-            <option value="<?= $row_fetch['name'] ?>"><?= $row_fetch['name'] ?></option>
-     
-<?php } ?>
-          </select> <!----></div>
+        <?php
+    $default_subcategory = 52; // Default subcategory ID
+    $selected_category = isset($_GET['category']) ? (int) $_GET['category'] : null;
+    $has_subcategories = false; // Flag to check if any subcategories are found
+
+    if ($selected_category) {
+        $stmt = $pdo->prepare("SELECT `id`, `name` FROM `subcategories` WHERE `category_id` = :category_id;");
+        $stmt->execute(['category_id' => $selected_category]);
+
+        while ($row = $stmt->fetch()) {
+            echo "<option value='{$row['id']}'>{$row['name']}</option>";
+            $has_subcategories = true; // Set flag to true as subcategories exist
+        }
+    }
+
+    // Show default option only if no subcategories were fetched
+    if (!$has_subcategories) {
+        echo "<option value='{$default_subcategory}' selected>Others</option>";
+    }
+    ?>
+          </select>
+          
+          <input type="hidden" name="subcategory" value="52"><!----></div>
+<!-- 
+        <label>Name</label>
+        <div class="form-group" bis_skin_checked="1"><input id="name" name="name" placeholder="Enter Name" value="<?= $_SESSION['name'] ?>" class="form-control" /></div> 
+-->
         <label>About</label>
         <div class="form-group" bis_skin_checked="1"><textarea id="about" name="about" placeholder="Enter About" class="form-control"></textarea> <!----></div> 
         <label>City</label>
@@ -337,7 +369,7 @@ $stmt = $pdo->prepare("SELECT `id`, `city` FROM `cities`;");
   $stmt->execute(array());
   
 while ($row_fetch_city = $stmt->fetch()) { ?>
-            <option value="<?= $row_fetch_city['id'] ?>"><?= $row_fetch_city['city'] ?></option>
+            <option value="<?= $row_fetch_city['id'] ?>" <?= (isset($_SESSION['city']) && $_SESSION['city'] == $row_fetch_city['city'] ? 'selected' : '')  ?>><?= $row_fetch_city['city'] ?></option>
 <?php } ?>
 
 </select><!----></div> 
@@ -570,7 +602,7 @@ while ($row_fetch = $stmt->fetch()) { ?>
         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
 
-          </div><a href="<?= APP_WWW ?>?create-profession">Create Profession</a>
+          </div><a href="<?= APP_WWW ?>?partners">Create Profession</a>
         </div>
         <div role="button" tabindex="0" class="flex items-center w-full p-3 rounded-lg text-start leading-tight transition-all hover:bg-blue-50 hover:bg-opacity-80 focus:bg-blue-50 focus:bg-opacity-80 active:bg-blue-50 active:bg-opacity-80 hover:text-blue-900 focus:text-blue-900 active:text-blue-900 text-white outline-none">
           <div class="grid place-items-center mr-4">
@@ -715,108 +747,6 @@ if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['User'])) { ?>
 </section>
 
 </div>
-<?php } elseif (isset($_GET['create-profession'])) { ?> 
-  
-<div style="position: absolute; top: 0; left: 100px; height: 95%; width: 75%; display: inline; float: left; margin: 25px 0 0 250px;" class="absolute overflow-x-auto shadow-md sm:rounded-lg">
-
-
-<div style="position: relative; height: 500px; margin-bottom: 50px;">
-  <div style="position: absolute; top: 40px; display: inline; margin: 25px auto; width: 100%; overflow-x:scroll;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
-<div class="box-tools" bis_skin_checked="1">
-    <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add Partner<i class="fas fa-user-plus fa-fw"></i></button>
-</div>
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-                <th scope="col" class="px-6 py-3">
-                    Category
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Subcategory
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Type
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    City
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Address
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    About
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Profile
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Registered At
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Modify
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-          
-<?php 
-
-$stmt = $pdo->prepare("SELECT `id`, `category_id`, `subcategory_id`, `type`, `about`, `photo`, `city_id`, `address`, `name`, `phone`, `created_at` FROM `partners` WHERE `user_id` = :user_id;");
-
-$stmt->execute(array('user_id' => $_SESSION['user_id'] ));
-
-while ($row = $stmt->fetch()) { ?>
-
-    <tr class="odd:bg-black odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                <td class="px-6 py-4">
-                  <?= $row['category_id'] ?>
-                </td>
-                <td class="px-6 py-4">
-                  <?= $row['subcategory_id'] ?>
-                </td>
-                <td class="px-6 py-4">
-                  <?= $row['type'] ?>
-                </td>
-                <td class="px-6 py-4">
-                  <?= $row['city_id'] ?>
-                </td>
-                <td class="px-6 py-4">
-                  <?= $row['address'] ?>
-                </td>
-                <td class="px-6 py-4">
-                 <?= $row['about'] ?>
-                </td>
-                <td class="px-6 py-4">
-                  <?= $row['photo'] ?>
-                </td>
-                <td class="px-6 py-4">
-                  <?= $row['created_at'] ?>
-                </td>
-                <td class="px-6 py-4">
-                    <!-- a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a -->
-
-                    <form class="partner_edit" style="display: inline;">
-                      <input type="hidden" name="partner" value="edit" />
-                      <input type="hidden" name="partner_id" value="<?= $row['id'] ?>">
-                      <button type="submit">Edit</button>
-                    </form>
-                    / 
-                    <form action method="POST" style="display: inline;">
-                      <input type="hidden" name="partner" value="delete" />
-                      <input type="hidden" name="partner_id" value="<?= $row['id'] ?>">
-                      <button type="submit">Delete</button>
-                    </form>
-                </td>
-            </tr>
-
-<?php } ?>
-        </tbody>
-    </table>
-</div>
-</div>
-
-</div>
-  
 <?php } elseif (isset($_GET['users'])) { ?>
 
 <div style="position: absolute; top: 0; left: 100px; height: 95%; display: inline; float: left; margin: 25px 0 0 250px;" class="absolute overflow-x-auto shadow-md sm:rounded-lg">  
@@ -920,7 +850,7 @@ $row_fetch = $stmt->fetch(); ?>
 </div>
   
   
-<?php } elseif (isset($_GET['partners'])) { ?>
+<?php } elseif (isset($_GET['partners']) || isset($_GET['create-profession'])) { ?>
  
 <div style="position: absolute; top: 0; right: 60px; height: 95%; display: inline; float: right; margin: 25px 0 0 275px; width: 75%; overflow-x:scroll;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
@@ -970,7 +900,7 @@ $row_fetch = $stmt->fetch(); ?>
           
 <?php 
 
-$stmt = $pdo->prepare($sql = "SELECT `id`, `category_id`, `subcategory_id`, `type`, `about`, `photo`, `city_id`, `name`, `phone`, `created_at` FROM `partners` " . ($_SESSION['type'] == 'Partner' ? ' WHERE `user_id` = :user_id' : '') . ";");
+$stmt = $pdo->prepare($sql = "SELECT `id`, `category_id`, `subcategory_id`, `type`, `about`, `photo`, `city_id`, `name`, `phone`, `user_id`, `created_at` FROM `partners` " . ($_SESSION['type'] == 'Partner' ? ' WHERE `user_id` = :user_id' : '') . ";");
 //dd($sql);
 $array = [];
 
@@ -997,7 +927,14 @@ $stmt = $pdo->prepare("SELECT `name` FROM `users` WHERE `id` = :user_id;");
 $stmt->execute(array('user_id' => $_SESSION['user_id']));
 $row_user = $stmt->fetch();
 */           
-?><?= $_SESSION['name']; ?>
+?>
+<?php
+//dd($row);
+$stmt_user = $pdo->prepare("SELECT `name` FROM `users` WHERE `id` = :user_id;");
+$stmt_user->execute(array('user_id' => $row['user_id']));
+$row_user = $stmt_user->fetch();
+             
+?><?= $row_user['name']; ?>
                 </td>
                 <td class="px-6 py-4">
 <?php
@@ -1100,7 +1037,10 @@ Enquiries Table
 //dd($_SESSION);
 //dd(implode(',', $_SESSION['professions']));
 
-$stmt = $pdo->prepare("SELECT `id`, `user_id`, `email`, `phone`, `subcategory_id`, `city_id`, `address`, `approval_status` FROM `enquiries` " . ($_SESSION['type'] == 'User' ? ' WHERE `user_id` = :user_id' : ($_SESSION['type'] == 'Partner' ? ' WHERE `subcategory_id` IN (' . implode(',', $_SESSION['professions']) . ')' : '')) . ";");
+//$stmt = $pdo->prepare("SELECT `id`, `user_id`, `email`, `phone`, `subcategory_id`, `city_id`, `address`, `approval_status` FROM `enquiries` " . ($_SESSION['type'] == 'User' ? ' WHERE `user_id` = :user_id' : ($_SESSION['type'] == 'Partner' ? ' WHERE `subcategory_id` IN (' . implode(',', $_SESSION['professions']) . ')' : '')) . ";");
+$stmt = $pdo->prepare("SELECT `id`, `user_id`, `email`, `phone`, `subcategory_id`, `city_id`, `address`, `approval_status`, `created_at`, `updated_at` FROM `enquiries` " 
+    . ($_SESSION['type'] == 'User' ? ' WHERE `user_id` = :user_id' : ($_SESSION['type'] == 'Partner' ? ' WHERE `subcategory_id` IN (' . implode(',', $_SESSION['professions']) . ')' : ''))
+    . " ORDER BY `updated_at` DESC, `created_at` DESC;");
 
 $array = [];
 if ($_SESSION['type'] == 'User') {
@@ -1143,12 +1083,13 @@ $row_city = $stmt_city->fetch();
                  <?= $row['address'] ?>
                 </td>
                 <th scope="col" class="px-6 py-3">         
-<?php
-if (in_array($_SESSION['type'], ['User', 'Admin'])) { $approvals = json_decode($row['approval_status']);
-//dd($approvals);
+<?php 
+$approvals = json_decode($row['approval_status'], false);
+if (in_array($_SESSION['type'], ['User', 'Admin'])) {
+dd($approvals);
 $yes = $no = 0;
 foreach($approvals as $key => $approval) {
-  if ($approval->{'status'} == 1) $yes++;
+  if ($approval == 1) $yes++;
   else $no++;
 }
 ?>
@@ -1160,7 +1101,7 @@ foreach($approvals as $key => $approval) {
                         <input type="hidden" name="enquiry" value="edit">
                         <input type="hidden" name="enquiry_id" value="<?= $row['id'] ?>">
 
-                        <button type="submit">Yes<button>
+                        <button type="submit"><?= (isset($approvals->{$_SESSION['user_id']}) ? ($approvals->{$_SESSION['user_id']} == 1 ? 'Yes': 'No') : 'Pending')?><button>
 </form>
   <?php } ?>
                 </th>
@@ -1244,9 +1185,6 @@ while ($row = $stmt->fetch()) { ?>
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th scope="col" class="px-6 py-3">
-                    Id
-                </th>
-                <th scope="col" class="px-6 py-3">
                     Name
                 </th>
                 <th scope="col" class="px-6 py-3">
@@ -1263,11 +1201,8 @@ while ($row = $stmt->fetch()) { ?>
 
     <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    <?= $row['id'] ?>
+                    <?= '[' . $row['id'] . '] ' . $row['name'] ?>
                 </th>
-                <td class="px-6 py-4">
-                 <?= $row['name'] ?>
-                </td>
                 <td class="px-6 py-4">
                     <form class="category_edit" style="display: inline;">
                       <input type="hidden" name="category" value="edit">
@@ -1299,13 +1234,10 @@ while ($row = $stmt->fetch()) { ?>
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th scope="col" class="px-6 py-3">
-                    Id
-                </th>
-                <th scope="col" class="px-6 py-3">
                     Name
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Belongs To
+                    Category
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Modify
@@ -1321,13 +1253,16 @@ while ($row = $stmt->fetch()) { ?>
 
     <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    <?= $row['id'] ?>
+                  <?= '[' . $row['id'] . '] ' . $row['name'] ?>
+               
                 </th>
                 <td class="px-6 py-4">
-                 <?= $row['category_id'] ?>
-                </td>
-                <td class="px-6 py-4">
-                 <?= $row['name'] ?>
+ <?php
+$stmt_category = $pdo->prepare("SELECT `name` FROM `subcategories` WHERE `id` = :id;");
+$stmt_category->execute(array('id' => $row['category_id']));
+$row_category = $stmt_category->fetch();
+             
+?><?= '[' . $row['category_id'] . '] ' . $row_category['name']; ?>
                 </td>
                 <td class="px-6 py-4">
                     <form class="subcategory_edit" style="display: inline;">
