@@ -116,3 +116,26 @@ function check_http_200($url = 'http://8.8.8.8') {
   }
   return false; // Ping or HTTP request failed //$connected = @fsockopen("www.google.com", 80); //fclose($connected);
 }
+
+function createSlug($string) {
+    // Convert to lowercase
+    $slug = strtolower($string);
+    
+    // Remove accents and other special characters
+    $slug = iconv('UTF-8', 'ASCII//TRANSLIT', $slug);
+    
+    // Replace non-letter or digits by hyphen
+    $slug = preg_replace('~[^\pL\d]+~u', '-', $slug);
+    
+    // Remove unwanted characters
+    $slug = preg_replace('~[^-\w]+~', '', $slug);
+    
+    // Trim hyphens from the beginning and end
+    $slug = trim($slug, '-');
+    
+    // Replace multiple hyphens with a single hyphen
+    $slug = preg_replace('~-+~', '-', $slug);
+    
+    // Return the slug
+    return $slug;
+}

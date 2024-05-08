@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 06, 2024 at 03:55 AM
+-- Generation Time: May 08, 2024 at 05:54 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -89,7 +89,7 @@ CREATE TABLE `enquiries` (
   `subcategory_id` int(11) UNSIGNED NOT NULL,
   `city_id` int(11) UNSIGNED NOT NULL,
   `description` text NOT NULL,
-  `approval_status` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '{}',
+  `approval_status` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -99,8 +99,14 @@ CREATE TABLE `enquiries` (
 --
 
 INSERT INTO `enquiries` (`id`, `user_id`, `email`, `address`, `phone`, `subcategory_id`, `city_id`, `description`, `approval_status`, `created_at`, `updated_at`) VALUES
-(4, 2, 'random@localhost', '456 Testing', '5455565689', 2, 2, 'Technical details', '{\"3\":1}', '2024-05-03 22:21:31', '2024-05-03 22:21:31'),
-(5, 3, 'partner@localhost', '123 fake street', '8147483647', 1, 2, '', '{}', '2024-05-06 01:27:37', '2024-05-06 01:27:37');
+(8, 1, 'admin@localhost', '123 Fake Street', '1115551212', 1, 1, '', '{}', '2024-05-06 14:26:37', '2024-05-06 14:26:37'),
+(9, 1, 'admin@localhost', '123 Fake Street', '1115551212', 9, 1, '', '{}', '2024-05-06 14:28:11', '2024-05-06 14:28:11'),
+(10, 3, 'partner@localhost', '123 fake street', '8147483647', 7, 2, '', '{\"3\":1}', '2024-05-06 14:29:14', '2024-05-06 14:29:14'),
+(11, 1, 'admin@localhost', '123 Fake Street', '1115551212', 6, 1, '', '{}', '2024-05-06 15:03:49', '2024-05-06 15:03:49'),
+(12, 2, 'user@localhost', '456 Testing', '1234567890', 5, 2, 'Here is the description now', '{}', '2024-05-06 15:56:04', '2024-05-06 15:56:04'),
+(13, 2, 'random@localhost', '456 Testing', '6661212111', 3, 2, 'This is a description', '{}', '2024-05-06 19:24:31', '2024-05-06 19:24:31'),
+(14, 2, 'random@localhost', '456 Testing', '6669991212', 7, 2, 'I need it like yesturday', '{}', '2024-05-06 19:42:40', '2024-05-06 19:42:40'),
+(17, 1, 'admin@localhost', '123 Fake Street', '1115551212', 46, 1, '', '{}', '2024-05-06 23:01:22', '2024-05-06 23:01:22');
 
 -- --------------------------------------------------------
 
@@ -151,7 +157,8 @@ INSERT INTO `partners` (`id`, `category_id`, `subcategory_id`, `type`, `about`, 
 (32, 1, 1, 'Not Listed', '123 fake street', NULL, NULL, 2, 'sdgfdfg', '4254532356', NULL, '', '', 3, '2024-05-03 23:04:51', NULL),
 (43, 1, 2, 'Partner', '', NULL, NULL, 1, NULL, '', NULL, '8147483647', '', 3, '2024-05-05 01:57:56', NULL),
 (44, 6, 36, 'Partner', 'I\'m a bartender', NULL, NULL, 1, NULL, '123 fake s', NULL, '8147483647', '', 3, '2024-05-05 22:06:10', NULL),
-(49, 1, 52, 'Partner', '', NULL, NULL, 1, NULL, '', NULL, '1115551212', '', 1, '2024-05-06 00:03:42', NULL);
+(49, 1, 52, 'Partner', 'Appliance Repair', NULL, NULL, 1, NULL, '3335551212', NULL, 'Another Address', '', 1, '2024-05-06 00:03:42', NULL),
+(50, 3, 3, 'Partner', 'This is the about', NULL, NULL, 1, NULL, '8889991212', NULL, 'My Address', '', 3, '2024-05-06 20:29:25', NULL);
 
 -- --------------------------------------------------------
 
@@ -180,8 +187,8 @@ CREATE TABLE `posts` (
   `photo1` varchar(191) DEFAULT NULL,
   `photo2` varchar(191) DEFAULT NULL,
   `slug` varchar(191) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -209,7 +216,9 @@ INSERT INTO `posts` (`id`, `category_id`, `subcategory_id`, `about`, `city_id`, 
 (18, 7, 45, '<ul><li> We provide best car rent service </li> <li>Go anywhere in india with our expert chauffeurs </li>\n         <li>We also provide  self drive car facility</li>\n         <li>Our price are also reasonable</li>\n      </ul>', 1, '1550516161.jpeg', NULL, 'car-rent', '2019-02-18 18:56:01', '2019-02-23 09:26:55'),
 (19, 9, 46, '<ul><li>Want a domestic maid?</Li><li>Get well trained and registered domestic helper</li><li>Contact us and get highly trained and well behaved domestic maid at your home</li></ul>', 1, '11553936280.jpeg', NULL, 'maid-service', '2019-02-22 18:40:03', '2019-03-30 08:58:01'),
 (20, 9, 5, 'Microwave Repair', 1, '11553936294.png', NULL, 'microwave-repair', '2019-03-04 19:24:50', '2019-03-30 08:58:15'),
-(21, 11, 48, 'Get Your Website Developed with professionals', 1, '11553936364.jpeg', NULL, 'website-development', '2019-03-09 02:44:27', '2019-03-30 08:59:24');
+(21, 11, 48, 'Get Your Website Developed with professionals', 1, '11553936364.jpeg', NULL, 'website-development', '2019-03-09 02:44:27', '2019-03-30 08:59:24'),
+(26, 6, 61, '', 1, 'Untitled.jpg', NULL, 'nightclub-shoot', '2024-05-08 03:54:23', '2024-05-08 03:54:23'),
+(29, 7, 1, 'sdfsdfsdf', 3, '', NULL, 'ac-service-repair', '2024-05-08 04:20:47', '2024-05-08 04:20:47');
 
 -- --------------------------------------------------------
 
@@ -281,7 +290,8 @@ INSERT INTO `subcategories` (`id`, `category_id`, `name`, `created_at`, `updated
 (50, 8, 'Home Tutors for Specific Subjects', '2019-03-27 10:10:44', '2019-03-28 13:55:17'),
 (51, 8, 'Professional Subject Tutors (E.g., Java, C++)', '2019-03-27 10:12:12', '2019-03-28 13:55:08'),
 (52, 12, 'Others', '2019-03-27 10:12:22', '2019-03-28 14:00:18'),
-(53, 7, 'Car Selling', '2019-04-18 04:06:52', '2019-04-18 04:06:52');
+(53, 7, 'Car Selling', '2019-04-18 04:06:52', '2019-04-18 04:06:52'),
+(61, 6, 'Nightclub shoot', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -306,7 +316,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `address`, `phone`, `city_id`, `type`, `password`) VALUES
 (1, 'admin', 'admin@localhost', '123 Fake Street', '1115551212', 1, 'Admin', '$2y$10$vx3Ir1Ka106MD5CVGQ9pXOGI4NnNpmfS2uJo2JGUBmyOi428JYKP6'),
-(2, 'John', 'random@localhost', '456 Testing', NULL, 2, 'User', '$2y$10$9QkMMaulkqt1q1IS9gin9OcutfqJsoxFoY0Et2VZZbqKH0Xui5IaG'),
+(2, 'John', 'user@localhost', '456 Testing', NULL, 2, 'User', '$2y$10$9QkMMaulkqt1q1IS9gin9OcutfqJsoxFoY0Et2VZZbqKH0Xui5IaG'),
 (3, 'Bob', 'partner@localhost', '123 fake street', '8147483647', 2, 'Partner', '$2y$10$9QkMMaulkqt1q1IS9gin9OcutfqJsoxFoY0Et2VZZbqKH0Xui5IaG');
 
 --
@@ -375,7 +385,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `cities`
@@ -387,25 +397,25 @@ ALTER TABLE `cities`
 -- AUTO_INCREMENT for table `enquiries`
 --
 ALTER TABLE `enquiries`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `partners`
 --
 ALTER TABLE `partners`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `posts`
 --
 ALTER TABLE `posts`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `subcategories`
 --
 ALTER TABLE `subcategories`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -438,9 +448,9 @@ ALTER TABLE `partners`
 -- Constraints for table `posts`
 --
 ALTER TABLE `posts`
-  ADD CONSTRAINT `fk_subcategories_posts_subcategory_id` FOREIGN KEY (`subcategory_id`) REFERENCES `subcategories` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_categories_posts_category_id` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_cities_posts_city_id` FOREIGN KEY (`city_id`) REFERENCES `cities` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_cities_posts_city_id` FOREIGN KEY (`city_id`) REFERENCES `cities` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_subcategories_posts_subcategory_id` FOREIGN KEY (`subcategory_id`) REFERENCES `subcategories` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 --
 -- Constraints for table `subcategories`

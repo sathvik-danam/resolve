@@ -183,7 +183,7 @@ while ($row_fetch_city = $stmt_cities->fetch()) { ?>
         <div class="form-group" bis_skin_checked="1"><textarea id="description" name="description" placeholder="Enter Description" class="form-control"></textarea> <!----></div> 
           <div class="modal-footer" bis_skin_checked="1">
             <button type="button" data-dismiss="modal" class="px-5 py-2 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-red-600 lg:px-10 rounded-xl hover:bg-red-700">Close</button>
-            <button type="submit" class="px-5 py-2 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-green-600 lg:px-10 rounded-xl hover:bg-green-700" style="float: right;">Save changes</button>
+            <button type="submit" class="px-5 py-2 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-green-600 lg:px-10 rounded-xl hover:bg-green-700" style="float: right;">Post Enquiry</button>
           </div>
         </div>
       </form>
@@ -219,7 +219,13 @@ while ($row_fetch_city = $stmt_cities->fetch()) { ?>
 <!-- Container for content -->
 <div class="w-full h-64 bg-white p-8 shadow-lg flex flex-col justify-center items-center font-roboto">
   <div class="text-left mx-auto text-black"> <!-- Added text-white class -->
-    <h2 class="text-3xl mb-4"><?= (isset($row_fetch['category']) ? $row_fetch['category'] : 'Heading') ?></h2>
+    <h2 class="text-3xl mb-4"><?php if (isset($row_fetch['subcategory_id'])) {
+          $stmt_subcategory = $pdo->prepare("SELECT `name` FROM `subcategories` WHERE `id` = :subcategory_id;");
+          $stmt_subcategory->execute(array('subcategory_id' => $row_fetch['subcategory_id']));
+          $row_subcategory = $stmt_subcategory->fetch();
+                       
+          ?><?= $row_subcategory['name']; ?>
+        <?php } ?></h2>
     <div style=" font-size: 1.475rem;" class="text-black"><?= (isset($row_fetch['about']) ? $row_fetch['about'] : 'Heading Description') ?></div>
   </div>
 </div>
@@ -263,32 +269,6 @@ while ($row_fetch_city = $stmt_cities->fetch()) { ?>
   </div>
 </div>
 </section>
-
-<!-- Service cards section -->
-<div class="services-container mx-auto mt-8 px-4">
-    <h1 class="text-2xl font-bold text-gray-900 mb-4">What plumbing service do I need?</h1>
-    <div class="grid grid-cols-3 gap-4">
-        <!-- Card 1 -->
-        <div class="service-card bg-white p-4 shadow-md rounded-lg">
-            <h2 class="text-xl font-semibold text-gray-800">1. New installations</h2>
-            <p class="text-gray-600">When upgrading your property, always hire an expert plumber to install bathroom fittings, dishwashers and washing machines, and central heating systems. Use a plumber for anything you need to channel water around your property, and avoid future headaches.</p>
-        </div>
-        <!-- Card 2 -->
-        <div class="service-card bg-white p-4 shadow-md rounded-lg">
-            <h2 class="text-xl font-semibold text-gray-800">2. Plumbing repairs</h2>
-            <p class="text-gray-600">Plumbers fix faulty plumbing systems to get your home back up and running. Common requests include clogged drains, dripping taps, and weak water pressure – but that’s just a sample of the many issues you might face. Enquiries on Yell get you a tailored solution to your current problem.</p>
-        </div>
-        <!-- Card 3 -->
-        <div class="service-card bg-white p-4 shadow-md rounded-lg">
-            <h2 class="text-xl font-semibold text-gray-800">3. Emergency plumber</h2>
-            <p class="text-gray-600">Plumbing emergencies must be dealt with immediately. For situations like burst pipes and sewage backups, you’ll need an emergency plumber right away. This 24-hour service comes at a premium, but it’s worth the added expense to avoid severe property damage and further upheaval.</p>
-        </div>
-    </div>
-</div>
-
-
-
-
 
 <?php require_once('footer.php'); ?>
 <script type="text/javascript">

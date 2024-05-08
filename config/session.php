@@ -17,6 +17,10 @@ ini_set('session.cookie_lifetime', 0); // SESSION_LIFETIME
 //ini_set('session.save_path', SESSION_SAVE_PATH); // APP_PATH . APP_BASE['sessions']
 //session_save_path(SESSION_SAVE_PATH);
 
+
+if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN')
+  session_save_path('/tmp');
+
 //ini_set("session.use_cookies", 0);
 //ini_set('session.use_only_cookies', '0');
 //ini_set("session.use_trans_sid", 1);

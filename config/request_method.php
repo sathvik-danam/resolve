@@ -1,6 +1,5 @@
 <?php
-
-//include('../config/config.php');
+include('config.php'); //dd($_FILES);
 
 switch ($_SERVER['REQUEST_METHOD']) {
   case 'POST':
@@ -373,10 +372,48 @@ if (!empty($approvals) && property_exists($approvals, $_SESSION['user_id'])) {
         ':category_id' => $_POST['category']
       ));
     } elseif (isset($_POST['subcategory']) && $_POST['subcategory'] == 'add') {
-      $stmt = $pdo->prepare("INSERT INTO `subcategories` (`category_id`, `name`) VALUES (?, ?)");
+      $stmt = $pdo->prepare($sql = "INSERT INTO `subcategories` (`category_id`, `name`) VALUES ( :category_id, :name);");
+      //dd($sql);
+      $stmt->execute(array(
+        ':category_id' => $_POST['category'],
+        ':name' => $_POST['name']
+      ));
+    }  elseif (isset($_POST['post']) && $_POST['post'] == 'edit') {
+      $stmt = $pdo->prepare($sql = "UPDATE `posts` SET `category_id` = :category_id, `subcategory_id` = :subcategory_id, `about` = :about, `city_id` = :city_id WHERE `posts`.`id` = :post_id;");
+
+      //dd($sql);
+      $stmt->execute(array(
+        ":post_id" => $_POST['post_id'],
+        ':category_id' => $_POST['category'],
+        ':subcategory_id' => $_POST['subcategory'],
+        ':city_id' => $_POST['city'],
+        ':about' => $_POST['about']
+      ));
+    } elseif (isset($_POST['post']) && $_POST['post'] == 'add') {
+
+
+      if (is_file($fileTmpPath = $_FILES['file_upload']['tmp_name'][0])) {
+
+        move_uploaded_file($fileTmpPath, $destination = APP_PATH . 'public/img/profession/' . basename($_FILES['file_upload']['name'][0]) );
+      }
+      $stmt_category = $pdo->prepare("SELECT `name` FROM `subcategories` WHERE `id` = :subcategory_id;");
+      $stmt_category->execute(array('subcategory_id' => $_POST['subcategory']));
+      $row_fetch_category = $stmt_category->fetch();
+                   
+      ?><?php
+      $stmt = $pdo->prepare("INSERT INTO `posts` (`category_id`, `subcategory_id`, `about`, `city_id`, `photo1`, `slug`) VALUES (?, ?, ?, ?, ?, ?)");
       $stmt->execute(array(
         $_POST['category'],
-        $_POST['name']
+        $_POST['subcategory'],
+        $_POST['about'],
+        $_POST['city'],
+        $_FILES['file_upload']['name'][0], // ($_FILES["file_upload"]["error"] == 0 ? 'success' : 'test' )
+        createSlug($row_fetch_category['name'])
+      ));
+    } elseif (isset($_POST['post']) && $_POST['post'] == 'delete') {
+      $stmt = $pdo->prepare("DELETE FROM `posts` WHERE `posts`.`id` = :post_id;");
+      $stmt->execute(array(
+        ":post_id" => $_POST['post_id']
       ));
     } elseif (!empty($rawData = file_get_contents("php://input"))) {
       $decodedData = json_decode($rawData, true);
@@ -424,13 +461,13 @@ if (!empty($approvals) && property_exists($approvals, $_SESSION['user_id'])) {
         $row_fetch = $stmt->fetch();
         die(json_encode(['partner_id' => $decodedData['partner_id'], 'category_id' => $row_fetch['category_id'], 'subcategory_id' => $row_fetch['subcategory_id'], 'type' => $row_fetch['type'], 'about' => $row_fetch['about'], 'city_id' => $row_fetch['city_id'], 'name' => $row_fetch['name'], 'phone' => $row_fetch['phone'], 'address' => $row_fetch['address'], 'user_id' => $row_fetch['user_id'], 'created_at' => $row_fetch['created_at']]));
       } elseif (isset($decodedData['post_id'])) {
-// `id`, `category_id`, `subcategory_id`, `about`, `city_id`, `photo1`, `photo2`, `created_at`
-        $stmt = $pdo->prepare("SELECT `id`, `category_id`, `subcategory_id`, `about`, `city_id`, `photo1`, `photo2`, `created_at` FROM `posts` WHERE `id` = :post_id;");
+        $stmt = $pdo->prepare("SELECT `id`, `category_id`, `subcategory_id`, `about`, `city_id`, `photo1`, `photo2`, 'address', 'user_id', `created_at` FROM `posts` WHERE `id` = :post_id;");
         $stmt->execute(array(
             ":post_id" => $decodedData['post_id']
         ));
         //die('{"test":"test"}');
         $row_fetch = $stmt->fetch();
+ 
         die(json_encode(['post_id' => $decodedData['post_id'], 'category_id' => $row_fetch['category_id'], 'subcategory_id' => $row_fetch['subcategory_id'], 'about' => $row_fetch['about'], 'city_id' => $row_fetch['city_id'], 'photo1' => $row_fetch['photo1'], 'photo2' => $row_fetch['photo2'], 'address' => $row_fetch['address'], 'user_id' => $row_fetch['user_id'], 'created_at' => $row_fetch['created_at']]));
 
       } else if (isset($decodedData['category_id'])) {

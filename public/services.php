@@ -124,7 +124,7 @@ while ($row = $stm->fetch(PDO::FETCH_ASSOC)) {
 
 foreach($categories as $key => $category_id) { ?>
 <div class="gallery-container" style="width: 1300px; margin: 75px auto;">
-  <h1  class="text-lg md:text-xl"><?php
+<h1 class="text-1xl font-bold sm:text-3xl"><?php
 
 $stmt_category = $pdo->prepare("SELECT `name` FROM `categories` WHERE `id` = :category_id;");
 $stmt_category->execute(array('category_id' => $category_id));
@@ -147,7 +147,7 @@ while ($row = $stm->fetch(PDO::FETCH_ASSOC)) { ?>
 $stmt_subcategory = $pdo->prepare("SELECT `name` FROM `subcategories` WHERE `id` = :subcategory_id;");
 $stmt_subcategory->execute(array('subcategory_id' => $row['subcategory_id']));
 $row_subcategory = $stmt_subcategory->fetch();
-?><?= $row_subcategory['name']; ?>"></a>
+?><?= $row_subcategory['name']; ?>"><?= $row_subcategory['name']; ?></a>
 
 <?php } ?>
 

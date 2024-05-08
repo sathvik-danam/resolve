@@ -75,6 +75,7 @@ if (empty($_SESSION)) die(header('Location: ' . APP_URL_BASE)); ?>
   overflow: auto; /* Enable scroll if needed */
   background-color: rgb(0,0,0); /* Fallback color */
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  height: 1000px;
 }
 
  
@@ -122,7 +123,7 @@ if (empty($_SESSION)) die(header('Location: ' . APP_URL_BASE)); ?>
     <div class="modal-content" bis_skin_checked="1">
       <div class="modal-header" bis_skin_checked="1">
         <button id="myBtn" type="button" data-dismiss="modal" aria-label="Close" class="close" style="float: right;"><span aria-hidden="true">×</span></button>
-        <span id="addNewLabel" class="modal-title" style="">Add New User</span>
+        <span id="addNewLabel" class="modal-title" >Add New User</span>
         <h5 id="addNewLabel" class="modal-title" style="display: none;">Update User's info</h5>
 
       </div>
@@ -157,7 +158,7 @@ if (empty($_SESSION)) die(header('Location: ' . APP_URL_BASE)); ?>
       <div class="modal-content" bis_skin_checked="1">
         <div class="modal-header" bis_skin_checked="1">
           <button id="myBtn" type="button" data-dismiss="modal" aria-label="Close" class="close" style="float: right;"><span aria-hidden="true">×</span></button>
-          <span id="addNewLabel" class="modal-title" style="">Add New City</span>
+          <span id="addNewLabel" class="modal-title">Add New City</span>
           <h5 id="addNewLabel" class="modal-title" style="display: none;">Update User's info</h5>
 
         </div>
@@ -184,7 +185,7 @@ if (empty($_SESSION)) die(header('Location: ' . APP_URL_BASE)); ?>
       <div class="modal-content" bis_skin_checked="1">
         <div class="modal-header" bis_skin_checked="1">
           <button id="myBtn" type="button" data-dismiss="modal" aria-label="Close" class="close" style="float: right;"><span aria-hidden="true">×</span></button>
-          <span id="addNewLabel" class="modal-title">Add New</span>
+          <span id="addNewLabel" class="modal-title">Add New Category</span>
 
         </div>
         <form action method="POST">
@@ -210,7 +211,7 @@ if (empty($_SESSION)) die(header('Location: ' . APP_URL_BASE)); ?>
       <div class="modal-content" bis_skin_checked="1">
         <div class="modal-header" bis_skin_checked="1">
           <button id="myBtn" type="button" data-dismiss="modal" aria-label="Close" class="close" style="float: right;"><span aria-hidden="true">×</span></button>
-          <span id="addNewLabel" class="modal-title">Add New</span>
+          <span id="addNewLabel" class="modal-title">Add New Subcategory</span>
 
         </div>
         <form action method="POST">
@@ -224,11 +225,11 @@ if (empty($_SESSION)) die(header('Location: ' . APP_URL_BASE)); ?>
             <div class="form-group" bis_skin_checked="1">
               <select name="category">
 <?php
-$stmt = $pdo->prepare("SELECT `name` FROM `categories`;");
+$stmt = $pdo->prepare("SELECT `id`, `name` FROM `categories`;");
   $stmt->execute(array());
   
 while ($row_fetch = $stmt->fetch()) { ?>
-            <option value="<?= $row_fetch['name'] ?>"><?= $row_fetch['name'] ?></option>
+            <option value="<?= $row_fetch['id'] ?>"><?= $row_fetch['name'] ?></option>
 <?php } ?>
               </select>
             <!----></div> 
@@ -463,15 +464,15 @@ while ($row_fetch_city = $stmt_cities->fetch()) { ?>
 
 <?php } elseif (isset($_GET['create-profession'])) { ?>
 
-<div id="myModal" class="modal" style="display: none; border: 1px solid #000;">
+<div id="myModal" class="modal" style="display: none; border: 1px solid #000; height: 1000px;">
   <div role="document" class="modal-dialog modal-dialog-centered" bis_skin_checked="1">
     <div class="modal-content" bis_skin_checked="1">
       <div class="modal-header" bis_skin_checked="1">
         <button id="myBtn" type="button" data-dismiss="modal" aria-label="Close" class="close" style="float: right;"><span aria-hidden="true">×</span></button>
-        <span id="addNewLabel" class="modal-title" style="">Add New</span>
+        <span id="addNewLabel" class="modal-title" style="">Add New Profession</span>
         <h5 id="addNewLabel" class="modal-title" style="display: none;">Update User's info</h5>
       </div>
-      <form action method="POST">
+      <form action method="POST" enctype="multipart/form-data">
         <input type="hidden" name="post" value="add" />
         <input type="hidden" name="post_id" />
         <div class="modal-body" bis_skin_checked="1">
@@ -504,7 +505,7 @@ while ($row_fetch = $stmt->fetch()) { ?>
         
         <!----></div> 
         <label>City</label>
-        <div class="form-group" bis_skin_checked="1"><select name="city_id" class="form-control">
+        <div class="form-group" bis_skin_checked="1"><select name="city" class="form-control">
           <?php
 $stmt = $pdo->prepare("SELECT `id`, `city` FROM `cities`;");
   $stmt->execute(array());
@@ -524,16 +525,17 @@ while ($row_fetch_city = $stmt->fetch()) { ?>
 <?php if (isset($row_fetch['photo1']) && check_http_200(APP_URL_BASE . 'img/profession/' . $row_fetch['photo1']) ) { ?>
         <input id="photo1" type="text" name="photo1" placeholder="Enter About" class="form-control" value="<?= $row_fetch['photo1'] ?>" />
 <?php } else { ?>
-        <input id="photo1" type="file" name="photo1" class="form-control" <?= /*[] multiple*/ NULL; ?>/><!----></div> 
+        <input id="photo1" type="file" name="file_upload[]" class="form-control" <?= /*[] multiple*/ NULL; ?>/><!----></div> 
 <?php } ?><!----></div>
+<?php
+/*
         <label for="file_upload">Profession Photo:</label>
         <div class="form-group" bis_skin_checked="1">
-<?php if (isset($row_fetch['photo1']) && check_http_200(APP_URL_BASE . 'img/profession/' . $row_fetch['photo2']) ) { ?>
+        <?php if (isset($row_fetch['photo1']) && check_http_200(APP_URL_BASE . 'img/profession/' . $row_fetch['photo2']) ) { ?>
         <input id="photo2" type="text" name="photo2" placeholder="Enter About" class="form-control" value="<?= $row_fetch['photo2'] ?>" />
-<?php } else { ?>
-        <input id="photo2" type="file" name="photo2" class="form-control" <?= /*[] multiple*/ NULL; ?>/><!----></div> 
-<?php } ?><!----></div> 
-
+<?php } else { ?> */
+/*        <input id="photo2" type="file" name="photo2" class="form-control" <?= *//*[] multiple*/ /*NULL; ?>/><!----></div> 
+<?php } ?>TEST<!----></div>*/ ?>
           <div class="modal-footer" bis_skin_checked="1">
             <button type="button" data-dismiss="modal" class="btn btn-danger">Close</button>
             <button type="submit" class="btn btn-primary" style="float: right;">Save changes</button>
@@ -748,10 +750,10 @@ if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['User'])) { ?>
       <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Welcome to your personalized dashboard, your central hub for all things important to you. This intuitive interface provides a comprehensive overview of your key metrics, tasks, and insights, empowering you to make informed decisions and stay on top of your priorities. From monitoring your progress to accessing valuable data, your dashboard is designed to streamline your workflow and enhance your productivity. Dive in and discover the power of having everything you need at your fingertips.</p>
     </div>
     <!-- First Row -->
-    <div class="flex flex-wrap -m-4 text-center">
+    <div class="flex flex-wrap -m-4 text-center" style="color: black;">
       <!-- First Item -->
       <div class="p-4 md:w-1/3 sm:w-1/2 w-full">
-        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg">
+        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg" style="background-color: #52D3D8;">
           <div><h3>
 
 <?php
@@ -767,7 +769,7 @@ if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['User'])) { ?>
       </div>
       <!-- Second Item -->
       <div class="p-4 md:w-1/3 sm:w-1/2 w-full">
-        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg">
+        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg" style="background-color: #3887BE;">
           <div class="inner" bis_skin_checked="1"><h3><?php
     $stmt = $pdo->query("SELECT COUNT(*) AS total FROM `partners`;");
 
@@ -778,7 +780,7 @@ if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['User'])) { ?>
       </div>
       <!-- Third Item -->
       <div class="p-4 md:w-1/3 sm:w-1/2 w-full">
-        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg">
+        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg" style="background-color: #38419D">
           <div class="inner" bis_skin_checked="1"><h3><?php
     $stmt = $pdo->query("SELECT COUNT(*) AS total FROM `cities`;");
 
@@ -789,10 +791,10 @@ if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['User'])) { ?>
       </div>
     </div>
     <!-- Second Row -->
-    <div class="flex flex-wrap -m-4 text-center">
+    <div class="flex flex-wrap -m-4 text-center" style="color: black;">
       <!-- Fourth Item -->
       <div class="p-4 md:w-1/3 sm:w-1/2 w-full">
-        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg">
+        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg" style="background-color: #DBCC95;">
           <div class="inner" bis_skin_checked="1"><h3><?php
     $stmt = $pdo->query("SELECT COUNT(*) AS total FROM `posts`;");
 
@@ -803,7 +805,7 @@ if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['User'])) { ?>
       </div>
       <!-- Fifth Item -->
       <div class="p-4 md:w-1/3 sm:w-1/2 w-full">
-        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg">
+        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg" style="background-color: #FFECD6;">
         <div class="inner" bis_skin_checked="1"><h3><?php
     $stmt = $pdo->query("SELECT COUNT(*) AS total FROM `categories`;");
 
@@ -814,7 +816,7 @@ if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['User'])) { ?>
       </div>
       <!-- Sixth Item -->
       <div class="p-4 md:w-1/3 sm:w-1/2 w-full">
-        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg">
+        <div class="border-2 border-gray-200 px-4 py-6 rounded-lg" style="background-color: #607274;">
           <div class="small-box bg-info" bis_skin_checked="1">
             <div class="inner" bis_skin_checked="1"><h3><?php
     $stmt = $pdo->query("SELECT COUNT(*) AS total FROM `subcategories`;");
@@ -927,7 +929,7 @@ if (isset($_SESSION['type']) && in_array($_SESSION['type'], ['User'])) { ?>
 
 <div style="position: absolute; top: 0; left: 100px; height: 95%; display: inline; float: left; margin: 25px 0 0 250px;" class="absolute overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
-    <button class="btn btn-success px-5 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 lg:px-10 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" onclick="document.getElementById('myModal').style.display='block';">Add User<i class="fas fa-user-plus fa-fw"></i></button>
+    <button class="btn btn-success px-5 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 lg:px-10 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" onclick="document.getElementById('myModal').style.display='block';">Add User</button>
 </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -988,7 +990,7 @@ while ($row = $stmt->fetch()) { ?>
  
 <div style="position: absolute; top: 0; right: 60px; height: 95%; display: inline; float: right; margin: 25px 0 0 275px; width: 75%; overflow-x:scroll;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
-    <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add Partner<i class="fas fa-user-plus fa-fw"></i></button>
+    <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add Partner</button>
 </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -1146,7 +1148,7 @@ if (!is_null($phone) && $phone !== '') {
 <div style="position: absolute; top: 0; left: 100px; height: 95%; display: inline; float: left; margin: 25px 0 0 250px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
 Enquiries Table<br />
-<button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add Enquiry<i class="fas fa-user-plus fa-fw"></i></button>
+<button class="btn btn-success px-5 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 lg:px-10 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" onclick="document.getElementById('myModal').style.display='block';">Add Enquiry</button>
 </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -1307,7 +1309,7 @@ if (in_array($_SESSION['type'], ['User', 'Admin'])) {
 
 <div style="position: absolute; top: 0; left: 300px; height: 95%; display: inline; float: left; margin: 25px 20px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
-    <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add City<i class="fas fa-user-plus fa-fw"></i></button>
+<button class="btn btn-success px-5 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 lg:px-10 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" onclick="document.getElementById('myModal').style.display='block';">Add City</button>
 </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -1403,7 +1405,7 @@ $row_fetch = $stmt->fetch(); ?>
   <div style="position: absolute; top: 0; right: 60px; height: 95%; display: inline; float: right; margin: 25px 0 0 275px; width: 75%; overflow-x:scroll;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
     Post Table<br />
-    <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add Profession<i class="fas fa-user-plus fa-fw"></i></button>
+    <button class="btn btn-success px-5 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 lg:px-10 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" onclick="document.getElementById('myModal').style.display='block';">Add Profession</button>
 </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -1497,7 +1499,7 @@ $row_city = $stmt_city->fetch();
                 </td>
                 <td class="px-6 py-4">
                   <?php
-$date = new DateTime($row['created_at'] );
+$date = new DateTime($row['created_at'] ?: date('F j, Y') );
 
 // Format the date to "Month Day, Year"
 $formattedDate = $date->format('F j, Y'); ?><?= $formattedDate ?>
@@ -1531,7 +1533,7 @@ $formattedDate = $date->format('F j, Y'); ?><?= $formattedDate ?>
 <div style="position: absolute; top: 0; left: 325px; height: 95%; display: inline; float: left; margin: 25px 20px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
     <h1 class="text-lg md:text-xl">Primary Profession Table</h1>
-    <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add Category<i class="fas fa-user-plus fa-fw"></i></button>
+    <button class="btn btn-success px-5 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 lg:px-10 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" onclick="document.getElementById('myModal').style.display='block';">Add Category</button>
 </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -1580,7 +1582,7 @@ while ($row = $stmt->fetch()) { ?>
 <div style="position: absolute; top: 0; left: 325px; height: 95%; display: inline; float: left; margin: 25px 20px;" class="relative overflow-x-auto shadow-md sm:rounded-lg">  
 <div class="box-tools" bis_skin_checked="1">
     <h1 class="text-lg md:text-xl">Profession Sub-Types Table</h1>
-    <button class="btn btn-success" onclick="document.getElementById('myModal').style.display='block';">Add Professional Sub-Types<i class="fas fa-user-plus fa-fw"></i></button>
+    <button class="btn btn-success px-5 py-4 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 lg:px-10 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" onclick="document.getElementById('myModal').style.display='block';">Add Professional Sub-Types</button>
 </div>
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -2026,7 +2028,7 @@ console.log('testing 123');
                 if (xhr.readyState === 4 && xhr.status === 200) {
                   //console.log('what is tyhis' + xhr.responseText.split(',')[1] ); // Handle the response data here
                   var data = JSON.parse(xhr.responseText);
-                  console.log(data);
+                  console.log(data); // getElementsByName
                   document.getElementsByName('post')[0].value = 'edit';
                   document.getElementsByName('post_id')[0].value = data['post_id'];
 
@@ -2036,29 +2038,19 @@ console.log('testing 123');
                   } else {
                       console.error('The specified value does not exist in the options');
                   }
+/*
                   selectElement = document.getElementById('subcategory');
                   if (selectElement.querySelector(`option[value="${data['subcategory']}"]`)) {
-                      selectElement.value = data['subcategory'];
+                      selectElement.value = data['subcategory_id'];
                   } else {
                       console.error('The specified value does not exist in the options');
-                  }
+                  }*/
                   
-                  
-               /* `category_id`, `subcategory_id`, `about`, `city_id`, `photo1`, `photo2`, `created_at`  */
-                  
-/*
-                  selectElement = document.getElementById('category');
-                  if (selectElement.querySelector(`option[value="${data['category']}"]`)) {
-                      selectElement.value = data['category'];
-                  } else {
-                      console.error('The specified value does not exist in the options');
-                  } // $_POST['category'],
-*/
 
                   document.getElementsByName('about')[0].value = data['about'];
                   document.getElementsByName('city')[0].value = data['city_id']; // $_POST['city']
-                  document.getElementsByName('photo1')[0].value = data['photo1'];
-                  document.getElementsByName('photo2')[0].value = data['photo2'];
+                  //document.getElementsByName('photo1')[0].value = data['photo1'];
+                  // document.getElementsByName('photo2')[0].value = data['photo2'];
 
                   //document.getElementsByName('name')[0].value = data['name']; //$_POST['name']
 
@@ -2066,7 +2058,7 @@ console.log('testing 123');
               };
 
               var data = JSON.stringify({
-                "partner_id": `${value}`
+                "post_id": `${value}`
               });
               
               xhr.send(data);
