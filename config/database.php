@@ -4,7 +4,7 @@
 define('DB_HOST',      'localhost');
 define('DB_PATH',      '');
 define('DB_CHARSET',   'utf8mb4');
-define('DB_UNAME',     'root'); // $_ENV['DB_UNAME']
+define('DB_UNAME',     'veeru'); // $_ENV['DB_UNAME']
 define('DB_PWORD',     'Cst@1985'); // $_ENV['DB_PWORD']
 define('DB_NAME',  'resolve'); // DB_NAME[0]
 
