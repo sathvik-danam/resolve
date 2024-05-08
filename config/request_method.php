@@ -423,6 +423,16 @@ if (!empty($approvals) && property_exists($approvals, $_SESSION['user_id'])) {
         //die('{"test":"test"}');
         $row_fetch = $stmt->fetch();
         die(json_encode(['partner_id' => $decodedData['partner_id'], 'category_id' => $row_fetch['category_id'], 'subcategory_id' => $row_fetch['subcategory_id'], 'type' => $row_fetch['type'], 'about' => $row_fetch['about'], 'city_id' => $row_fetch['city_id'], 'name' => $row_fetch['name'], 'phone' => $row_fetch['phone'], 'address' => $row_fetch['address'], 'user_id' => $row_fetch['user_id'], 'created_at' => $row_fetch['created_at']]));
+      } elseif (isset($decodedData['post_id'])) {
+// `id`, `category_id`, `subcategory_id`, `about`, `city_id`, `photo1`, `photo2`, `created_at`
+        $stmt = $pdo->prepare("SELECT `id`, `category_id`, `subcategory_id`, `about`, `city_id`, `photo1`, `photo2`, `created_at` FROM `posts` WHERE `id` = :post_id;");
+        $stmt->execute(array(
+            ":post_id" => $decodedData['post_id']
+        ));
+        //die('{"test":"test"}');
+        $row_fetch = $stmt->fetch();
+        die(json_encode(['post_id' => $decodedData['post_id'], 'category_id' => $row_fetch['category_id'], 'subcategory_id' => $row_fetch['subcategory_id'], 'about' => $row_fetch['about'], 'city_id' => $row_fetch['city_id'], 'photo1' => $row_fetch['photo1'], 'photo2' => $row_fetch['photo2'], 'address' => $row_fetch['address'], 'user_id' => $row_fetch['user_id'], 'created_at' => $row_fetch['created_at']]));
+
       } else if (isset($decodedData['category_id'])) {
         //die(json_decode($decodedData, true));
         //die('{"test":"test"}');

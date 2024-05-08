@@ -15,7 +15,11 @@
                 </li>
 
                 <li style="display: inline-block; padding-right: 50px;">
-                    <a href="<?= APP_URL_BASE ?>?create-invitation" style="color: black;">Create Invitation</a>
+                    <a href="<?= APP_URL_BASE ?>?create-invitation" style="color: black;">How It Works</a>
+                </li>
+
+                <li style="display: inline-block; padding-right: 50px;">
+                    <a href="<?= APP_URL_BASE ?>?create-invitation" style="color: black;">About</a>
                 </li>
                 <li style="display: inline-block; padding-right: 50px;">
                     <a href="services.php" style="color: black;">Service</a>

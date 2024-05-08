@@ -399,20 +399,9 @@ function toggleViews() {
 </script>
 
 
-
-
-
-<!-- div  style="position:fixed; display: none; width: 400px; border: 1px solid #000; z-index: 1; left: 38%; right:50%;">
-
-  <div class="max-w-md w-full border py-8 px-6 rounded border-gray-300 bg-white">
-
-  </div>
-
-</div -->
-
 <?php } ?>
 
-<!-- 2*2 section -->
+<!-- Saparate Pages-->
 
 <?php
 
